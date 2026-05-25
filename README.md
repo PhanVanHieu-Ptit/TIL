@@ -261,3 +261,244 @@ const UserPage = lazy(() => import("./UserPage"));
 - Làm sao đo performance bằng React Profiler?
 
 </details>
+
+<details>
+<summary><strong>📅 2026-05-25 — Frontend Theory Notes</strong></summary>
+
+---
+
+# 11. `useEffect` hoạt động như thế nào?
+
+## 📝 Tóm tắt
+`useEffect` dùng để xử lý side effects trong React như fetch API, subscribe realtime, timer hoặc cleanup resource.
+
+## 💻 Ví dụ thực tế
+
+```js
+useEffect(() => {
+  const interval = setInterval(() => {
+    console.log("running...");
+  }, 1000);
+
+  return () => clearInterval(interval);
+}, []);
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useEffect
+
+## ❓ Câu hỏi còn lại
+- Dependency array hoạt động ra sao?
+- Khi nào gây infinite re-render?
+
+---
+
+# 12. Debounce vs Throttle
+
+## 📝 Tóm tắt
+Debounce delay execution cho đến khi user ngừng action. Throttle giới hạn số lần function được gọi trong khoảng thời gian.
+
+## 💻 Ví dụ thực tế
+
+```js
+const debouncedSearch = debounce(searchAPI, 500);
+```
+
+```js
+const throttledScroll = throttle(handleScroll, 200);
+```
+
+## 🔗 Link tham khảo
+- https://lodash.com/docs/#debounce
+
+## ❓ Câu hỏi còn lại
+- Search input nên dùng debounce hay throttle?
+- Scroll event tối ưu thế nào?
+
+---
+
+# 13. Virtual DOM là gì?
+
+## 📝 Tóm tắt
+Virtual DOM là object representation của DOM thật giúp React tối ưu update UI bằng cách diffing trước khi render thật.
+
+## 💻 Ví dụ thực tế
+
+```jsx
+const element = <h1>Hello</h1>;
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/learn/render-and-commit
+
+## ❓ Câu hỏi còn lại
+- Diffing algorithm hoạt động ra sao?
+- Virtual DOM có luôn nhanh hơn DOM thật không?
+
+---
+
+# 14. Key trong React dùng để làm gì?
+
+## 📝 Tóm tắt
+`key` giúp React identify item trong list để optimize reconciliation và tránh render sai.
+
+## 💻 Ví dụ thực tế
+
+```jsx
+users.map((user) => (
+  <UserCard key={user.id} user={user} />
+));
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/learn/rendering-lists
+
+## ❓ Câu hỏi còn lại
+- Vì sao không nên dùng index làm key?
+- Key ảnh hưởng re-render như thế nào?
+
+---
+
+# 15. Authentication vs Authorization
+
+## 📝 Tóm tắt
+Authentication xác thực user là ai. Authorization xác định user được phép làm gì.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Login bằng JWT -> Authentication
+Role admin được xoá user -> Authorization
+```
+
+## 🔗 Link tham khảo
+- https://auth0.com/docs
+
+## ❓ Câu hỏi còn lại
+- Access token và refresh token khác nhau ra sao?
+- JWT có thật sự stateless không?
+
+---
+
+# 16. LocalStorage vs SessionStorage vs Cookie
+
+## 📝 Tóm tắt
+Cả 3 đều lưu dữ liệu phía client nhưng khác nhau về lifecycle, security và cách browser xử lý.
+
+## 💻 Ví dụ thực tế
+
+```js
+localStorage.setItem("token", accessToken);
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API
+
+## ❓ Câu hỏi còn lại
+- Vì sao không nên lưu JWT trong localStorage?
+- HttpOnly cookie hoạt động ra sao?
+
+---
+
+# 17. CORS là gì?
+
+## 📝 Tóm tắt
+CORS là cơ chế browser kiểm soát request giữa các domain khác nhau để đảm bảo security.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Frontend:
+http://localhost:3000
+
+Backend:
+http://localhost:8080
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+
+## ❓ Câu hỏi còn lại
+- Preflight request là gì?
+- Vì sao Postman gọi được nhưng browser bị CORS?
+
+---
+
+# 18. Lazy Loading là gì?
+
+## 📝 Tóm tắt
+Lazy loading giúp giảm initial bundle bằng cách chỉ load component/resource khi cần.
+
+## 💻 Ví dụ thực tế
+
+```js
+const Dashboard = lazy(() => import("./Dashboard"));
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/lazy
+
+## ❓ Câu hỏi còn lại
+- Dynamic import hoạt động như thế nào?
+- Lazy loading ảnh hưởng SEO không?
+
+---
+
+# 19. REST API vs GraphQL
+
+## 📝 Tóm tắt
+REST chia theo resource endpoint. GraphQL cho phép client query đúng dữ liệu cần lấy.
+
+## 💻 Ví dụ thực tế
+
+REST:
+
+```txt
+GET /users/1
+```
+
+GraphQL:
+
+```graphql
+query {
+  user(id: 1) {
+    name
+    email
+  }
+}
+```
+
+## 🔗 Link tham khảo
+- https://graphql.org/learn/
+
+## ❓ Câu hỏi còn lại
+- GraphQL có gây overfetching không?
+- Khi nào REST tốt hơn GraphQL?
+
+---
+
+# 20. Memory Leak trong React
+
+## 📝 Tóm tắt
+Memory leak xảy ra khi resource không được cleanup đúng cách khiến app tốn memory theo thời gian.
+
+## 💻 Ví dụ thực tế
+
+```js
+useEffect(() => {
+  const interval = setInterval(() => {
+    console.log("running");
+  }, 1000);
+
+  return () => clearInterval(interval);
+}, []);
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useEffect
+
+## ❓ Câu hỏi còn lại
+- Làm sao detect memory leak?
+- WebSocket/MQTT cleanup đúng cách thế nào?
+
+</details>
