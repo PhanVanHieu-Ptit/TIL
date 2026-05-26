@@ -502,3 +502,224 @@ useEffect(() => {
 - WebSocket/MQTT cleanup đúng cách thế nào?
 
 </details>
+
+<details>
+<summary><strong>📅 2026-05-26 — Frontend Theory Notes</strong></summary>
+
+---
+
+# 21. `useRef` dùng để làm gì?
+
+## 📝 Tóm tắt
+`useRef` dùng để lưu mutable value mà không trigger re-render hoặc để truy cập trực tiếp DOM element.
+
+## 💻 Ví dụ thực tế
+
+```js
+const inputRef = useRef(null);
+
+inputRef.current.focus();
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useRef
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên dùng useRef thay vì useState?
+- useRef có lưu value giữa các lần render không?
+
+---
+
+# 22. Shallow Compare là gì?
+
+## 📝 Tóm tắt
+Shallow compare chỉ compare reference ở level đầu tiên thay vì compare sâu toàn bộ object.
+
+## 💻 Ví dụ thực tế
+
+```js
+const a = { name: "A" };
+const b = { name: "A" };
+
+console.log(a === b); // false
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/memo
+
+## ❓ Câu hỏi còn lại
+- React.memo dùng shallow compare như thế nào?
+- Deep compare có performance issue không?
+
+---
+
+# 23. Hydration trong React/Next.js là gì?
+
+## 📝 Tóm tắt
+Hydration là quá trình React attach event listeners vào HTML đã render từ server.
+
+## 💻 Ví dụ thực tế
+
+```txt
+SSR render HTML trước
+↓
+Client React hydrate lại page
+```
+
+## 🔗 Link tham khảo
+- https://nextjs.org/docs/messages/react-hydration-error
+
+## ❓ Câu hỏi còn lại
+- Vì sao hydration mismatch xảy ra?
+- Hydration ảnh hưởng performance thế nào?
+
+---
+
+# 24. Bundle Size là gì?
+
+## 📝 Tóm tắt
+Bundle size là kích thước file JavaScript/CSS được gửi xuống browser. Bundle quá lớn sẽ làm app load chậm.
+
+## 💻 Ví dụ thực tế
+
+```txt
+main.js = 3MB
+→ initial loading chậm
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/reduce-javascript-payloads-with-code-splitting/
+
+## ❓ Câu hỏi còn lại
+- Tree shaking hoạt động thế nào?
+- Làm sao analyze bundle hiệu quả?
+
+---
+
+# 25. Tree Shaking là gì?
+
+## 📝 Tóm tắt
+Tree shaking giúp loại bỏ code không sử dụng khỏi final bundle để giảm kích thước app.
+
+## 💻 Ví dụ thực tế
+
+```js
+import { debounce } from "lodash";
+```
+
+## 🔗 Link tham khảo
+- https://webpack.js.org/guides/tree-shaking/
+
+## ❓ Câu hỏi còn lại
+- Vì sao CommonJS khó tree shaking hơn ESM?
+- Side effects ảnh hưởng tree shaking thế nào?
+
+---
+
+# 26. WebSocket hoạt động như thế nào?
+
+## 📝 Tóm tắt
+WebSocket tạo persistent connection giữa client và server để trao đổi dữ liệu realtime 2 chiều.
+
+## 💻 Ví dụ thực tế
+
+```js
+const ws = new WebSocket("ws://localhost:8080");
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API
+
+## ❓ Câu hỏi còn lại
+- WebSocket reconnect strategy nên làm thế nào?
+- WebSocket khác SSE ra sao?
+
+---
+
+# 27. Optimistic Update là gì?
+
+## 📝 Tóm tắt
+Optimistic update update UI trước khi API thành công để tạo cảm giác app phản hồi nhanh hơn.
+
+## 💻 Ví dụ thực tế
+
+```txt
+User click like
+→ UI tăng like ngay
+→ gọi API phía sau
+```
+
+## 🔗 Link tham khảo
+- https://tanstack.com/query/latest
+
+## ❓ Câu hỏi còn lại
+- Nếu API fail thì rollback thế nào?
+- Khi nào không nên dùng optimistic update?
+
+---
+
+# 28. Pagination vs Infinite Scroll
+
+## 📝 Tóm tắt
+Pagination chia dữ liệu thành page cố định. Infinite scroll load thêm dữ liệu khi user scroll xuống cuối.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Pagination:
+Page 1 → 2 → 3
+
+Infinite scroll:
+Facebook / TikTok feed
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/infinite-scroll/
+
+## ❓ Câu hỏi còn lại
+- Infinite scroll ảnh hưởng SEO không?
+- Khi nào pagination tốt hơn?
+
+---
+
+# 29. Accessibility (a11y) là gì?
+
+## 📝 Tóm tắt
+Accessibility giúp ứng dụng dễ sử dụng với mọi người, bao gồm người dùng screen reader hoặc keyboard navigation.
+
+## 💻 Ví dụ thực tế
+
+```html
+<button aria-label="Close modal">X</button>
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/Accessibility
+
+## ❓ Câu hỏi còn lại
+- Semantic HTML ảnh hưởng accessibility thế nào?
+- Làm sao test accessibility?
+
+---
+
+# 30. React Context có phải thay thế Redux không?
+
+## 📝 Tóm tắt
+React Context phù hợp share state đơn giản. Redux phù hợp state lớn, phức tạp hoặc cần debugging/middleware mạnh.
+
+## 💻 Ví dụ thực tế
+
+```js
+<AuthContext.Provider value={user}>
+  <App />
+</AuthContext.Provider>
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useContext
+
+## ❓ Câu hỏi còn lại
+- Context gây re-render như thế nào?
+- Khi nào Context trở thành anti-pattern?
+
+</details>
