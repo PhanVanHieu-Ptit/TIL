@@ -723,3 +723,230 @@ React Context phù hợp share state đơn giản. Redux phù hợp state lớn,
 - Khi nào Context trở thành anti-pattern?
 
 </details>
+
+<details>
+<summary><strong>📅 2026-05-27 — Frontend Theory Notes</strong></summary>
+
+---
+
+# 31. Server Component vs Client Component
+
+## 📝 Tóm tắt
+Server Component render phía server để giảm bundle client. Client Component chạy trên browser và hỗ trợ state, event, hook.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+"use client";
+
+import { useState } from "react";
+```
+
+## 🔗 Link tham khảo
+- https://nextjs.org/docs/app/building-your-application/rendering/server-components
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên dùng Server Component?
+- Server Component có gọi useEffect được không?
+
+---
+
+# 32. Suspense trong React là gì?
+
+## 📝 Tóm tắt
+Suspense giúp hiển thị fallback UI trong lúc component hoặc data đang loading.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+<Suspense fallback={<Loading />}>
+  <Dashboard />
+</Suspense>
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/Suspense
+
+## ❓ Câu hỏi còn lại
+- Suspense khác loading state bình thường thế nào?
+- Suspense hỗ trợ data fetching ra sao?
+
+---
+
+# 33. Race Condition trong Frontend là gì?
+
+## 📝 Tóm tắt
+Race condition xảy ra khi nhiều async task hoàn thành không đúng thứ tự mong muốn dẫn tới dữ liệu sai.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Search "a"
+↓
+Search "ab"
+↓
+API "a" response về sau cùng
+→ UI hiển thị sai data
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop
+
+## ❓ Câu hỏi còn lại
+- Làm sao cancel request cũ?
+- React Query xử lý race condition thế nào?
+
+---
+
+# 34. Skeleton Loading là gì?
+
+## 📝 Tóm tắt
+Skeleton loading hiển thị placeholder layout thay vì spinner để tạo cảm giác app load nhanh hơn.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+<Skeleton active paragraph={{ rows: 4 }} />
+```
+
+## 🔗 Link tham khảo
+- https://ant.design/components/skeleton
+
+## ❓ Câu hỏi còn lại
+- Skeleton có tốt hơn spinner không?
+- Khi nào không nên dùng skeleton?
+
+---
+
+# 35. CDN là gì?
+
+## 📝 Tóm tắt
+CDN (Content Delivery Network) giúp phân phối static assets từ server gần user nhất để giảm latency.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Image CDN:
+cdn.example.com/banner.png
+```
+
+## 🔗 Link tham khảo
+- https://www.cloudflare.com/learning/cdn/what-is-a-cdn/
+
+## ❓ Câu hỏi còn lại
+- CDN cache invalidation hoạt động thế nào?
+- CDN ảnh hưởng SEO ra sao?
+
+---
+
+# 36. HTTP Cache là gì?
+
+## 📝 Tóm tắt
+HTTP cache giúp browser lưu lại resource để giảm request và tăng tốc load page.
+
+## 💻 Ví dụ thực tế
+
+```http
+Cache-Control: max-age=3600
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching
+
+## ❓ Câu hỏi còn lại
+- ETag hoạt động thế nào?
+- Hard reload bỏ qua cache ra sao?
+
+---
+
+# 37. Monorepo là gì?
+
+## 📝 Tóm tắt
+Monorepo là mô hình chứa nhiều package/project trong cùng một repository.
+
+## 💻 Ví dụ thực tế
+
+```txt
+apps/
+packages/
+shared-ui/
+```
+
+## 🔗 Link tham khảo
+- https://turbo.build/repo/docs
+
+## ❓ Câu hỏi còn lại
+- Monorepo có nhược điểm gì?
+- Turborepo optimize build thế nào?
+
+---
+
+# 38. Design System là gì?
+
+## 📝 Tóm tắt
+Design System là tập hợp UI component, guideline và design rule để maintain consistency giữa các project.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Button
+Input
+Modal
+Typography
+Spacing
+```
+
+## 🔗 Link tham khảo
+- https://www.designsystems.com/
+
+## ❓ Câu hỏi còn lại
+- Design System khác UI library thế nào?
+- Khi nào nên build internal design system?
+
+---
+
+# 39. CI/CD là gì?
+
+## 📝 Tóm tắt
+CI/CD giúp automate testing, build và deploy application để giảm manual work và tăng stability.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Push code
+→ Run test
+→ Build app
+→ Deploy Vercel
+```
+
+## 🔗 Link tham khảo
+- https://github.com/features/actions
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên deploy preview environment?
+- CI pipeline tối ưu thế nào?
+
+---
+
+# 40. Feature Flag là gì?
+
+## 📝 Tóm tắt
+Feature flag cho phép bật/tắt feature mà không cần deploy lại application.
+
+## 💻 Ví dụ thực tế
+
+```js
+if (featureFlags.newDashboard) {
+  return <NewDashboard />;
+}
+```
+
+## 🔗 Link tham khảo
+- https://launchdarkly.com/docs
+
+## ❓ Câu hỏi còn lại
+- Feature flag cleanup thế nào?
+- Khi nào feature flag trở thành technical debt?
+
+
+</details>
