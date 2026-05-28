@@ -950,3 +950,241 @@ if (featureFlags.newDashboard) {
 
 
 </details>
+
+<details>
+<summary><strong>📅 2026-05-28 — Frontend Theory Notes</strong></summary>
+
+---
+
+# 41. React Fiber là gì?
+
+## 📝 Tóm tắt
+React Fiber là kiến trúc rendering mới của React giúp chia nhỏ rendering work để app responsive hơn.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Render task lớn
+↓
+Fiber chia nhỏ task
+↓
+Browser không bị block
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/learn/render-and-commit
+
+## ❓ Câu hỏi còn lại
+- Concurrent rendering hoạt động ra sao?
+- Fiber scheduler ưu tiên update thế nào?
+
+---
+
+# 42. Reconciliation trong React là gì?
+
+## 📝 Tóm tắt
+Reconciliation là quá trình React compare Virtual DOM cũ và mới để quyết định update DOM thật.
+
+## 💻 Ví dụ thực tế
+
+```jsx
+<ul>
+  {users.map(user => (
+    <li key={user.id}>{user.name}</li>
+  ))}
+</ul>
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/learn/rendering-lists
+
+## ❓ Câu hỏi còn lại
+- Vì sao key rất quan trọng?
+- React diffing algorithm tối ưu thế nào?
+
+---
+
+# 43. SSR Streaming là gì?
+
+## 📝 Tóm tắt
+SSR Streaming cho phép server gửi HTML từng phần thay vì đợi render toàn bộ page.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Header render trước
+↓
+Body render sau
+↓
+User thấy content sớm hơn
+```
+
+## 🔗 Link tham khảo
+- https://nextjs.org/docs/app/building-your-application/routing/loading-ui-and-streaming
+
+## ❓ Câu hỏi còn lại
+- Streaming ảnh hưởng SEO thế nào?
+- Suspense liên quan SSR Streaming ra sao?
+
+---
+
+# 44. Edge Runtime là gì?
+
+## 📝 Tóm tắt
+Edge Runtime chạy logic gần user hơn để giảm latency thay vì chạy ở central server.
+
+## 💻 Ví dụ thực tế
+
+```txt
+User VN
+↓
+Request xử lý tại Singapore edge
+↓
+Response nhanh hơn
+```
+
+## 🔗 Link tham khảo
+- https://vercel.com/docs/functions/edge-functions
+
+## ❓ Câu hỏi còn lại
+- Edge runtime có limitation gì?
+- Khi nào nên dùng Edge Function?
+
+---
+
+# 45. Zustand khác Redux thế nào?
+
+## 📝 Tóm tắt
+Zustand lightweight hơn Redux và ít boilerplate hơn, phù hợp state đơn giản hoặc medium-scale app.
+
+## 💻 Ví dụ thực tế
+
+```js
+const useStore = create((set) => ({
+  count: 0,
+  increment: () => set((state) => ({
+    count: state.count + 1
+  }))
+}));
+```
+
+## 🔗 Link tham khảo
+- https://zustand-demo.pmnd.rs/
+
+## ❓ Câu hỏi còn lại
+- Zustand có middleware mạnh như Redux không?
+- Khi nào Redux phù hợp hơn Zustand?
+
+---
+
+# 46. React Query/TanStack Query dùng để làm gì?
+
+## 📝 Tóm tắt
+TanStack Query giúp quản lý server state như fetching, caching, retry và synchronization.
+
+## 💻 Ví dụ thực tế
+
+```js
+const { data, isLoading } = useQuery({
+  queryKey: ["users"],
+  queryFn: fetchUsers
+});
+```
+
+## 🔗 Link tham khảo
+- https://tanstack.com/query/latest
+
+## ❓ Câu hỏi còn lại
+- Cache invalidation hoạt động thế nào?
+- Khi nào vẫn cần Redux dù đã có React Query?
+
+---
+
+# 47. Code Splitting là gì?
+
+## 📝 Tóm tắt
+Code splitting chia bundle lớn thành nhiều chunk nhỏ để load khi cần.
+
+## 💻 Ví dụ thực tế
+
+```js
+const SettingsPage = lazy(() => import("./SettingsPage"));
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/reduce-javascript-payloads-with-code-splitting/
+
+## ❓ Câu hỏi còn lại
+- Route-based splitting khác component splitting thế nào?
+- Too many chunks có gây issue không?
+
+---
+
+# 48. SEO trong Frontend là gì?
+
+## 📝 Tóm tắt
+SEO giúp website dễ được search engine crawl và rank tốt hơn trên kết quả tìm kiếm.
+
+## 💻 Ví dụ thực tế
+
+```html
+<title>Frontend Learning Journal</title>
+
+<meta
+  name="description"
+  content="React and Frontend notes"
+/>
+```
+
+## 🔗 Link tham khảo
+- https://developers.google.com/search/docs/fundamentals/seo-starter-guide
+
+## ❓ Câu hỏi còn lại
+- CSR ảnh hưởng SEO ra sao?
+- Core Web Vitals quan trọng thế nào?
+
+---
+
+# 49. Core Web Vitals là gì?
+
+## 📝 Tóm tắt
+Core Web Vitals là bộ metrics đo trải nghiệm người dùng thực tế trên web.
+
+## 💻 Ví dụ thực tế
+
+```txt
+LCP → tốc độ load chính
+FID → tốc độ phản hồi
+CLS → độ ổn định layout
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/vitals/
+
+## ❓ Câu hỏi còn lại
+- Làm sao optimize CLS?
+- Lighthouse đo metrics thế nào?
+
+---
+
+# 50. Micro Frontend là gì?
+
+## 📝 Tóm tắt
+Micro Frontend chia frontend lớn thành nhiều app nhỏ độc lập để team phát triển riêng biệt.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Auth app
+Dashboard app
+Admin app
+```
+
+## 🔗 Link tham khảo
+- https://micro-frontends.org/
+
+## ❓ Câu hỏi còn lại
+- Shared state giữa micro frontend xử lý ra sao?
+- Khi nào micro frontend trở thành over-engineering?
+
+</details>
