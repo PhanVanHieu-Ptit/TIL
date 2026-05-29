@@ -1188,3 +1188,240 @@ Admin app
 - Khi nào micro frontend trở thành over-engineering?
 
 </details>
+
+<details>
+<summary><strong>📅 2026-05-29 — Frontend Theory Notes</strong></summary>
+
+---
+
+# 51. Browser Rendering Pipeline là gì?
+
+## 📝 Tóm tắt
+Browser rendering pipeline là quá trình browser parse HTML/CSS/JS để hiển thị UI lên màn hình.
+
+## 💻 Ví dụ thực tế
+
+```txt
+HTML
+↓
+DOM
+↓
+CSSOM
+↓
+Render Tree
+↓
+Layout
+↓
+Paint
+↓
+Composite
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/Performance/How_browsers_work
+
+## ❓ Câu hỏi còn lại
+- Reflow và repaint khác nhau thế nào?
+- CSS animation ảnh hưởng rendering ra sao?
+
+---
+
+# 52. Reflow vs Repaint
+
+## 📝 Tóm tắt
+Reflow xảy ra khi layout thay đổi. Repaint xảy ra khi chỉ thay đổi giao diện mà không đổi layout.
+
+## 💻 Ví dụ thực tế
+
+```css
+width: 100px; /* Reflow */
+background: red; /* Repaint */
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/avoid-large-complex-layouts-and-layout-thrashing/
+
+## ❓ Câu hỏi còn lại
+- Layout thrashing là gì?
+- Làm sao giảm reflow?
+
+---
+
+# 53. Service Worker là gì?
+
+## 📝 Tóm tắt
+Service Worker là script chạy background giúp hỗ trợ offline mode, push notification và caching.
+
+## 💻 Ví dụ thực tế
+
+```js
+navigator.serviceWorker.register("/sw.js");
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API
+
+## ❓ Câu hỏi còn lại
+- Service Worker cache update thế nào?
+- Khi nào không nên dùng PWA?
+
+---
+
+# 54. PWA là gì?
+
+## 📝 Tóm tắt
+PWA (Progressive Web App) giúp web app có trải nghiệm giống native app như offline mode hoặc install app.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Add to Home Screen
+Offline support
+Push notification
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/progressive-web-apps/
+
+## ❓ Câu hỏi còn lại
+- PWA limitation trên iOS là gì?
+- PWA khác native app ra sao?
+
+---
+
+# 55. Web Accessibility Semantic HTML là gì?
+
+## 📝 Tóm tắt
+Semantic HTML giúp browser và screen reader hiểu đúng ý nghĩa nội dung HTML.
+
+## 💻 Ví dụ thực tế
+
+```html
+<header>
+<nav>
+<main>
+<footer>
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Glossary/Semantics
+
+## ❓ Câu hỏi còn lại
+- Screen reader đọc semantic HTML thế nào?
+- Div soup gây issue gì?
+
+---
+
+# 56. Intersection Observer dùng để làm gì?
+
+## 📝 Tóm tắt
+Intersection Observer giúp detect khi element xuất hiện trong viewport mà không cần listen scroll event liên tục.
+
+## 💻 Ví dụ thực tế
+
+```js
+const observer = new IntersectionObserver(callback);
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
+
+## ❓ Câu hỏi còn lại
+- Infinite scroll dùng Intersection Observer thế nào?
+- Observer có performance tốt hơn scroll event không?
+
+---
+
+# 57. Web Vitals Monitoring là gì?
+
+## 📝 Tóm tắt
+Web Vitals Monitoring giúp theo dõi performance thực tế của user production.
+
+## 💻 Ví dụ thực tế
+
+```js
+import { getCLS, getLCP } from "web-vitals";
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/vitals/
+
+## ❓ Câu hỏi còn lại
+- Synthetic metrics khác real user metrics thế nào?
+- CLS thường bị ảnh hưởng bởi gì?
+
+---
+
+# 58. CSS Specificity là gì?
+
+## 📝 Tóm tắt
+CSS specificity xác định rule CSS nào được ưu tiên apply.
+
+## 💻 Ví dụ thực tế
+
+```css
+#id {
+  color: red;
+}
+
+.button {
+  color: blue;
+}
+```
+
+`#id` sẽ ưu tiên hơn.
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/CSS/Specificity
+
+## ❓ Câu hỏi còn lại
+- `!important` ảnh hưởng specificity thế nào?
+- CSS-in-JS xử lý specificity ra sao?
+
+---
+
+# 59. Event Delegation là gì?
+
+## 📝 Tóm tắt
+Event delegation dùng event bubbling để handle event cho nhiều element bằng một listener cha.
+
+## 💻 Ví dụ thực tế
+
+```js
+list.addEventListener("click", (e) => {
+  if (e.target.matches("li")) {
+    console.log("clicked");
+  }
+});
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Building_blocks/Events
+
+## ❓ Câu hỏi còn lại
+- Event bubbling khác capturing thế nào?
+- React synthetic event hoạt động ra sao?
+
+---
+
+# 60. Synthetic Event trong React là gì?
+
+## 📝 Tóm tắt
+Synthetic Event là wrapper của React quanh native browser event để đảm bảo behavior consistent giữa các browser.
+
+## 💻 Ví dụ thực tế
+
+```jsx
+<button onClick={handleClick}>
+  Click
+</button>
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react-dom/components/common
+
+## ❓ Câu hỏi còn lại
+- React event pooling là gì?
+- Synthetic event khác native event ra sao?
+
+</details>
