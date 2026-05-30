@@ -1425,3 +1425,238 @@ Synthetic Event là wrapper của React quanh native browser event để đảm 
 - Synthetic event khác native event ra sao?
 
 </details>
+<details>
+<summary><strong>📅 2026-05-30 — Frontend Interview Theory (JavaScript + React)</strong></summary>
+
+  ---
+
+# 61. Hydration Mismatch là gì?
+
+## 📝 Tóm tắt
+Hydration mismatch xảy ra khi HTML render từ server khác với HTML render phía client.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+const date = new Date().toLocaleTimeString();
+```
+
+Server và client render khác thời gian → mismatch.
+
+## 🔗 Link tham khảo
+- https://nextjs.org/docs/messages/react-hydration-error
+
+## ❓ Câu hỏi còn lại
+- Làm sao debug hydration mismatch?
+- `useEffect` giúp tránh mismatch thế nào?
+
+---
+
+# 62. Memoization là gì?
+
+## 📝 Tóm tắt
+Memoization là kỹ thuật cache kết quả computation để tránh tính toán lại không cần thiết.
+
+## 💻 Ví dụ thực tế
+
+```js
+const expensiveValue = useMemo(() => {
+  return heavyCalculation(data);
+}, [data]);
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useMemo
+
+## ❓ Câu hỏi còn lại
+- Memoization có cost gì?
+- Khi nào không nên dùng useMemo?
+
+---
+
+# 63. Runtime vs Build Time
+
+## 📝 Tóm tắt
+Build time xảy ra khi app được build trước deploy. Runtime xảy ra khi app đang chạy thực tế trên browser/server.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Build time:
+Next.js generate static page
+
+Runtime:
+Fetch API khi user mở page
+```
+
+## 🔗 Link tham khảo
+- https://nextjs.org/docs
+
+## ❓ Câu hỏi còn lại
+- ISR nằm giữa build time và runtime như thế nào?
+- Runtime config xử lý ra sao?
+
+---
+
+# 64. Image Optimization là gì?
+
+## 📝 Tóm tắt
+Image optimization giúp giảm dung lượng ảnh và tăng tốc load page.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+<Image
+  src="/banner.png"
+  width={800}
+  height={400}
+  alt="banner"
+/>
+```
+
+## 🔗 Link tham khảo
+- https://nextjs.org/docs/pages/api-reference/components/image
+
+## ❓ Câu hỏi còn lại
+- WebP và AVIF khác nhau thế nào?
+- Lazy loading image hoạt động ra sao?
+
+---
+
+# 65. WebSocket Reconnect Strategy là gì?
+
+## 📝 Tóm tắt
+Reconnect strategy giúp app tự reconnect khi WebSocket bị disconnect.
+
+## 💻 Ví dụ thực tế
+
+```js
+setTimeout(connectWebSocket, 3000);
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API
+
+## ❓ Câu hỏi còn lại
+- Exponential backoff là gì?
+- Khi nào nên stop reconnect?
+
+---
+
+# 66. Data Normalization là gì?
+
+## 📝 Tóm tắt
+Data normalization giúp lưu dữ liệu dạng phẳng để tránh duplicate và dễ update state.
+
+## 💻 Ví dụ thực tế
+
+```js
+{
+  users: {
+    byId: {
+      1: { id: 1, name: "Hieu" }
+    },
+    allIds: [1]
+  }
+}
+```
+
+## 🔗 Link tham khảo
+- https://redux.js.org/usage/structuring-reducers/normalizing-state-shape
+
+## ❓ Câu hỏi còn lại
+- Khi nào normalized state là overkill?
+- RTK entity adapter hoạt động thế nào?
+
+---
+
+# 67. Optimistic UI vs Pessimistic UI
+
+## 📝 Tóm tắt
+Optimistic UI update giao diện trước khi API thành công. Pessimistic UI đợi API xong mới update UI.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Optimistic:
+Like post → tăng like ngay
+
+Pessimistic:
+Đợi API success → mới update
+```
+
+## 🔗 Link tham khảo
+- https://tanstack.com/query/latest
+
+## ❓ Câu hỏi còn lại
+- Khi nào optimistic update nguy hiểm?
+- Rollback strategy nên làm sao?
+
+---
+
+# 68. Thundering Herd Problem là gì?
+
+## 📝 Tóm tắt
+Thundering herd xảy ra khi quá nhiều request cùng retry hoặc fetch cùng lúc gây overload server.
+
+## 💻 Ví dụ thực tế
+
+```txt
+1000 client reconnect WebSocket cùng lúc
+```
+
+## 🔗 Link tham khảo
+- https://en.wikipedia.org/wiki/Thundering_herd_problem
+
+## ❓ Câu hỏi còn lại
+- Exponential backoff giảm issue này thế nào?
+- Cache giúp hạn chế thundering herd ra sao?
+
+---
+
+# 69. State Machine trong Frontend là gì?
+
+## 📝 Tóm tắt
+State machine giúp quản lý state transition rõ ràng và predictable.
+
+## 💻 Ví dụ thực tế
+
+```txt
+idle
+↓
+loading
+↓
+success / error
+```
+
+## 🔗 Link tham khảo
+- https://xstate.js.org/docs/
+
+## ❓ Câu hỏi còn lại
+- Khi nào state machine hữu ích hơn Redux?
+- XState hoạt động thế nào?
+
+---
+
+# 70. Module Federation là gì?
+
+## 📝 Tóm tắt
+Module Federation cho phép nhiều app share module runtime mà không cần build chung.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Host app
+↓
+Load remote component
+↓
+Remote app
+```
+
+## 🔗 Link tham khảo
+- https://webpack.js.org/concepts/module-federation/
+
+## ❓ Câu hỏi còn lại
+- Shared dependency xử lý thế nào?
+- Khi nào Module Federation gây complexity lớn?
+
