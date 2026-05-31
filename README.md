@@ -4,6 +4,232 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-05-31 — Frontend Theory Notes</strong></summary>
+
+---
+
+# 71. React Strict Mode là gì?
+
+## 📝 Tóm tắt
+React Strict Mode giúp detect potential issue trong development như side effect không an toàn hoặc deprecated API.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+<React.StrictMode>
+  <App />
+</React.StrictMode>
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/StrictMode
+
+## ❓ Câu hỏi còn lại
+- Vì sao useEffect chạy 2 lần trong Strict Mode?
+- Strict Mode có ảnh hưởng production không?
+
+---
+
+# 72. Stale Closure là gì?
+
+## 📝 Tóm tắt
+Stale closure xảy ra khi function giữ giá trị state/props cũ do closure capture dữ liệu trước đó.
+
+## 💻 Ví dụ thực tế
+
+```js
+useEffect(() => {
+  setInterval(() => {
+    console.log(count);
+  }, 1000);
+}, []);
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useEffect
+
+## ❓ Câu hỏi còn lại
+- Dependency array ảnh hưởng stale closure ra sao?
+- useRef giúp xử lý stale closure thế nào?
+
+---
+
+# 73. Concurrent Rendering là gì?
+
+## 📝 Tóm tắt
+Concurrent Rendering giúp React interrupt hoặc prioritize rendering để UI responsive hơn.
+
+## 💻 Ví dụ thực tế
+
+```js
+startTransition(() => {
+  setSearch(keyword);
+});
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useTransition
+
+## ❓ Câu hỏi còn lại
+- Concurrent rendering khác sync rendering thế nào?
+- Khi nào nên dùng transition?
+
+---
+
+# 74. `useTransition` dùng để làm gì?
+
+## 📝 Tóm tắt
+`useTransition` giúp đánh dấu update không urgent để tránh block UI.
+
+## 💻 Ví dụ thực tế
+
+```js
+const [isPending, startTransition] = useTransition();
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useTransition
+
+## ❓ Câu hỏi còn lại
+- useTransition khác debounce thế nào?
+- Khi nào transition không hiệu quả?
+
+---
+
+# 75. `useDeferredValue` là gì?
+
+## 📝 Tóm tắt
+`useDeferredValue` giúp defer update của value để giảm lag UI khi rendering nặng.
+
+## 💻 Ví dụ thực tế
+
+```js
+const deferredSearch = useDeferredValue(search);
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useDeferredValue
+
+## ❓ Câu hỏi còn lại
+- useDeferredValue khác useMemo thế nào?
+- Khi nào deferred value hữu ích?
+
+---
+
+# 76. Batch Update trong React là gì?
+
+## 📝 Tóm tắt
+Batch update giúp React gom nhiều state update thành một lần render để optimize performance.
+
+## 💻 Ví dụ thực tế
+
+```js
+setCount(c => c + 1);
+setLoading(true);
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/learn/queueing-a-series-of-state-updates
+
+## ❓ Câu hỏi còn lại
+- React batch update trong async event thế nào?
+- flushSync dùng để làm gì?
+
+---
+
+# 77. `flushSync` là gì?
+
+## 📝 Tóm tắt
+`flushSync` buộc React update DOM ngay lập tức thay vì chờ batching.
+
+## 💻 Ví dụ thực tế
+
+```js
+flushSync(() => {
+  setOpen(true);
+});
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react-dom/flushSync
+
+## ❓ Câu hỏi còn lại
+- Khi nào cần flushSync?
+- flushSync có gây performance issue không?
+
+---
+
+# 78. Layout Shift là gì?
+
+## 📝 Tóm tắt
+Layout shift xảy ra khi UI bị nhảy layout trong lúc load page gây trải nghiệm xấu.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Image chưa có width/height
+↓
+Content bị đẩy xuống
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/cls/
+
+## ❓ Câu hỏi còn lại
+- CLS được tính thế nào?
+- Skeleton loading giúp giảm CLS ra sao?
+
+---
+
+# 79. Time To Interactive (TTI) là gì?
+
+## 📝 Tóm tắt
+TTI là thời điểm page có thể tương tác ổn định với user.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Page render xong
+↓
+Button click được
+↓
+Không bị lag
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/interactive/
+
+## ❓ Câu hỏi còn lại
+- Bundle size ảnh hưởng TTI ra sao?
+- Lighthouse đo TTI thế nào?
+
+---
+
+# 80. Request Waterfall là gì?
+
+## 📝 Tóm tắt
+Request waterfall xảy ra khi request phụ thuộc nhau khiến loading chậm hơn.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Fetch user
+↓
+Fetch posts
+↓
+Fetch comments
+```
+
+## 🔗 Link tham khảo
+- https://developer.chrome.com/docs/devtools/network/
+
+## ❓ Câu hỏi còn lại
+- Parallel fetching tối ưu waterfall thế nào?
+- React Query hỗ trợ tránh waterfall ra sao?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-05-30 — Frontend Theory Notes</strong></summary>
 
 # 61. Hydration Mismatch là gì?
