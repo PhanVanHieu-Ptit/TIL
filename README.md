@@ -4,7 +4,7 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
-<summary><strong>📅 2026-05-31 — Frontend Theory Notes</strong></summary>
+<summary><strong>📅 2026-05-31 — React Advanced Rendering, Concurrency & Web Performance</strong></summary>
 
 ---
 
@@ -230,7 +230,7 @@ Fetch comments
 </details>
 
 <details>
-<summary><strong>📅 2026-05-30 — Frontend Theory Notes</strong></summary>
+<summary><strong>📅 2026-05-30 — Frontend Performance, Realtime Data & Architecture Patterns</strong></summary>
 
 # 61. Hydration Mismatch là gì?
 
@@ -465,7 +465,7 @@ Remote app
 </details>
 
 <details>
-<summary><strong>📅 2026-05-29 — Frontend Theory Notes</strong></summary>
+<summary><strong>📅 2026-05-29 — Browser Rendering, PWA, Accessibility, CSS & Events</strong></summary>
 
 ---
 
@@ -702,7 +702,7 @@ Synthetic Event là wrapper của React quanh native browser event để đảm 
 </details>
 
 <details>
-<summary><strong>📅 2026-05-28 — Frontend Theory Notes</strong></summary>
+<summary><strong>📅 2026-05-28 — React Architecture, Next.js Rendering & Frontend Scaling</strong></summary>
 
 ---
 
@@ -940,7 +940,7 @@ Admin app
 </details>
 
 <details>
-<summary><strong>📅 2026-05-27 — Frontend Theory Notes</strong></summary>
+<summary><strong>📅 2026-05-27 — Next.js Components, Async UX, Caching & Delivery Workflow</strong></summary>
 
 ---
 
@@ -1167,7 +1167,7 @@ if (featureFlags.newDashboard) {
 </details>
 
 <details>
-<summary><strong>📅 2026-05-26 — Frontend Theory Notes</strong></summary>
+<summary><strong>📅 2026-05-26 — React Hooks, Bundle Optimization, Realtime & State Management</strong></summary>
 
 ---
 
@@ -1388,7 +1388,7 @@ React Context phù hợp share state đơn giản. Redux phù hợp state lớn,
 </details>
 
 <details>
-<summary><strong>📅 2026-05-25 — Frontend Theory Notes</strong></summary>
+<summary><strong>📅 2026-05-25 — React Effects, Browser Storage, Security & API Patterns</strong></summary>
 
 ---
 
@@ -1629,7 +1629,7 @@ useEffect(() => {
 </details>
 
 <details>
-<summary><strong>📅 2026-05-24 — Frontend Interview Theory (JavaScript + React)</strong></summary>
+<summary><strong>📅 2026-05-24 — JavaScript Core, React Rendering & Frontend Performance Basics</strong></summary>
 
 ---
 
