@@ -4,6 +4,230 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-06-01 — Advanced React & Web Performance Concepts</strong></summary>
+
+---
+
+# 81. React Portal là gì?
+
+## 📝 Tóm tắt
+React Portal cho phép render component ra ngoài DOM hierarchy hiện tại.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+createPortal(
+  <Modal />,
+  document.body
+);
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react-dom/createPortal
+
+## ❓ Câu hỏi còn lại
+- Vì sao modal thường dùng portal?
+- Event bubbling hoạt động thế nào với portal?
+
+---
+
+# 82. Error Boundary là gì?
+
+## 📝 Tóm tắt
+Error Boundary giúp catch JavaScript error trong component tree và hiển thị fallback UI.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+<ErrorBoundary fallback={<ErrorPage />}>
+  <Dashboard />
+</ErrorBoundary>
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary
+
+## ❓ Câu hỏi còn lại
+- Error Boundary catch async error được không?
+- Khi nào nên chia nhỏ error boundary?
+
+---
+
+# 83. React Lazy Hydration là gì?
+
+## 📝 Tóm tắt
+Lazy hydration trì hoãn hydrate component đến khi cần để giảm initial JS execution.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Footer hydrate khi scroll tới
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/progressive-hydration/
+
+## ❓ Câu hỏi còn lại
+- Lazy hydration khác code splitting thế nào?
+- Khi nào hydrate quá muộn gây UX xấu?
+
+---
+
+# 84. Island Architecture là gì?
+
+## 📝 Tóm tắt
+Island architecture chỉ hydrate interactive component thay vì hydrate toàn page.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Static page
+↓
+Chỉ search bar interactive
+```
+
+## 🔗 Link tham khảo
+- https://docs.astro.build/en/concepts/islands/
+
+## ❓ Câu hỏi còn lại
+- Island architecture khác SSR truyền thống thế nào?
+- Khi nào island phù hợp hơn SPA?
+
+---
+
+# 85. React Server Actions là gì?
+
+## 📝 Tóm tắt
+Server Actions cho phép gọi server-side function trực tiếp từ React component.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+async function createPost(formData) {
+  "use server";
+}
+```
+
+## 🔗 Link tham khảo
+- https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations
+
+## ❓ Câu hỏi còn lại
+- Server Actions khác API route thế nào?
+- Khi nào Server Actions không phù hợp?
+
+---
+
+# 86. Long Task là gì?
+
+## 📝 Tóm tắt
+Long task là JavaScript task chạy quá lâu khiến browser bị block và UI lag.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Heavy loop chạy 300ms
+↓
+UI freeze
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/long-tasks-devtools/
+
+## ❓ Câu hỏi còn lại
+- Web Worker giúp xử lý long task thế nào?
+- React concurrent rendering giảm long task ra sao?
+
+---
+
+# 87. Web Worker là gì?
+
+## 📝 Tóm tắt
+Web Worker cho phép chạy JavaScript background thread mà không block main UI thread.
+
+## 💻 Ví dụ thực tế
+
+```js
+const worker = new Worker("worker.js");
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API
+
+## ❓ Câu hỏi còn lại
+- Web Worker communicate với main thread thế nào?
+- Khi nào không nên dùng worker?
+
+---
+
+# 88. Main Thread Blocking là gì?
+
+## 📝 Tóm tắt
+Main thread blocking xảy ra khi JavaScript execution làm browser không render hoặc không phản hồi user interaction.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Heavy JSON parse
+↓
+Button click bị lag
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/off-main-thread/
+
+## ❓ Câu hỏi còn lại
+- Làm sao detect main thread blocking?
+- Bundle lớn ảnh hưởng main thread ra sao?
+
+---
+
+# 89. HTTP/2 khác HTTP/1.1 thế nào?
+
+## 📝 Tóm tắt
+HTTP/2 hỗ trợ multiplexing giúp gửi nhiều request trên cùng một connection nhanh hơn HTTP/1.1.
+
+## 💻 Ví dụ thực tế
+
+```txt
+HTTP/1.1:
+Nhiều TCP connection
+
+HTTP/2:
+Một connection nhiều stream
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Glossary/HTTP_2
+
+## ❓ Câu hỏi còn lại
+- HTTP/3 khác HTTP/2 thế nào?
+- Multiplexing giúp giảm waterfall ra sao?
+
+---
+
+# 90. Prefetch vs Preload là gì?
+
+## 📝 Tóm tắt
+Preload ưu tiên load resource hiện tại. Prefetch load trước resource có thể dùng ở tương lai.
+
+## 💻 Ví dụ thực tế
+
+```html
+<link rel="preload" href="main.js" />
+
+<link rel="prefetch" href="next-page.js" />
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/preload
+
+## ❓ Câu hỏi còn lại
+- Preload quá nhiều có gây chậm page không?
+- Next.js tự động prefetch hoạt động thế nào?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-05-31 — React Advanced Rendering, Concurrency & Web Performance</strong></summary>
 
 ---
