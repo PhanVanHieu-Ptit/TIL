@@ -4,6 +4,238 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-06-02 — React Internals, Rendering Pipeline & Build System</strong></summary>
+
+---
+
+# 91. React Scheduler là gì?
+
+## 📝 Tóm tắt
+React Scheduler giúp React ưu tiên các task quan trọng để UI responsive hơn.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Typing input
+↓
+Ưu tiên render input trước
+↓
+Render list nặng sau
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/blog/2022/03/29/react-v18
+
+## ❓ Câu hỏi còn lại
+- Scheduler khác Event Loop thế nào?
+- React priority level hoạt động ra sao?
+
+---
+
+# 92. Tearing trong React là gì?
+
+## 📝 Tóm tắt
+Tearing xảy ra khi UI hiển thị dữ liệu không đồng bộ giữa các component trong concurrent rendering.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Component A:
+count = 1
+
+Component B:
+count = 2
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useSyncExternalStore
+
+## ❓ Câu hỏi còn lại
+- useSyncExternalStore giúp tránh tearing thế nào?
+- Zustand/Redux xử lý tearing ra sao?
+
+---
+
+# 93. `useSyncExternalStore` là gì?
+
+## 📝 Tóm tắt
+`useSyncExternalStore` giúp React subscribe external store an toàn trong concurrent rendering.
+
+## 💻 Ví dụ thực tế
+
+```js
+const state = useSyncExternalStore(
+  subscribe,
+  getSnapshot
+);
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useSyncExternalStore
+
+## ❓ Câu hỏi còn lại
+- Khi nào cần useSyncExternalStore?
+- Hook này khác useEffect subscription thế nào?
+
+---
+
+# 94. Render Blocking Resource là gì?
+
+## 📝 Tóm tắt
+Render blocking resource là resource khiến browser chưa thể render page ngay.
+
+## 💻 Ví dụ thực tế
+
+```html
+<link rel="stylesheet" href="style.css" />
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/render-blocking-resources/
+
+## ❓ Câu hỏi còn lại
+- CSS vì sao render blocking?
+- Async/defer ảnh hưởng script loading ra sao?
+
+---
+
+# 95. Async vs Defer trong Script
+
+## 📝 Tóm tắt
+`async` load và execute script ngay khi tải xong. `defer` đợi parse HTML xong mới execute.
+
+## 💻 Ví dụ thực tế
+
+```html
+<script async src="analytics.js"></script>
+
+<script defer src="main.js"></script>
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script
+
+## ❓ Câu hỏi còn lại
+- Khi nào async gây lỗi dependency?
+- Vì sao main bundle thường dùng defer?
+
+---
+
+# 96. Source Map là gì?
+
+## 📝 Tóm tắt
+Source map giúp mapping code production/minified về source code gốc để debug dễ hơn.
+
+## 💻 Ví dụ thực tế
+
+```txt
+main.min.js
+↓
+Map về App.tsx
+```
+
+## 🔗 Link tham khảo
+- https://developer.chrome.com/docs/devtools/javascript/source-maps/
+
+## ❓ Câu hỏi còn lại
+- Có nên disable source map production không?
+- Source map ảnh hưởng security thế nào?
+
+---
+
+# 97. Dead Code là gì?
+
+## 📝 Tóm tắt
+Dead code là code không bao giờ được execute nhưng vẫn tồn tại trong bundle.
+
+## 💻 Ví dụ thực tế
+
+```js
+if (false) {
+  console.log("dead code");
+}
+```
+
+## 🔗 Link tham khảo
+- https://webpack.js.org/guides/tree-shaking/
+
+## ❓ Câu hỏi còn lại
+- Tree shaking remove dead code thế nào?
+- Dynamic import ảnh hưởng dead code ra sao?
+
+---
+
+# 98. Hot Reload vs Live Reload
+
+## 📝 Tóm tắt
+Hot reload update module mà không reload toàn page. Live reload reload toàn browser page.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Change CSS
+↓
+UI update ngay
+↓
+State vẫn giữ nguyên
+```
+
+## 🔗 Link tham khảo
+- https://vitejs.dev/guide/features.html#hot-module-replacement
+
+## ❓ Câu hỏi còn lại
+- HMR hoạt động bên trong ra sao?
+- Khi nào hot reload fail?
+
+---
+
+# 99. ESM là gì?
+
+## 📝 Tóm tắt
+ESM (ECMAScript Module) là chuẩn module hiện đại của JavaScript hỗ trợ import/export.
+
+## 💻 Ví dụ thực tế
+
+```js
+export const sum = (a, b) => a + b;
+
+import { sum } from "./math";
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules
+
+## ❓ Câu hỏi còn lại
+- ESM khác CommonJS thế nào?
+- Vì sao ESM tree shaking tốt hơn?
+
+---
+
+# 100. Dependency Injection là gì?
+
+## 📝 Tóm tắt
+Dependency Injection giúp inject dependency từ bên ngoài thay vì tạo trực tiếp bên trong component/module.
+
+## 💻 Ví dụ thực tế
+
+```js
+function UserService(apiClient) {
+  return {
+    getUsers: () => apiClient.get("/users")
+  };
+}
+```
+
+## 🔗 Link tham khảo
+- https://martinfowler.com/articles/injection.html
+
+## ❓ Câu hỏi còn lại
+- React Context có phải dependency injection không?
+- Khi nào DI làm code phức tạp hơn?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-06-01 — Advanced React & Web Performance Concepts</strong></summary>
 
 ---
