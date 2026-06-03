@@ -4,6 +4,241 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-06-03 — React State Management & Reactivity</strong></summary>
+
+---
+
+# 101. React Context Re-render Problem là gì?
+
+## 📝 Tóm tắt
+Khi value của Context thay đổi, tất cả component đang subscribe Context đều có thể re-render.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+<AuthContext.Provider value={user}>
+  <App />
+</AuthContext.Provider>
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useContext
+
+## ❓ Câu hỏi còn lại
+- Context Selector giải quyết vấn đề này thế nào?
+- Khi nào nên dùng Redux/Zustand thay Context?
+
+---
+
+# 102. Context Selector là gì?
+
+## 📝 Tóm tắt
+Context Selector cho phép component chỉ subscribe phần dữ liệu cần thiết thay vì toàn bộ context.
+
+## 💻 Ví dụ thực tế
+
+```txt
+UserProfile
+↓
+Chỉ subscribe user.name
+```
+
+## 🔗 Link tham khảo
+- https://github.com/dai-shi/use-context-selector
+
+## ❓ Câu hỏi còn lại
+- Context Selector hoạt động nội bộ ra sao?
+- Performance cải thiện bao nhiêu?
+
+---
+
+# 103. React Compiler là gì?
+
+## 📝 Tóm tắt
+React Compiler tự động tối ưu memoization để giảm việc sử dụng thủ công `useMemo` và `useCallback`.
+
+## 💻 Ví dụ thực tế
+
+```txt
+React Compiler
+↓
+Tự động optimize render
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/learn/react-compiler
+
+## ❓ Câu hỏi còn lại
+- React Compiler thay thế React.memo được không?
+- Khi nào vẫn cần useMemo?
+
+---
+
+# 104. Fine-Grained Reactivity là gì?
+
+## 📝 Tóm tắt
+Fine-grained reactivity chỉ update đúng phần dữ liệu thay đổi thay vì re-render cả component tree.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Signal thay đổi
+↓
+Chỉ update node liên quan
+```
+
+## 🔗 Link tham khảo
+- https://docs.solidjs.com/
+
+## ❓ Câu hỏi còn lại
+- Signal khác State của React thế nào?
+- React tương lai có hỗ trợ signal không?
+
+---
+
+# 105. Signals là gì?
+
+## 📝 Tóm tắt
+Signal là primitive reactive giúp tracking dependency tự động và update UI hiệu quả.
+
+## 💻 Ví dụ thực tế
+
+```js
+const count = signal(0);
+```
+
+## 🔗 Link tham khảo
+- https://preactjs.com/guide/v10/signals/
+
+## ❓ Câu hỏi còn lại
+- Signal khác useState thế nào?
+- Signal có thay thế Redux được không?
+
+---
+
+# 106. Server-Side Cache là gì?
+
+## 📝 Tóm tắt
+Server-side cache lưu dữ liệu ở phía server để giảm số lần truy vấn database hoặc gọi API.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Request
+↓
+Redis Cache
+↓
+Database
+```
+
+## 🔗 Link tham khảo
+- https://redis.io/docs/
+
+## ❓ Câu hỏi còn lại
+- Cache invalidation xử lý thế nào?
+- Khi nào cache gây stale data?
+
+---
+
+# 107. CDN Cache là gì?
+
+## 📝 Tóm tắt
+CDN cache lưu static assets tại edge location gần user để giảm latency.
+
+## 💻 Ví dụ thực tế
+
+```txt
+User VN
+↓
+Cloudflare Singapore
+↓
+Image
+```
+
+## 🔗 Link tham khảo
+- https://www.cloudflare.com/learning/cdn/what-is-caching/
+
+## ❓ Câu hỏi còn lại
+- Cache purge hoạt động ra sao?
+- CDN cache khác browser cache thế nào?
+
+---
+
+# 108. Stale-While-Revalidate là gì?
+
+## 📝 Tóm tắt
+Stale-While-Revalidate trả về cache cũ ngay lập tức và fetch dữ liệu mới ở background.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Return cache
+↓
+Fetch background
+↓
+Update cache
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/stale-while-revalidate/
+
+## ❓ Câu hỏi còn lại
+- React Query áp dụng SWR thế nào?
+- Khi nào không nên dùng SWR?
+
+---
+
+# 109. Resource Hint là gì?
+
+## 📝 Tóm tắt
+Resource Hint giúp browser biết trước resource nào cần tải để tối ưu tốc độ load.
+
+## 💻 Ví dụ thực tế
+
+```html
+<link rel="dns-prefetch" href="//example.com">
+
+<link rel="preconnect" href="https://api.example.com">
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/learn/performance/resource-hints
+
+## ❓ Câu hỏi còn lại
+- Preconnect khác prefetch thế nào?
+- Khi nào resource hint gây phản tác dụng?
+
+---
+
+# 110. Critical Rendering Path là gì?
+
+## 📝 Tóm tắt
+Critical Rendering Path là chuỗi bước browser thực hiện để hiển thị nội dung đầu tiên lên màn hình.
+
+## 💻 Ví dụ thực tế
+
+```txt
+HTML
+↓
+DOM
+↓
+CSSOM
+↓
+Render Tree
+↓
+Paint
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/Performance/Critical_rendering_path
+
+## ❓ Câu hỏi còn lại
+- CSS ảnh hưởng Critical Rendering Path thế nào?
+- Làm sao rút ngắn First Paint?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-06-02 — React Internals, Rendering Pipeline & Build System</strong></summary>
 
 ---
