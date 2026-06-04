@@ -4,6 +4,232 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-06-04 — Advanced React & Browser Internals</strong></summary>
+
+---
+
+# 111. React Reconciliation Algorithm hoạt động như thế nào?
+
+## 📝 Tóm tắt
+Reconciliation là quá trình React so sánh Virtual DOM cũ và mới để xác định phần nào cần update trên DOM thật.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Old Tree
+↓
+New Tree
+↓
+Diff
+↓
+Update DOM tối thiểu
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/learn/render-and-commit
+
+## ❓ Câu hỏi còn lại
+- Vì sao React không dùng deep compare?
+- Key ảnh hưởng diffing algorithm thế nào?
+
+---
+
+# 112. React.memo hoạt động nội bộ ra sao?
+
+## 📝 Tóm tắt
+React.memo sử dụng shallow comparison để quyết định có re-render component hay không.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+export default React.memo(UserCard);
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/memo
+
+## ❓ Câu hỏi còn lại
+- React.memo có cost gì?
+- Khi nào React.memo làm app chậm hơn?
+
+---
+
+# 113. Referential Equality là gì?
+
+## 📝 Tóm tắt
+Hai object hoặc array chỉ bằng nhau khi cùng tham chiếu đến một vùng nhớ.
+
+## 💻 Ví dụ thực tế
+
+```js
+{} === {} // false
+
+[] === [] // false
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Equality_comparisons_and_sameness
+
+## ❓ Câu hỏi còn lại
+- Vì sao referential equality quan trọng với React?
+- useMemo giúp ổn định reference như thế nào?
+
+---
+
+# 114. Structural Sharing là gì?
+
+## 📝 Tóm tắt
+Structural Sharing tái sử dụng phần dữ liệu không thay đổi khi tạo immutable state mới.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Old State
+↓
+Update user.name
+↓
+Reuse các object khác
+```
+
+## 🔗 Link tham khảo
+- https://immerjs.github.io/immer/
+
+## ❓ Câu hỏi còn lại
+- Immer dùng structural sharing thế nào?
+- Redux Toolkit hưởng lợi gì từ kỹ thuật này?
+
+---
+
+# 115. Browser Task Queue là gì?
+
+## 📝 Tóm tắt
+Task Queue chứa các macrotask như setTimeout, DOM events và được Event Loop xử lý tuần tự.
+
+## 💻 Ví dụ thực tế
+
+```js
+setTimeout(() => {
+  console.log("task");
+}, 0);
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop
+
+## ❓ Câu hỏi còn lại
+- Task Queue khác Microtask Queue thế nào?
+- Browser ưu tiên queue nào trước?
+
+---
+
+# 116. Mutation Observer là gì?
+
+## 📝 Tóm tắt
+Mutation Observer cho phép theo dõi thay đổi của DOM tree.
+
+## 💻 Ví dụ thực tế
+
+```js
+const observer = new MutationObserver(callback);
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
+
+## ❓ Câu hỏi còn lại
+- Khi nào Mutation Observer hữu ích?
+- Có ảnh hưởng performance không?
+
+---
+
+# 117. Resize Observer là gì?
+
+## 📝 Tóm tắt
+Resize Observer giúp phát hiện khi kích thước của element thay đổi.
+
+## 💻 Ví dụ thực tế
+
+```js
+const observer = new ResizeObserver(callback);
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver
+
+## ❓ Câu hỏi còn lại
+- ResizeObserver khác window resize thế nào?
+- Khi nào nên dùng ResizeObserver?
+
+---
+
+# 118. React Key Stability là gì?
+
+## 📝 Tóm tắt
+Key phải ổn định giữa các lần render để React reuse component chính xác.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+users.map(user => (
+  <UserCard key={user.id} />
+))
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/learn/rendering-lists
+
+## ❓ Câu hỏi còn lại
+- Vì sao index làm key gây bug?
+- Key ảnh hưởng state component thế nào?
+
+---
+
+# 119. Render Props Pattern là gì?
+
+## 📝 Tóm tắt
+Render Props là pattern chia sẻ logic bằng cách truyền function làm prop.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+<DataProvider
+  render={(data) => (
+    <UserList data={data} />
+  )}
+/>
+```
+
+## 🔗 Link tham khảo
+- https://legacy.reactjs.org/docs/render-props.html
+
+## ❓ Câu hỏi còn lại
+- Render Props khác Custom Hook thế nào?
+- Vì sao Render Props ít được dùng hơn hiện nay?
+
+---
+
+# 120. Higher Order Component (HOC) là gì?
+
+## 📝 Tóm tắt
+HOC là function nhận vào component và trả về component mới với logic được mở rộng.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+const EnhancedComponent =
+  withAuth(Component);
+```
+
+## 🔗 Link tham khảo
+- https://legacy.reactjs.org/docs/higher-order-components.html
+
+## ❓ Câu hỏi còn lại
+- HOC khác Hook thế nào?
+- Khi nào HOC vẫn là lựa chọn tốt?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-06-03 — React State Management & Reactivity</strong></summary>
 
 ---
