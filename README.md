@@ -4,6 +4,250 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-06-05 — Advanced State Management & Data Fetching</strong></summary>
+
+---
+
+# 121. Server State và Client State khác nhau thế nào?
+
+## 📝 Tóm tắt
+Client State là dữ liệu chỉ tồn tại trên frontend. Server State là dữ liệu đến từ API và cần đồng bộ với backend.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Client State:
+Modal Open
+Theme
+Sidebar Collapse
+
+Server State:
+Users
+Orders
+Products
+```
+
+## 🔗 Link tham khảo
+- https://tanstack.com/query/latest
+
+## ❓ Câu hỏi còn lại
+- Vì sao React Query không thay thế hoàn toàn Redux?
+- Khi nào dữ liệu nên là Client State?
+
+---
+
+# 122. Cache Invalidation là gì?
+
+## 📝 Tóm tắt
+Cache Invalidation là quá trình đánh dấu dữ liệu cache không còn hợp lệ để fetch lại dữ liệu mới.
+
+## 💻 Ví dụ thực tế
+
+```js
+queryClient.invalidateQueries({
+  queryKey: ["users"]
+});
+```
+
+## 🔗 Link tham khảo
+- https://tanstack.com/query/latest/docs
+
+## ❓ Câu hỏi còn lại
+- Invalidate khác refetch thế nào?
+- Khi nào invalidate quá nhiều gây issue?
+
+---
+
+# 123. Request Deduplication là gì?
+
+## 📝 Tóm tắt
+Request Deduplication giúp nhiều component dùng chung một request thay vì gọi API trùng lặp.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Component A
+Component B
+↓
+1 API Request
+```
+
+## 🔗 Link tham khảo
+- https://tanstack.com/query/latest
+
+## ❓ Câu hỏi còn lại
+- React Query dedupe request ra sao?
+- SWR xử lý thế nào?
+
+---
+
+# 124. Polling là gì?
+
+## 📝 Tóm tắt
+Polling là kỹ thuật gọi API định kỳ để lấy dữ liệu mới.
+
+## 💻 Ví dụ thực tế
+
+```js
+setInterval(fetchData, 5000);
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/setInterval
+
+## ❓ Câu hỏi còn lại
+- Polling khác WebSocket thế nào?
+- Khi nào polling gây tốn tài nguyên?
+
+---
+
+# 125. Infinite Query là gì?
+
+## 📝 Tóm tắt
+Infinite Query hỗ trợ tải dữ liệu theo từng trang khi người dùng scroll.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Page 1
+↓
+Page 2
+↓
+Page 3
+```
+
+## 🔗 Link tham khảo
+- https://tanstack.com/query/latest/docs/framework/react/guides/infinite-queries
+
+## ❓ Câu hỏi còn lại
+- Infinite Query cache page thế nào?
+- Khi nào nên reset cache?
+
+---
+
+# 126. Waterfall Fetching là gì?
+
+## 📝 Tóm tắt
+Waterfall Fetching xảy ra khi request sau phải chờ request trước hoàn thành.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Get User
+↓
+Get Orders
+↓
+Get Order Details
+```
+
+## 🔗 Link tham khảo
+- https://tanstack.com/query/latest
+
+## ❓ Câu hỏi còn lại
+- Parallel Query giải quyết vấn đề này ra sao?
+- SSR ảnh hưởng waterfall như thế nào?
+
+---
+
+# 127. Optimistic Concurrency là gì?
+
+## 📝 Tóm tắt
+Optimistic Concurrency giả định dữ liệu không bị thay đổi đồng thời và xử lý conflict nếu xảy ra.
+
+## 💻 Ví dụ thực tế
+
+```txt
+User A edit profile
+User B edit profile
+↓
+Version Check
+```
+
+## 🔗 Link tham khảo
+- https://martinfowler.com/eaaCatalog/optimisticOfflineLock.html
+
+## ❓ Câu hỏi còn lại
+- Frontend xử lý conflict thế nào?
+- Version field được dùng ra sao?
+
+---
+
+# 128. Query Key là gì?
+
+## 📝 Tóm tắt
+Query Key là định danh duy nhất cho dữ liệu cache trong React Query.
+
+## 💻 Ví dụ thực tế
+
+```js
+["users"]
+
+["users", userId]
+
+["orders", page]
+```
+
+## 🔗 Link tham khảo
+- https://tanstack.com/query/latest
+
+## ❓ Câu hỏi còn lại
+- Query key nên thiết kế thế nào?
+- Query key quá lớn có ảnh hưởng gì?
+
+---
+
+# 129. Normalized Cache là gì?
+
+## 📝 Tóm tắt
+Normalized Cache lưu dữ liệu theo entity thay vì theo response API.
+
+## 💻 Ví dụ thực tế
+
+```txt
+users:
+  1
+  2
+  3
+
+posts:
+  1
+  2
+```
+
+## 🔗 Link tham khảo
+- https://www.apollographql.com/docs/react/caching/overview
+
+## ❓ Câu hỏi còn lại
+- Apollo Cache hoạt động thế nào?
+- React Query có normalized cache không?
+
+---
+
+# 130. BFF (Backend For Frontend) là gì?
+
+## 📝 Tóm tắt
+BFF là backend được thiết kế riêng cho từng frontend để giảm coupling với backend service.
+
+## 💻 Ví dụ thực tế
+
+```txt
+React App
+↓
+NestJS BFF
+↓
+Microservices
+```
+
+## 🔗 Link tham khảo
+- https://samnewman.io/patterns/architectural/bff/
+
+## ❓ Câu hỏi còn lại
+- BFF khác API Gateway thế nào?
+- Khi nào không nên dùng BFF?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-06-04 — Advanced React & Browser Internals</strong></summary>
 
 ---
