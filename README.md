@@ -4,6 +4,239 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-06-06 — React Performance & Large-Scale Frontend Architecture</strong></summary>
+
+---
+
+# 131. Component Composition là gì?
+
+## 📝 Tóm tắt
+Component Composition là kỹ thuật xây dựng UI bằng cách kết hợp nhiều component nhỏ thay vì dùng inheritance.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+<Card>
+  <CardHeader />
+  <CardBody />
+  <CardFooter />
+</Card>
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/learn/passing-props-to-a-component
+
+## ❓ Câu hỏi còn lại
+- Composition tốt hơn inheritance ở điểm nào?
+- Khi nào composition trở nên quá phức tạp?
+
+---
+
+# 132. Prop Drilling là gì?
+
+## 📝 Tóm tắt
+Prop Drilling xảy ra khi dữ liệu phải truyền qua nhiều cấp component trung gian.
+
+## 💻 Ví dụ thực tế
+
+```txt
+App
+↓
+Layout
+↓
+Dashboard
+↓
+UserCard
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/learn/passing-data-deeply-with-context
+
+## ❓ Câu hỏi còn lại
+- Khi nào Context là giải pháp phù hợp?
+- Prop drilling có phải lúc nào cũng xấu không?
+
+---
+
+# 133. Controlled Component vs Uncontrolled Component
+
+## 📝 Tóm tắt
+Controlled Component được quản lý bởi React State. Uncontrolled Component được quản lý bởi DOM.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+<input
+  value={name}
+  onChange={(e) => setName(e.target.value)}
+/>
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react-dom/components/input
+
+## ❓ Câu hỏi còn lại
+- React Hook Form tối ưu theo hướng nào?
+- Khi nào nên dùng uncontrolled form?
+
+---
+
+# 134. React Hook Form tối ưu hiệu năng như thế nào?
+
+## 📝 Tóm tắt
+React Hook Form sử dụng uncontrolled input và subscription để giảm re-render.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+const { register } = useForm();
+```
+
+## 🔗 Link tham khảo
+- https://react-hook-form.com/
+
+## ❓ Câu hỏi còn lại
+- Vì sao React Hook Form nhanh hơn Formik?
+- Controller dùng trong trường hợp nào?
+
+---
+
+# 135. Virtualization là gì?
+
+## 📝 Tóm tắt
+Virtualization chỉ render các item đang hiển thị trên màn hình thay vì render toàn bộ danh sách.
+
+## 💻 Ví dụ thực tế
+
+```txt
+10,000 rows
+↓
+Render 20 rows visible
+```
+
+## 🔗 Link tham khảo
+- https://tanstack.com/virtual
+
+## ❓ Câu hỏi còn lại
+- Virtualization ảnh hưởng SEO thế nào?
+- Khi nào không nên dùng virtualization?
+
+---
+
+# 136. Windowing là gì?
+
+## 📝 Tóm tắt
+Windowing là kỹ thuật chỉ render một phần dữ liệu trong viewport hiện tại.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Visible Area
+↓
+Items 100-120
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/articles/virtualize-long-lists-react-window
+
+## ❓ Câu hỏi còn lại
+- Windowing khác Pagination thế nào?
+- react-window và react-virtual khác nhau ra sao?
+
+---
+
+# 137. Bundle Analyzer là gì?
+
+## 📝 Tóm tắt
+Bundle Analyzer giúp phân tích bundle để tìm package lớn hoặc code dư thừa.
+
+## 💻 Ví dụ thực tế
+
+```bash
+npm run analyze
+```
+
+## 🔗 Link tham khảo
+- https://github.com/webpack-contrib/webpack-bundle-analyzer
+
+## ❓ Câu hỏi còn lại
+- Làm sao giảm bundle size hiệu quả?
+- Package nào thường làm bundle tăng mạnh?
+
+---
+
+# 138. Dynamic Import là gì?
+
+## 📝 Tóm tắt
+Dynamic Import cho phép tải module khi cần thay vì tải ngay từ đầu.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+const AdminPage = lazy(
+  () => import("./AdminPage")
+);
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import
+
+## ❓ Câu hỏi còn lại
+- Dynamic import khác code splitting thế nào?
+- Khi nào dynamic import gây chậm UX?
+
+---
+
+# 139. Monolithic Frontend vs Micro Frontend
+
+## 📝 Tóm tắt
+Monolithic Frontend là một ứng dụng frontend duy nhất. Micro Frontend chia thành nhiều ứng dụng nhỏ độc lập.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Monolith:
+1 React App
+
+Micro Frontend:
+Auth App
+Admin App
+Dashboard App
+```
+
+## 🔗 Link tham khảo
+- https://micro-frontends.org/
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên dùng Micro Frontend?
+- Shared state giữa các app xử lý thế nào?
+
+---
+
+# 140. Frontend Observability là gì?
+
+## 📝 Tóm tắt
+Frontend Observability giúp theo dõi lỗi, hiệu năng và hành vi người dùng trên môi trường production.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Sentry
+PostHog
+Datadog
+LogRocket
+```
+
+## 🔗 Link tham khảo
+- https://sentry.io/welcome/
+
+## ❓ Câu hỏi còn lại
+- Error Monitoring khác Logging thế nào?
+- Những metric nào nên theo dõi trong production?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-06-05 — Advanced State Management & Data Fetching</strong></summary>
 
 ---
