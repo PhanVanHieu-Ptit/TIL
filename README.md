@@ -4,6 +4,236 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-06-07 — React Performance & Large-Scale Frontend Architecture</strong></summary>
+  # 141. React Suspense là gì?
+
+## 📝 Tóm tắt
+Suspense cho phép React tạm dừng render một phần UI cho đến khi dữ liệu hoặc code cần thiết sẵn sàng.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+<Suspense fallback={<Loading />}>
+  <UserProfile />
+</Suspense>
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/Suspense
+
+## ❓ Câu hỏi còn lại
+- Suspense hoạt động nội bộ như thế nào?
+- Suspense có thay thế loading state không?
+
+---
+
+# 142. useTransition là gì?
+
+## 📝 Tóm tắt
+useTransition giúp đánh dấu một số state update là ít ưu tiên hơn để giữ UI phản hồi mượt mà.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+const [isPending, startTransition] = useTransition();
+
+startTransition(() => {
+  setSearchResults(data);
+});
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useTransition
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên dùng useTransition?
+- useTransition khác debounce thế nào?
+
+---
+
+# 143. useDeferredValue là gì?
+
+## 📝 Tóm tắt
+useDeferredValue cho phép trì hoãn cập nhật giá trị ít quan trọng để ưu tiên tương tác của người dùng.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+const deferredQuery = useDeferredValue(query);
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useDeferredValue
+
+## ❓ Câu hỏi còn lại
+- useDeferredValue khác useTransition thế nào?
+- Có thay thế debounce được không?
+
+---
+
+# 144. Hydration Mismatch là gì?
+
+## 📝 Tóm tắt
+Hydration mismatch xảy ra khi HTML từ server khác với HTML React render ở client.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+<p>{new Date().toISOString()}</p>
+```
+
+## 🔗 Link tham khảo
+- https://nextjs.org/docs/messages/react-hydration-error
+
+## ❓ Câu hỏi còn lại
+- Làm sao debug hydration mismatch?
+- Vì sao random value dễ gây lỗi này?
+
+---
+
+# 145. Streaming SSR là gì?
+
+## 📝 Tóm tắt
+Streaming SSR cho phép server gửi HTML từng phần thay vì đợi render toàn bộ trang.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Header
+↓
+Content
+↓
+Comments
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react-dom/server/renderToPipeableStream
+
+## ❓ Câu hỏi còn lại
+- Streaming SSR cải thiện TTFB thế nào?
+- Khi nào không nên dùng?
+
+---
+
+# 146. Edge Rendering là gì?
+
+## 📝 Tóm tắt
+Edge Rendering render nội dung tại edge server gần người dùng thay vì datacenter trung tâm.
+
+## 💻 Ví dụ thực tế
+
+```txt
+User VN
+↓
+Singapore Edge
+↓
+HTML
+```
+
+## 🔗 Link tham khảo
+- https://vercel.com/docs/edge-network
+
+## ❓ Câu hỏi còn lại
+- Edge Runtime khác Node.js Runtime thế nào?
+- Khi nào edge không phù hợp?
+
+---
+
+# 147. Virtual DOM Diffing là gì?
+
+## 📝 Tóm tắt
+React so sánh Virtual DOM cũ và mới để xác định thay đổi tối thiểu cần cập nhật lên DOM thật.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Old Tree
+↓
+New Tree
+↓
+Patch DOM
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/learn/render-and-commit
+
+## ❓ Câu hỏi còn lại
+- React reconciliation hoạt động ra sao?
+- Key ảnh hưởng diffing thế nào?
+
+---
+
+# 148. Reconciliation là gì?
+
+## 📝 Tóm tắt
+Reconciliation là quá trình React quyết định component nào cần update, mount hoặc unmount.
+
+## 💻 Ví dụ thực tế
+
+```txt
+State Change
+↓
+Reconciliation
+↓
+Commit DOM
+```
+
+## 🔗 Link tham khảo
+- https://legacy.reactjs.org/docs/reconciliation.html
+
+## ❓ Câu hỏi còn lại
+- Reconciliation khác diffing thế nào?
+- Fiber tham gia quá trình này ra sao?
+
+---
+
+# 149. Browser Reflow vs Repaint
+
+## 📝 Tóm tắt
+Reflow tính toán lại layout, còn repaint chỉ vẽ lại giao diện mà không thay đổi layout.
+
+## 💻 Ví dụ thực tế
+
+```txt
+width change
+↓
+Reflow + Repaint
+
+background change
+↓
+Repaint
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/avoid-large-complex-layouts-and-layout-thrashing/
+
+## ❓ Câu hỏi còn lại
+- Những CSS nào gây reflow?
+- Làm sao giảm layout thrashing?
+
+---
+
+# 150. Layout Thrashing là gì?
+
+## 📝 Tóm tắt
+Layout Thrashing xảy ra khi code liên tục đọc và ghi layout khiến browser phải reflow nhiều lần.
+
+## 💻 Ví dụ thực tế
+
+```js
+element.offsetHeight;
+element.style.height = "100px";
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/avoid-large-complex-layouts-and-layout-thrashing/
+
+## ❓ Câu hỏi còn lại
+- DevTools phát hiện layout thrashing thế nào?
+- requestAnimationFrame giúp giảm vấn đề này ra sao?
+</details>
+
+<details>
 <summary><strong>📅 2026-06-06 — React Performance & Large-Scale Frontend Architecture</strong></summary>
 
 ---
