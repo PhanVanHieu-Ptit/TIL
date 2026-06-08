@@ -4,463 +4,493 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
-  <summary><strong> 📅 2026-06-08 — Advanced State Management & React Performance Patterns</strong></summary>
- 
-
-# 151. React.memo là gì?
-
-## 📝 Tóm tắt
-React.memo giúp component chỉ re-render khi props thay đổi.
-
-## 💻 Ví dụ thực tế
-
-```tsx
-const UserCard = React.memo(({ user }) => {
-  return <div>{user.name}</div>;
-});
-```
-
-## 🔗 Link tham khảo
-- https://react.dev/reference/react/memo
-
-## ❓ Câu hỏi còn lại
-- React.memo so sánh props như thế nào?
-- Khi nào React.memo phản tác dụng?
+<summary><strong>📅 2026-06-08 — Network, Realtime & Production Frontend Systems</strong></summary>
 
 ---
 
-# 152. useMemo là gì?
+# 151. REST API và GraphQL khác nhau thế nào?
 
 ## 📝 Tóm tắt
-useMemo cache kết quả của một phép tính để tránh tính toán lại không cần thiết.
+REST sử dụng nhiều endpoint khác nhau. GraphQL cho phép client chủ động chọn dữ liệu cần lấy từ một endpoint duy nhất.
 
 ## 💻 Ví dụ thực tế
 
-```tsx
-const filteredUsers = useMemo(
-  () => users.filter(u => u.active),
-  [users]
-);
-```
+```txt
+REST
+GET /users/1
 
-## 🔗 Link tham khảo
-- https://react.dev/reference/react/useMemo
-
-## ❓ Câu hỏi còn lại
-- useMemo có thực sự tăng performance không?
-- Khi nào không nên dùng useMemo?
-
----
-
-# 153. useCallback là gì?
-
-## 📝 Tóm tắt
-useCallback cache function giữa các lần render để tránh tạo function mới.
-
-## 💻 Ví dụ thực tế
-
-```tsx
-const handleClick = useCallback(() => {
-  saveUser();
-}, []);
-```
-
-## 🔗 Link tham khảo
-- https://react.dev/reference/react/useCallback
-
-## ❓ Câu hỏi còn lại
-- useCallback khác useMemo thế nào?
-- Khi nào useCallback không có ý nghĩa?
-
----
-
-# 154. React.memo + useCallback thường được dùng cùng nhau vì sao?
-
-## 📝 Tóm tắt
-React.memo chỉ hiệu quả khi props không đổi, còn useCallback giúp giữ nguyên reference của function prop.
-
-## 💻 Ví dụ thực tế
-
-```tsx
-<Child onClick={handleClick} />
-```
-
-## 🔗 Link tham khảo
-- https://react.dev/reference/react/memo
-
-## ❓ Câu hỏi còn lại
-- Khi nào nên tối ưu theo cặp này?
-- Có trường hợp nào gây giảm performance?
-
----
-
-# 155. Selector Pattern là gì?
-
-## 📝 Tóm tắt
-Selector Pattern giúp component chỉ lấy đúng phần state cần thiết thay vì subscribe toàn bộ store.
-
-## 💻 Ví dụ thực tế
-
-```tsx
-const username = useUserStore(
-  state => state.username
-);
-```
-
-## 🔗 Link tham khảo
-- https://redux.js.org/usage/deriving-data-selectors
-
-## ❓ Câu hỏi còn lại
-- Selector giúp giảm re-render thế nào?
-- Zustand áp dụng selector ra sao?
-
----
-
-# 156. Reselect là gì?
-
-## 📝 Tóm tắt
-Reselect là thư viện tạo memoized selector cho Redux.
-
-## 💻 Ví dụ thực tế
-
-```tsx
-const selectActiveUsers = createSelector(
-  [selectUsers],
-  users => users.filter(u => u.active)
-);
-```
-
-## 🔗 Link tham khảo
-- https://reselect.js.org/
-
-## ❓ Câu hỏi còn lại
-- Memoized selector hoạt động thế nào?
-- Khi nào không cần Reselect?
-
----
-
-# 157. Normalized State là gì?
-
-## 📝 Tóm tắt
-Normalized State lưu dữ liệu dạng bảng thay vì nested object để dễ quản lý và cập nhật.
-
-## 💻 Ví dụ thực tế
-
-```js
-{
-  users: {
-    byId: {
-      1: { id: 1, name: "John" }
-    }
+GraphQL
+query {
+  user(id:1){
+    id
+    name
   }
 }
 ```
 
 ## 🔗 Link tham khảo
-- https://redux.js.org/usage/structuring-reducers/normalizing-state-shape
+- https://graphql.org/learn/
 
 ## ❓ Câu hỏi còn lại
-- Khi nào cần normalize dữ liệu?
-- RTK Entity hỗ trợ việc này thế nào?
+- Khi nào GraphQL phù hợp hơn REST?
+- GraphQL có nhược điểm gì?
 
 ---
 
-# 158. RTK Query là gì?
+# 152. N+1 Problem là gì?
 
 ## 📝 Tóm tắt
-RTK Query là giải pháp data fetching và caching được tích hợp trong Redux Toolkit.
-
-## 💻 Ví dụ thực tế
-
-```tsx
-const { data } = useGetUsersQuery();
-```
-
-## 🔗 Link tham khảo
-- https://redux-toolkit.js.org/rtk-query/overview
-
-## ❓ Câu hỏi còn lại
-- RTK Query khác React Query thế nào?
-- Khi nào nên chọn RTK Query?
-
----
-
-# 159. Optimistic Update là gì?
-
-## 📝 Tóm tắt
-Optimistic Update cập nhật UI trước khi server trả kết quả để tăng cảm giác phản hồi.
+N+1 Problem xảy ra khi một request chính kéo theo nhiều request con không cần thiết.
 
 ## 💻 Ví dụ thực tế
 
 ```txt
-Click Like
+Get Users
 ↓
-UI tăng +1 ngay
+Get User Posts x100
 ↓
-Call API
+101 Queries
 ```
 
 ## 🔗 Link tham khảo
-- https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates
+- https://graphql.org/learn/performance/
 
 ## ❓ Câu hỏi còn lại
-- Nếu API fail thì rollback thế nào?
-- Khi nào không nên dùng optimistic update?
+- DataLoader giải quyết vấn đề này thế nào?
+- REST có gặp N+1 không?
 
 ---
 
-# 160. Cache Invalidation là gì?
+# 153. Long Polling là gì?
 
 ## 📝 Tóm tắt
-Cache Invalidation là quá trình làm mới hoặc xóa cache khi dữ liệu nguồn thay đổi.
+Long Polling giữ kết nối mở cho đến khi server có dữ liệu mới để trả về.
 
 ## 💻 Ví dụ thực tế
 
 ```txt
-Update User
+Client Request
 ↓
-Invalidate users cache
+Server chờ dữ liệu
 ↓
-Refetch
+Response khi có event
 ```
 
 ## 🔗 Link tham khảo
-- https://tanstack.com/query/latest/docs/framework/react/guides/query-invalidation
+- https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest_API
 
 ## ❓ Câu hỏi còn lại
-- Cache invalidation khó ở điểm nào?
-- React Query xử lý invalidate như thế nào?
-</details>
-
-
-<details>
-<summary><strong>📅 2026-06-07 —  Suspense, SSR & Browser Rendering Internals</strong></summary>
-  # 141. React Suspense là gì?
-
-## 📝 Tóm tắt
-Suspense cho phép React tạm dừng render một phần UI cho đến khi dữ liệu hoặc code cần thiết sẵn sàng.
-
-## 💻 Ví dụ thực tế
-
-```tsx
-<Suspense fallback={<Loading />}>
-  <UserProfile />
-</Suspense>
-```
-
-## 🔗 Link tham khảo
-- https://react.dev/reference/react/Suspense
-
-## ❓ Câu hỏi còn lại
-- Suspense hoạt động nội bộ như thế nào?
-- Suspense có thay thế loading state không?
+- Long Polling khác Polling thế nào?
+- Khi nào nên dùng Long Polling?
 
 ---
 
-# 142. useTransition là gì?
+# 154. Server-Sent Events (SSE) là gì?
 
 ## 📝 Tóm tắt
-useTransition giúp đánh dấu một số state update là ít ưu tiên hơn để giữ UI phản hồi mượt mà.
-
-## 💻 Ví dụ thực tế
-
-```tsx
-const [isPending, startTransition] = useTransition();
-
-startTransition(() => {
-  setSearchResults(data);
-});
-```
-
-## 🔗 Link tham khảo
-- https://react.dev/reference/react/useTransition
-
-## ❓ Câu hỏi còn lại
-- Khi nào nên dùng useTransition?
-- useTransition khác debounce thế nào?
-
----
-
-# 143. useDeferredValue là gì?
-
-## 📝 Tóm tắt
-useDeferredValue cho phép trì hoãn cập nhật giá trị ít quan trọng để ưu tiên tương tác của người dùng.
-
-## 💻 Ví dụ thực tế
-
-```tsx
-const deferredQuery = useDeferredValue(query);
-```
-
-## 🔗 Link tham khảo
-- https://react.dev/reference/react/useDeferredValue
-
-## ❓ Câu hỏi còn lại
-- useDeferredValue khác useTransition thế nào?
-- Có thay thế debounce được không?
-
----
-
-# 144. Hydration Mismatch là gì?
-
-## 📝 Tóm tắt
-Hydration mismatch xảy ra khi HTML từ server khác với HTML React render ở client.
-
-## 💻 Ví dụ thực tế
-
-```tsx
-<p>{new Date().toISOString()}</p>
-```
-
-## 🔗 Link tham khảo
-- https://nextjs.org/docs/messages/react-hydration-error
-
-## ❓ Câu hỏi còn lại
-- Làm sao debug hydration mismatch?
-- Vì sao random value dễ gây lỗi này?
-
----
-
-# 145. Streaming SSR là gì?
-
-## 📝 Tóm tắt
-Streaming SSR cho phép server gửi HTML từng phần thay vì đợi render toàn bộ trang.
-
-## 💻 Ví dụ thực tế
-
-```txt
-Header
-↓
-Content
-↓
-Comments
-```
-
-## 🔗 Link tham khảo
-- https://react.dev/reference/react-dom/server/renderToPipeableStream
-
-## ❓ Câu hỏi còn lại
-- Streaming SSR cải thiện TTFB thế nào?
-- Khi nào không nên dùng?
-
----
-
-# 146. Edge Rendering là gì?
-
-## 📝 Tóm tắt
-Edge Rendering render nội dung tại edge server gần người dùng thay vì datacenter trung tâm.
-
-## 💻 Ví dụ thực tế
-
-```txt
-User VN
-↓
-Singapore Edge
-↓
-HTML
-```
-
-## 🔗 Link tham khảo
-- https://vercel.com/docs/edge-network
-
-## ❓ Câu hỏi còn lại
-- Edge Runtime khác Node.js Runtime thế nào?
-- Khi nào edge không phù hợp?
-
----
-
-# 147. Virtual DOM Diffing là gì?
-
-## 📝 Tóm tắt
-React so sánh Virtual DOM cũ và mới để xác định thay đổi tối thiểu cần cập nhật lên DOM thật.
-
-## 💻 Ví dụ thực tế
-
-```txt
-Old Tree
-↓
-New Tree
-↓
-Patch DOM
-```
-
-## 🔗 Link tham khảo
-- https://react.dev/learn/render-and-commit
-
-## ❓ Câu hỏi còn lại
-- React reconciliation hoạt động ra sao?
-- Key ảnh hưởng diffing thế nào?
-
----
-
-# 148. Reconciliation là gì?
-
-## 📝 Tóm tắt
-Reconciliation là quá trình React quyết định component nào cần update, mount hoặc unmount.
-
-## 💻 Ví dụ thực tế
-
-```txt
-State Change
-↓
-Reconciliation
-↓
-Commit DOM
-```
-
-## 🔗 Link tham khảo
-- https://legacy.reactjs.org/docs/reconciliation.html
-
-## ❓ Câu hỏi còn lại
-- Reconciliation khác diffing thế nào?
-- Fiber tham gia quá trình này ra sao?
-
----
-
-# 149. Browser Reflow vs Repaint
-
-## 📝 Tóm tắt
-Reflow tính toán lại layout, còn repaint chỉ vẽ lại giao diện mà không thay đổi layout.
-
-## 💻 Ví dụ thực tế
-
-```txt
-width change
-↓
-Reflow + Repaint
-
-background change
-↓
-Repaint
-```
-
-## 🔗 Link tham khảo
-- https://web.dev/avoid-large-complex-layouts-and-layout-thrashing/
-
-## ❓ Câu hỏi còn lại
-- Những CSS nào gây reflow?
-- Làm sao giảm layout thrashing?
-
----
-
-# 150. Layout Thrashing là gì?
-
-## 📝 Tóm tắt
-Layout Thrashing xảy ra khi code liên tục đọc và ghi layout khiến browser phải reflow nhiều lần.
+SSE cho phép server chủ động gửi dữ liệu một chiều đến client thông qua HTTP.
 
 ## 💻 Ví dụ thực tế
 
 ```js
-element.offsetHeight;
-element.style.height = "100px";
+const eventSource =
+  new EventSource("/events");
 ```
 
 ## 🔗 Link tham khảo
-- https://web.dev/avoid-large-complex-layouts-and-layout-thrashing/
+- https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events
 
 ## ❓ Câu hỏi còn lại
-- DevTools phát hiện layout thrashing thế nào?
-- requestAnimationFrame giúp giảm vấn đề này ra sao?
+- SSE khác WebSocket thế nào?
+- Khi nào SSE hiệu quả hơn WebSocket?
+
+---
+
+# 155. WebSocket Lifecycle là gì?
+
+## 📝 Tóm tắt
+WebSocket trải qua các trạng thái kết nối, mở, trao đổi dữ liệu và đóng kết nối.
+
+## 💻 Ví dụ thực tế
+
+```txt
+CONNECTING
+↓
+OPEN
+↓
+MESSAGE
+↓
+CLOSED
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
+
+## ❓ Câu hỏi còn lại
+- Heartbeat dùng để làm gì?
+- Reconnect strategy nên thiết kế thế nào?
+
+---
+
+# 156. MQTT là gì?
+
+## 📝 Tóm tắt
+MQTT là giao thức publish/subscribe nhẹ, phù hợp cho IoT và realtime systems.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Publisher
+↓
+Broker
+↓
+Subscriber
+```
+
+## 🔗 Link tham khảo
+- https://mqtt.org/
+
+## ❓ Câu hỏi còn lại
+- QoS 0,1,2 khác nhau thế nào?
+- Khi nào MQTT tốt hơn WebSocket?
+
+---
+
+# 157. Backpressure là gì?
+
+## 📝 Tóm tắt
+Backpressure xảy ra khi dữ liệu được gửi nhanh hơn khả năng xử lý của hệ thống nhận.
+
+## 💻 Ví dụ thực tế
+
+```txt
+1000 messages/sec
+↓
+Client xử lý 100/sec
+↓
+Queue tăng dần
+```
+
+## 🔗 Link tham khảo
+- https://nodejs.org/en/learn/modules/backpressuring-in-streams
+
+## ❓ Câu hỏi còn lại
+- Làm sao phát hiện backpressure?
+- Queue overflow xử lý thế nào?
+
+---
+
+# 158. Circuit Breaker Pattern là gì?
+
+## 📝 Tóm tắt
+Circuit Breaker giúp ngăn hệ thống liên tục gọi đến service đang lỗi.
+
+## 💻 Ví dụ thực tế
+
+```txt
+API lỗi liên tục
+↓
+Open Circuit
+↓
+Tạm ngừng request
+```
+
+## 🔗 Link tham khảo
+- https://martinfowler.com/bliki/CircuitBreaker.html
+
+## ❓ Câu hỏi còn lại
+- Frontend có cần circuit breaker không?
+- Retry và circuit breaker kết hợp thế nào?
+
+---
+
+# 159. Exponential Backoff là gì?
+
+## 📝 Tóm tắt
+Exponential Backoff tăng dần thời gian retry sau mỗi lần thất bại để tránh làm quá tải hệ thống.
+
+## 💻 Ví dụ thực tế
+
+```txt
+1s
+↓
+2s
+↓
+4s
+↓
+8s
+```
+
+## 🔗 Link tham khảo
+- https://cloud.google.com/storage/docs/retry-strategy
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên dừng retry?
+- Vì sao cần random jitter?
+
+---
+
+# 160. Distributed Tracing là gì?
+
+## 📝 Tóm tắt
+Distributed Tracing giúp theo dõi một request đi qua nhiều service trong hệ thống.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Frontend
+↓
+BFF
+↓
+Auth Service
+↓
+User Service
+```
+
+## 🔗 Link tham khảo
+- https://opentelemetry.io/docs/concepts/signals/traces/
+
+## ❓ Câu hỏi còn lại
+- Trace ID hoạt động thế nào?
+- Frontend có tham gia tracing được không?
+
+</details>
+
+<details>
+<summary><strong>📅 2026-06-07 — Modern Web Architecture & Browser Security</strong></summary>
+
+---
+
+# 141. Same-Origin Policy (SOP) là gì?
+
+## 📝 Tóm tắt
+Same-Origin Policy là cơ chế bảo mật của trình duyệt ngăn website truy cập tài nguyên từ origin khác.
+
+## 💻 Ví dụ thực tế
+
+```txt
+https://app.com
+↓
+Không được đọc dữ liệu từ
+https://admin.com
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy
+
+## ❓ Câu hỏi còn lại
+- SOP khác CORS thế nào?
+- SOP bảo vệ người dùng ra sao?
+
+---
+
+# 142. CSRF là gì?
+
+## 📝 Tóm tắt
+CSRF là kiểu tấn công lợi dụng session của người dùng để gửi request ngoài ý muốn.
+
+## 💻 Ví dụ thực tế
+
+```txt
+User đã login
+↓
+Click link độc hại
+↓
+Browser gửi request kèm cookie
+```
+
+## 🔗 Link tham khảo
+- https://owasp.org/www-community/attacks/csrf
+
+## ❓ Câu hỏi còn lại
+- SameSite Cookie giúp chống CSRF thế nào?
+- JWT có bị CSRF không?
+
+---
+
+# 143. XSS là gì?
+
+## 📝 Tóm tắt
+XSS xảy ra khi attacker chèn JavaScript độc hại vào website để thực thi trên trình duyệt người dùng.
+
+## 💻 Ví dụ thực tế
+
+```html
+<script>
+alert("hacked");
+</script>
+```
+
+## 🔗 Link tham khảo
+- https://owasp.org/www-community/attacks/xss/
+
+## ❓ Câu hỏi còn lại
+- React chống XSS bằng cách nào?
+- dangerouslySetInnerHTML có rủi ro gì?
+
+---
+
+# 144. Content Security Policy (CSP) là gì?
+
+## 📝 Tóm tắt
+CSP là cơ chế cho phép giới hạn nguồn tài nguyên được tải nhằm giảm nguy cơ XSS.
+
+## 💻 Ví dụ thực tế
+
+```http
+Content-Security-Policy:
+script-src 'self'
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+
+## ❓ Câu hỏi còn lại
+- CSP ảnh hưởng third-party script thế nào?
+- CSP có chặn XSS hoàn toàn không?
+
+---
+
+# 145. Cookie Attributes là gì?
+
+## 📝 Tóm tắt
+Cookie có nhiều thuộc tính để tăng bảo mật như HttpOnly, Secure và SameSite.
+
+## 💻 Ví dụ thực tế
+
+```http
+Set-Cookie:
+token=abc;
+HttpOnly;
+Secure;
+SameSite=Lax
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies
+
+## ❓ Câu hỏi còn lại
+- SameSite=None cần điều kiện gì?
+- HttpOnly có chống XSS không?
+
+---
+
+# 146. OAuth 2.0 là gì?
+
+## 📝 Tóm tắt
+OAuth 2.0 là chuẩn ủy quyền cho phép ứng dụng truy cập tài nguyên thay mặt người dùng.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Login with Google
+↓
+Google Consent Screen
+↓
+Access Token
+```
+
+## 🔗 Link tham khảo
+- https://oauth.net/2/
+
+## ❓ Câu hỏi còn lại
+- OAuth khác Authentication thế nào?
+- PKCE dùng để làm gì?
+
+---
+
+# 147. OpenID Connect (OIDC) là gì?
+
+## 📝 Tóm tắt
+OIDC là lớp xác thực xây dựng trên OAuth 2.0 giúp xác định danh tính người dùng.
+
+## 💻 Ví dụ thực tế
+
+```txt
+OAuth:
+Authorization
+
+OIDC:
+Authentication
+```
+
+## 🔗 Link tham khảo
+- https://openid.net/connect/
+
+## ❓ Câu hỏi còn lại
+- ID Token chứa thông tin gì?
+- Khi nào cần OIDC?
+
+---
+
+# 148. Access Token vs Refresh Token
+
+## 📝 Tóm tắt
+Access Token dùng để truy cập API. Refresh Token dùng để lấy Access Token mới khi hết hạn.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Access Token:
+15 phút
+
+Refresh Token:
+30 ngày
+```
+
+## 🔗 Link tham khảo
+- https://auth0.com/docs/secure/tokens
+
+## ❓ Câu hỏi còn lại
+- Refresh Token nên lưu ở đâu?
+- Rotation Token là gì?
+
+---
+
+# 149. API Gateway là gì?
+
+## 📝 Tóm tắt
+API Gateway là điểm vào duy nhất cho các backend service trong hệ thống microservices.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Frontend
+↓
+API Gateway
+↓
+User Service
+Order Service
+Auth Service
+```
+
+## 🔗 Link tham khảo
+- https://microservices.io/patterns/apigateway.html
+
+## ❓ Câu hỏi còn lại
+- API Gateway khác BFF thế nào?
+- Có nên dùng cả Gateway và BFF không?
+
+---
+
+# 150. Rate Limiting là gì?
+
+## 📝 Tóm tắt
+Rate Limiting giới hạn số lượng request trong một khoảng thời gian nhằm bảo vệ hệ thống.
+
+## 💻 Ví dụ thực tế
+
+```txt
+100 requests/minute
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Glossary/Rate_limit
+
+## ❓ Câu hỏi còn lại
+- Token Bucket hoạt động thế nào?
+- Frontend nên xử lý HTTP 429 ra sao?
+
 </details>
 
 <details>
