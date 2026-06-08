@@ -4,7 +4,237 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
-<summary><strong>📅 2026-06-07 — React Performance & Large-Scale Frontend Architecture</strong></summary>
+  <summary><strong> 📅 2026-06-08 — Advanced State Management & React Performance Patterns</strong></summary>
+ 
+
+# 151. React.memo là gì?
+
+## 📝 Tóm tắt
+React.memo giúp component chỉ re-render khi props thay đổi.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+const UserCard = React.memo(({ user }) => {
+  return <div>{user.name}</div>;
+});
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/memo
+
+## ❓ Câu hỏi còn lại
+- React.memo so sánh props như thế nào?
+- Khi nào React.memo phản tác dụng?
+
+---
+
+# 152. useMemo là gì?
+
+## 📝 Tóm tắt
+useMemo cache kết quả của một phép tính để tránh tính toán lại không cần thiết.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+const filteredUsers = useMemo(
+  () => users.filter(u => u.active),
+  [users]
+);
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useMemo
+
+## ❓ Câu hỏi còn lại
+- useMemo có thực sự tăng performance không?
+- Khi nào không nên dùng useMemo?
+
+---
+
+# 153. useCallback là gì?
+
+## 📝 Tóm tắt
+useCallback cache function giữa các lần render để tránh tạo function mới.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+const handleClick = useCallback(() => {
+  saveUser();
+}, []);
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useCallback
+
+## ❓ Câu hỏi còn lại
+- useCallback khác useMemo thế nào?
+- Khi nào useCallback không có ý nghĩa?
+
+---
+
+# 154. React.memo + useCallback thường được dùng cùng nhau vì sao?
+
+## 📝 Tóm tắt
+React.memo chỉ hiệu quả khi props không đổi, còn useCallback giúp giữ nguyên reference của function prop.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+<Child onClick={handleClick} />
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/memo
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên tối ưu theo cặp này?
+- Có trường hợp nào gây giảm performance?
+
+---
+
+# 155. Selector Pattern là gì?
+
+## 📝 Tóm tắt
+Selector Pattern giúp component chỉ lấy đúng phần state cần thiết thay vì subscribe toàn bộ store.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+const username = useUserStore(
+  state => state.username
+);
+```
+
+## 🔗 Link tham khảo
+- https://redux.js.org/usage/deriving-data-selectors
+
+## ❓ Câu hỏi còn lại
+- Selector giúp giảm re-render thế nào?
+- Zustand áp dụng selector ra sao?
+
+---
+
+# 156. Reselect là gì?
+
+## 📝 Tóm tắt
+Reselect là thư viện tạo memoized selector cho Redux.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+const selectActiveUsers = createSelector(
+  [selectUsers],
+  users => users.filter(u => u.active)
+);
+```
+
+## 🔗 Link tham khảo
+- https://reselect.js.org/
+
+## ❓ Câu hỏi còn lại
+- Memoized selector hoạt động thế nào?
+- Khi nào không cần Reselect?
+
+---
+
+# 157. Normalized State là gì?
+
+## 📝 Tóm tắt
+Normalized State lưu dữ liệu dạng bảng thay vì nested object để dễ quản lý và cập nhật.
+
+## 💻 Ví dụ thực tế
+
+```js
+{
+  users: {
+    byId: {
+      1: { id: 1, name: "John" }
+    }
+  }
+}
+```
+
+## 🔗 Link tham khảo
+- https://redux.js.org/usage/structuring-reducers/normalizing-state-shape
+
+## ❓ Câu hỏi còn lại
+- Khi nào cần normalize dữ liệu?
+- RTK Entity hỗ trợ việc này thế nào?
+
+---
+
+# 158. RTK Query là gì?
+
+## 📝 Tóm tắt
+RTK Query là giải pháp data fetching và caching được tích hợp trong Redux Toolkit.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+const { data } = useGetUsersQuery();
+```
+
+## 🔗 Link tham khảo
+- https://redux-toolkit.js.org/rtk-query/overview
+
+## ❓ Câu hỏi còn lại
+- RTK Query khác React Query thế nào?
+- Khi nào nên chọn RTK Query?
+
+---
+
+# 159. Optimistic Update là gì?
+
+## 📝 Tóm tắt
+Optimistic Update cập nhật UI trước khi server trả kết quả để tăng cảm giác phản hồi.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Click Like
+↓
+UI tăng +1 ngay
+↓
+Call API
+```
+
+## 🔗 Link tham khảo
+- https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates
+
+## ❓ Câu hỏi còn lại
+- Nếu API fail thì rollback thế nào?
+- Khi nào không nên dùng optimistic update?
+
+---
+
+# 160. Cache Invalidation là gì?
+
+## 📝 Tóm tắt
+Cache Invalidation là quá trình làm mới hoặc xóa cache khi dữ liệu nguồn thay đổi.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Update User
+↓
+Invalidate users cache
+↓
+Refetch
+```
+
+## 🔗 Link tham khảo
+- https://tanstack.com/query/latest/docs/framework/react/guides/query-invalidation
+
+## ❓ Câu hỏi còn lại
+- Cache invalidation khó ở điểm nào?
+- React Query xử lý invalidate như thế nào?
+</details>
+
+
+<details>
+<summary><strong>📅 2026-06-07 —  Suspense, SSR & Browser Rendering Internals</strong></summary>
   # 141. React Suspense là gì?
 
 ## 📝 Tóm tắt
