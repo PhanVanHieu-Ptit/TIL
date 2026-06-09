@@ -4,6 +4,234 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-06-09 — Advanced JavaScript Runtime & Browser APIs</strong></summary>
+
+---
+
+# 161. Execution Context là gì?
+
+## 📝 Tóm tắt
+Execution Context là môi trường mà JavaScript thực thi code, quản lý scope, biến và hàm.
+
+## 💻 Ví dụ thực tế
+
+```js
+function greet() {
+  const name = "Hieu";
+  console.log(name);
+}
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript
+
+## ❓ Câu hỏi còn lại
+- Global Context và Function Context khác nhau thế nào?
+- Execution Context được tạo khi nào?
+
+---
+
+# 162. Call Stack là gì?
+
+## 📝 Tóm tắt
+Call Stack là cấu trúc dữ liệu theo cơ chế LIFO dùng để quản lý các hàm đang thực thi.
+
+## 💻 Ví dụ thực tế
+
+```js
+function a() {
+  b();
+}
+
+function b() {
+  c();
+}
+
+function c() {}
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Glossary/Call_stack
+
+## ❓ Câu hỏi còn lại
+- Stack Overflow xảy ra như thế nào?
+- Browser giới hạn stack size ra sao?
+
+---
+
+# 163. Memory Leak trong JavaScript là gì?
+
+## 📝 Tóm tắt
+Memory Leak xảy ra khi object không còn sử dụng nhưng vẫn bị giữ tham chiếu và không được Garbage Collector dọn dẹp.
+
+## 💻 Ví dụ thực tế
+
+```js
+window.cache = largeObject;
+```
+
+## 🔗 Link tham khảo
+- https://developer.chrome.com/docs/devtools/memory-problems
+
+## ❓ Câu hỏi còn lại
+- React thường gặp memory leak ở đâu?
+- DevTools phát hiện leak thế nào?
+
+---
+
+# 164. Garbage Collection là gì?
+
+## 📝 Tóm tắt
+Garbage Collection là cơ chế tự động giải phóng bộ nhớ của JavaScript.
+
+## 💻 Ví dụ thực tế
+
+```js
+let user = {
+  name: "Hieu",
+};
+
+user = null;
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Memory_management
+
+## ❓ Câu hỏi còn lại
+- Mark and Sweep hoạt động ra sao?
+- Circular Reference có gây leak không?
+
+---
+
+# 165. Debounce là gì?
+
+## 📝 Tóm tắt
+Debounce trì hoãn việc thực thi hàm cho đến khi người dùng ngừng thao tác trong một khoảng thời gian.
+
+## 💻 Ví dụ thực tế
+
+```js
+debounce(search, 500);
+```
+
+## 🔗 Link tham khảo
+- https://lodash.com/docs/#debounce
+
+## ❓ Câu hỏi còn lại
+- Debounce khác Throttle thế nào?
+- Khi nào debounce gây UX kém?
+
+---
+
+# 166. Throttle là gì?
+
+## 📝 Tóm tắt
+Throttle giới hạn số lần hàm được thực thi trong một khoảng thời gian nhất định.
+
+## 💻 Ví dụ thực tế
+
+```js
+throttle(handleScroll, 100);
+```
+
+## 🔗 Link tham khảo
+- https://lodash.com/docs/#throttle
+
+## ❓ Câu hỏi còn lại
+- Scroll event nên dùng debounce hay throttle?
+- requestAnimationFrame có thay thế throttle được không?
+
+---
+
+# 167. requestAnimationFrame là gì?
+
+## 📝 Tóm tắt
+requestAnimationFrame cho phép browser tối ưu việc render animation theo refresh rate của màn hình.
+
+## 💻 Ví dụ thực tế
+
+```js
+requestAnimationFrame(update);
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
+
+## ❓ Câu hỏi còn lại
+- Vì sao animation nên dùng requestAnimationFrame?
+- RAF khác setInterval thế nào?
+
+---
+
+# 168. Shadow DOM là gì?
+
+## 📝 Tóm tắt
+Shadow DOM tạo một DOM tree độc lập giúp cô lập style và behavior của component.
+
+## 💻 Ví dụ thực tế
+
+```js
+element.attachShadow({
+  mode: "open",
+});
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM
+
+## ❓ Câu hỏi còn lại
+- Shadow DOM ảnh hưởng CSS thế nào?
+- Web Components dùng Shadow DOM ra sao?
+
+---
+
+# 169. Custom Elements là gì?
+
+## 📝 Tóm tắt
+Custom Elements cho phép tạo HTML tag tùy chỉnh bằng Web Components.
+
+## 💻 Ví dụ thực tế
+
+```js
+customElements.define(
+  "user-card",
+  UserCard
+);
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements
+
+## ❓ Câu hỏi còn lại
+- Custom Elements tích hợp React thế nào?
+- Khi nào nên dùng Web Components?
+
+---
+
+# 170. Browser Storage gồm những gì?
+
+## 📝 Tóm tắt
+Browser Storage là tập hợp các cơ chế lưu trữ dữ liệu phía client.
+
+## 💻 Ví dụ thực tế
+
+```txt
+localStorage
+sessionStorage
+IndexedDB
+Cookies
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API
+
+## ❓ Câu hỏi còn lại
+- IndexedDB khác localStorage thế nào?
+- Nên lưu Access Token ở đâu?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-06-08 — Network, Realtime & Production Frontend Systems</strong></summary>
 
 ---
