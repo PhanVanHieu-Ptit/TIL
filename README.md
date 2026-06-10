@@ -4,6 +4,238 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-06-10 — Frontend Design Patterns & Advanced React Hooks</strong></summary>
+
+---
+
+# 171. Custom Hook là gì?
+
+## 📝 Tóm tắt
+Custom Hook là cách tái sử dụng logic stateful giữa nhiều component mà không lặp code.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+function useWindowSize() {
+  // logic
+}
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/learn/reusing-logic-with-custom-hooks
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên tạo Custom Hook?
+- Custom Hook khác Utility Function thế nào?
+
+---
+
+# 172. Compound Component Pattern là gì?
+
+## 📝 Tóm tắt
+Compound Component cho phép nhiều component con phối hợp hoạt động thông qua context chung.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+<Tabs>
+  <Tabs.List />
+  <Tabs.Panel />
+</Tabs>
+```
+
+## 🔗 Link tham khảo
+- https://kentcdodds.com/blog/compound-components-with-react-hooks
+
+## ❓ Câu hỏi còn lại
+- Compound Component khác prop drilling thế nào?
+- Khi nào pattern này phù hợp?
+
+---
+
+# 173. Headless Component là gì?
+
+## 📝 Tóm tắt
+Headless Component chỉ cung cấp logic và state, không áp đặt giao diện.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+const {
+  selected,
+  open
+} = useSelect();
+```
+
+## 🔗 Link tham khảo
+- https://headlessui.com/
+
+## ❓ Câu hỏi còn lại
+- Headless UI khác Ant Design thế nào?
+- Khi nào nên chọn headless component?
+
+---
+
+# 174. Container-Presenter Pattern là gì?
+
+## 📝 Tóm tắt
+Pattern này tách logic xử lý dữ liệu khỏi phần hiển thị UI.
+
+## 💻 Ví dụ thực tế
+
+```txt
+UserContainer
+↓
+UserList
+```
+
+## 🔗 Link tham khảo
+- https://www.patterns.dev/react/presentational-container-pattern
+
+## ❓ Câu hỏi còn lại
+- Custom Hook có thay thế pattern này không?
+- Khi nào nên tách Container?
+
+---
+
+# 175. useImperativeHandle là gì?
+
+## 📝 Tóm tắt
+useImperativeHandle cho phép component cha gọi trực tiếp method của component con.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+useImperativeHandle(ref, () => ({
+  open,
+  close,
+}));
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useImperativeHandle
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên dùng ref thay vì props?
+- useImperativeHandle có làm code khó maintain không?
+
+---
+
+# 176. Forward Ref là gì?
+
+## 📝 Tóm tắt
+Forward Ref cho phép truyền ref từ component cha xuống DOM hoặc component con.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+const Input = forwardRef(
+  (props, ref) => {
+    return <input ref={ref} />;
+  }
+);
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/forwardRef
+
+## ❓ Câu hỏi còn lại
+- Forward Ref thường dùng trong UI Library thế nào?
+- React 19 thay đổi gì với ref?
+
+---
+
+# 177. useLayoutEffect là gì?
+
+## 📝 Tóm tắt
+useLayoutEffect chạy đồng bộ sau khi DOM update nhưng trước khi browser paint.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+useLayoutEffect(() => {
+  measureElement();
+}, []);
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useLayoutEffect
+
+## ❓ Câu hỏi còn lại
+- useLayoutEffect khác useEffect thế nào?
+- Khi nào useLayoutEffect gây block render?
+
+---
+
+# 178. useInsertionEffect là gì?
+
+## 📝 Tóm tắt
+useInsertionEffect được thiết kế cho CSS-in-JS libraries để inject style trước khi layout được tính toán.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+useInsertionEffect(() => {
+  injectStyles();
+});
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useInsertionEffect
+
+## ❓ Câu hỏi còn lại
+- Vì sao hook này hiếm khi dùng?
+- Styled Components sử dụng hook này thế nào?
+
+---
+
+# 179. Slot Pattern là gì?
+
+## 📝 Tóm tắt
+Slot Pattern cho phép truyền UI tùy chỉnh vào các vị trí xác định trong component.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+<Card
+  header={<Header />}
+  footer={<Footer />}
+/>
+```
+
+## 🔗 Link tham khảo
+- https://www.patterns.dev/react/compound-pattern/
+
+## ❓ Câu hỏi còn lại
+- Slot Pattern khác children thế nào?
+- Khi nào nên dùng nhiều slot?
+
+---
+
+# 180. Command Pattern trong Frontend là gì?
+
+## 📝 Tóm tắt
+Command Pattern đóng gói hành động thành object để dễ quản lý, undo hoặc queue.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Add Node
+Delete Node
+Undo
+Redo
+```
+
+## 🔗 Link tham khảo
+- https://refactoring.guru/design-patterns/command
+
+## ❓ Câu hỏi còn lại
+- React Flow áp dụng Command Pattern thế nào?
+- Khi nào nên dùng cho editor hoặc workflow builder?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-06-09 — Advanced JavaScript Runtime & Browser APIs</strong></summary>
 
 ---
