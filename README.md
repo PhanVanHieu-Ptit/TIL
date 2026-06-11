@@ -4,6 +4,241 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-06-11 — Advanced Rendering, Caching & Frontend Scalability</strong></summary>
+
+---
+
+# 181. ISR (Incremental Static Regeneration) là gì?
+
+## 📝 Tóm tắt
+ISR cho phép cập nhật lại trang Static sau khi deploy mà không cần build lại toàn bộ ứng dụng.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+export const revalidate = 60;
+```
+
+## 🔗 Link tham khảo
+- https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration
+
+## ❓ Câu hỏi còn lại
+- ISR khác SSR thế nào?
+- Khi nào ISR phù hợp hơn SSG?
+
+---
+
+# 182. Edge Caching là gì?
+
+## 📝 Tóm tắt
+Edge Caching lưu nội dung tại các Edge Location gần người dùng để giảm độ trễ.
+
+## 💻 Ví dụ thực tế
+
+```txt
+User VN
+↓
+Singapore Edge
+↓
+Response
+```
+
+## 🔗 Link tham khảo
+- https://vercel.com/docs/edge-network/caching
+
+## ❓ Câu hỏi còn lại
+- Cache hit ratio là gì?
+- Cache miss ảnh hưởng hiệu năng thế nào?
+
+---
+
+# 183. React Suspense for Data Fetching là gì?
+
+## 📝 Tóm tắt
+Suspense cho phép React hiển thị fallback UI trong khi dữ liệu đang được tải.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+<Suspense fallback={<Loading />}>
+  <UserList />
+</Suspense>
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/Suspense
+
+## ❓ Câu hỏi còn lại
+- Suspense khác loading state truyền thống thế nào?
+- Khi nào nên dùng Suspense?
+
+---
+
+# 184. Selective Hydration là gì?
+
+## 📝 Tóm tắt
+Selective Hydration cho phép React ưu tiên hydrate những phần UI quan trọng trước.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Navbar
+↓
+Button
+↓
+Comments Section
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react-dom/client/hydrateRoot
+
+## ❓ Câu hỏi còn lại
+- Selective Hydration giúp cải thiện TTI thế nào?
+- React Scheduler tham gia ra sao?
+
+---
+
+# 185. Partial Rendering là gì?
+
+## 📝 Tóm tắt
+Partial Rendering chỉ render hoặc cập nhật phần dữ liệu thay đổi thay vì toàn bộ giao diện.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Update Notification
+↓
+Chỉ render Notification Panel
+```
+
+## 🔗 Link tham khảo
+- https://nextjs.org/docs/app
+
+## ❓ Câu hỏi còn lại
+- Partial Rendering khác React.memo thế nào?
+- Next.js App Router hỗ trợ ra sao?
+
+---
+
+# 186. Cache Stampede là gì?
+
+## 📝 Tóm tắt
+Cache Stampede xảy ra khi nhiều request cùng lúc làm cache hết hạn và đồng thời truy cập database.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Cache Expired
+↓
+1000 Requests
+↓
+Database Overload
+```
+
+## 🔗 Link tham khảo
+- https://en.wikipedia.org/wiki/Cache_stampede
+
+## ❓ Câu hỏi còn lại
+- Cache warming là gì?
+- Stale-While-Revalidate giúp giảm vấn đề này thế nào?
+
+---
+
+# 187. Event Sourcing là gì?
+
+## 📝 Tóm tắt
+Event Sourcing lưu toàn bộ các sự kiện thay đổi trạng thái thay vì chỉ lưu trạng thái cuối cùng.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Create User
+Update User
+Delete User
+```
+
+## 🔗 Link tham khảo
+- https://martinfowler.com/eaaDev/EventSourcing.html
+
+## ❓ Câu hỏi còn lại
+- Frontend có áp dụng Event Sourcing không?
+- Event Store hoạt động thế nào?
+
+---
+
+# 188. CQRS là gì?
+
+## 📝 Tóm tắt
+CQRS tách riêng luồng đọc (Query) và ghi (Command) để tối ưu hệ thống.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Command API
+↓
+Write Database
+
+Query API
+↓
+Read Database
+```
+
+## 🔗 Link tham khảo
+- https://martinfowler.com/bliki/CQRS.html
+
+## ❓ Câu hỏi còn lại
+- CQRS thường đi cùng Event Sourcing thế nào?
+- Khi nào CQRS là over-engineering?
+
+---
+
+# 189. Feature-Based Architecture là gì?
+
+## 📝 Tóm tắt
+Feature-Based Architecture tổ chức source code theo tính năng thay vì theo loại file.
+
+## 💻 Ví dụ thực tế
+
+```txt
+features/
+ ├─ users/
+ ├─ orders/
+ ├─ auth/
+```
+
+## 🔗 Link tham khảo
+- https://feature-sliced.design/
+
+## ❓ Câu hỏi còn lại
+- Feature-based khác Layer-based thế nào?
+- Dự án nhỏ có nên áp dụng không?
+
+---
+
+# 190. Frontend Scalability là gì?
+
+## 📝 Tóm tắt
+Frontend Scalability là khả năng mở rộng codebase, team và hệ thống mà vẫn dễ bảo trì.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Design System
+Code Splitting
+Micro Frontend
+Monorepo
+```
+
+## 🔗 Link tham khảo
+- https://martinfowler.com/articles/micro-frontends.html
+
+## ❓ Câu hỏi còn lại
+- Dấu hiệu codebase không scalable là gì?
+- Team 20+ FE thường tổ chức source code thế nào?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-06-10 — Frontend Design Patterns & Advanced React Hooks</strong></summary>
 
 ---
