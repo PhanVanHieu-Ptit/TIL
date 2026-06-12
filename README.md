@@ -4,6 +4,243 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-06-12 — Frontend Testing, Reliability & Code Quality</strong></summary>
+
+---
+
+# 191. Unit Test là gì?
+
+## 📝 Tóm tắt
+Unit Test kiểm tra một hàm hoặc module riêng lẻ để đảm bảo hoạt động đúng như mong đợi.
+
+## 💻 Ví dụ thực tế
+
+```ts
+expect(sum(1, 2)).toBe(3);
+```
+
+## 🔗 Link tham khảo
+- https://jestjs.io/docs/getting-started
+
+## ❓ Câu hỏi còn lại
+- Unit Test nên mock đến mức nào?
+- Khi nào Unit Test trở nên khó bảo trì?
+
+---
+
+# 192. Integration Test là gì?
+
+## 📝 Tóm tắt
+Integration Test kiểm tra sự phối hợp giữa nhiều module hoặc component với nhau.
+
+## 💻 Ví dụ thực tế
+
+```txt
+User Form
+↓
+Submit Button
+↓
+API Call
+↓
+Success Message
+```
+
+## 🔗 Link tham khảo
+- https://testing-library.com/docs/react-testing-library/intro/
+
+## ❓ Câu hỏi còn lại
+- Integration Test khác E2E thế nào?
+- Có nên mock API trong Integration Test không?
+
+---
+
+# 193. End-to-End Test (E2E) là gì?
+
+## 📝 Tóm tắt
+E2E Test mô phỏng hành vi thực tế của người dùng từ đầu đến cuối hệ thống.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Login
+↓
+Create Order
+↓
+Payment
+↓
+Success
+```
+
+## 🔗 Link tham khảo
+- https://playwright.dev/
+
+## ❓ Câu hỏi còn lại
+- E2E nên cover bao nhiêu luồng?
+- Vì sao E2E thường chậm hơn các loại test khác?
+
+---
+
+# 194. Test Pyramid là gì?
+
+## 📝 Tóm tắt
+Test Pyramid là chiến lược phân bổ số lượng test theo hình kim tự tháp để tối ưu chi phí bảo trì.
+
+## 💻 Ví dụ thực tế
+
+```txt
+      E2E
+   Integration
+ Unit Tests
+```
+
+## 🔗 Link tham khảo
+- https://martinfowler.com/articles/practical-test-pyramid.html
+
+## ❓ Câu hỏi còn lại
+- Có nên chỉ viết E2E Test không?
+- Test Pyramid còn phù hợp hiện nay không?
+
+---
+
+# 195. Mocking là gì?
+
+## 📝 Tóm tắt
+Mocking là kỹ thuật thay thế dependency thật bằng dữ liệu hoặc hành vi giả lập để kiểm thử.
+
+## 💻 Ví dụ thực tế
+
+```ts
+vi.mock("./api");
+```
+
+## 🔗 Link tham khảo
+- https://vitest.dev/guide/mocking.html
+
+## ❓ Câu hỏi còn lại
+- Mock quá nhiều có rủi ro gì?
+- Khi nào nên dùng Mock Service Worker?
+
+---
+
+# 196. Contract Testing là gì?
+
+## 📝 Tóm tắt
+Contract Testing giúp đảm bảo frontend và backend tuân thủ cùng một API contract.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Frontend
+↓
+API Contract
+↓
+Backend
+```
+
+## 🔗 Link tham khảo
+- https://docs.pact.io/
+
+## ❓ Câu hỏi còn lại
+- Contract Test khác Integration Test thế nào?
+- Khi nào nên áp dụng Pact?
+
+---
+
+# 197. Feature Flag là gì?
+
+## 📝 Tóm tắt
+Feature Flag cho phép bật hoặc tắt tính năng mà không cần deploy lại ứng dụng.
+
+## 💻 Ví dụ thực tế
+
+```ts
+if (feature.newDashboard) {
+  renderNewUI();
+}
+```
+
+## 🔗 Link tham khảo
+- https://martinfowler.com/articles/feature-toggles.html
+
+## ❓ Câu hỏi còn lại
+- Feature Flag nên lưu ở đâu?
+- Làm sao tránh Feature Flag tồn đọng?
+
+---
+
+# 198. Canary Release là gì?
+
+## 📝 Tóm tắt
+Canary Release triển khai phiên bản mới cho một nhóm nhỏ người dùng trước khi rollout toàn bộ.
+
+## 💻 Ví dụ thực tế
+
+```txt
+5% Users
+↓
+20% Users
+↓
+100% Users
+```
+
+## 🔗 Link tham khảo
+- https://martinfowler.com/bliki/CanaryRelease.html
+
+## ❓ Câu hỏi còn lại
+- Canary khác Blue-Green Deployment thế nào?
+- Những metric nào cần theo dõi khi rollout?
+
+---
+
+# 199. Blue-Green Deployment là gì?
+
+## 📝 Tóm tắt
+Blue-Green Deployment duy trì hai môi trường giống nhau để chuyển đổi traffic nhanh chóng khi deploy.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Blue (Current)
+↓
+Switch Traffic
+↓
+Green (New)
+```
+
+## 🔗 Link tham khảo
+- https://martinfowler.com/bliki/BlueGreenDeployment.html
+
+## ❓ Câu hỏi còn lại
+- Chi phí Blue-Green có cao không?
+- Rollback diễn ra như thế nào?
+
+---
+
+# 200. Technical Debt là gì?
+
+## 📝 Tóm tắt
+Technical Debt là chi phí phát sinh trong tương lai do các quyết định kỹ thuật ngắn hạn ở hiện tại.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Copy-Paste Code
+↓
+Nhiều Bug
+↓
+Khó Maintain
+```
+
+## 🔗 Link tham khảo
+- https://martinfowler.com/bliki/TechnicalDebt.html
+
+## ❓ Câu hỏi còn lại
+- Làm sao đo lường Technical Debt?
+- Khi nào nên ưu tiên trả nợ kỹ thuật?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-06-11 — Advanced Rendering, Caching & Frontend Scalability</strong></summary>
 
 ---
