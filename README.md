@@ -4,6 +4,251 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-06-14 — Modern Frontend Build Systems & Engineering Practices</strong></summary>
+
+---
+
+# 201. Tree Shaking là gì?
+
+## 📝 Tóm tắt
+Tree Shaking là kỹ thuật loại bỏ code không được sử dụng khỏi bundle cuối cùng.
+
+## 💻 Ví dụ thực tế
+
+```js
+// math.js
+export const sum = () => {};
+export const multiply = () => {};
+
+// app.js
+import { sum } from "./math";
+```
+
+## 🔗 Link tham khảo
+- https://webpack.js.org/guides/tree-shaking/
+
+## ❓ Câu hỏi còn lại
+- Vì sao CommonJS tree shaking kém hơn ESM?
+- Dynamic import ảnh hưởng tree shaking thế nào?
+
+---
+
+# 202. Dead Code Elimination (DCE) là gì?
+
+## 📝 Tóm tắt
+DCE là quá trình loại bỏ code chắc chắn không được thực thi trong runtime.
+
+## 💻 Ví dụ thực tế
+
+```js
+if (false) {
+  console.log("never run");
+}
+```
+
+## 🔗 Link tham khảo
+- https://rollupjs.org/
+
+## ❓ Câu hỏi còn lại
+- DCE khác Tree Shaking thế nào?
+- Minifier tham gia DCE ra sao?
+
+---
+
+# 203. Vite nhanh hơn Webpack ở điểm nào?
+
+## 📝 Tóm tắt
+Vite tận dụng ESM và esbuild để giảm thời gian khởi động dev server.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Webpack
+↓
+Bundle trước
+
+Vite
+↓
+Serve theo module
+```
+
+## 🔗 Link tham khảo
+- https://vitejs.dev/
+
+## ❓ Câu hỏi còn lại
+- Khi nào Webpack vẫn phù hợp hơn?
+- Vite build production bằng gì?
+
+---
+
+# 204. Turborepo là gì?
+
+## 📝 Tóm tắt
+Turborepo giúp quản lý monorepo và tối ưu build thông qua caching.
+
+## 💻 Ví dụ thực tế
+
+```txt
+apps/
+packages/
+```
+
+## 🔗 Link tham khảo
+- https://turbo.build/repo
+
+## ❓ Câu hỏi còn lại
+- Turborepo khác Nx thế nào?
+- Remote Cache hoạt động ra sao?
+
+---
+
+# 205. Monorepo là gì?
+
+## 📝 Tóm tắt
+Monorepo là mô hình lưu nhiều ứng dụng hoặc package trong cùng một repository.
+
+## 💻 Ví dụ thực tế
+
+```txt
+apps/
+ ├─ web
+ ├─ admin
+
+packages/
+ ├─ ui
+ ├─ utils
+```
+
+## 🔗 Link tham khảo
+- https://monorepo.tools/
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên dùng Monorepo?
+- Nhược điểm lớn nhất là gì?
+
+---
+
+# 206. Semantic Versioning (SemVer) là gì?
+
+## 📝 Tóm tắt
+SemVer là quy tắc đặt version theo dạng MAJOR.MINOR.PATCH.
+
+## 💻 Ví dụ thực tế
+
+```txt
+1.2.5
+
+MAJOR.MINOR.PATCH
+```
+
+## 🔗 Link tham khảo
+- https://semver.org/
+
+## ❓ Câu hỏi còn lại
+- Khi nào tăng Major Version?
+- Breaking Change là gì?
+
+---
+
+# 207. Changelog là gì?
+
+## 📝 Tóm tắt
+Changelog ghi lại các thay đổi giữa các phiên bản phần mềm.
+
+## 💻 Ví dụ thực tế
+
+```txt
+v2.0.0
+- Add Dashboard
+- Remove Legacy API
+```
+
+## 🔗 Link tham khảo
+- https://keepachangelog.com/
+
+## ❓ Câu hỏi còn lại
+- Changelog nên tạo thủ công hay tự động?
+- Conventional Commit hỗ trợ thế nào?
+
+---
+
+# 208. Conventional Commit là gì?
+
+## 📝 Tóm tắt
+Conventional Commit là chuẩn đặt tên commit giúp tự động hóa release và changelog.
+
+## 💻 Ví dụ thực tế
+
+```txt
+feat: add login page
+
+fix: resolve token bug
+
+docs: update README
+```
+
+## 🔗 Link tham khảo
+- https://www.conventionalcommits.org/
+
+## ❓ Câu hỏi còn lại
+- feat khác fix thế nào?
+- Commit message nên chi tiết đến đâu?
+
+---
+
+# 209. Git Hooks là gì?
+
+## 📝 Tóm tắt
+Git Hooks cho phép chạy script tự động trước hoặc sau các hành động Git.
+
+## 💻 Ví dụ thực tế
+
+```txt
+pre-commit
+↓
+eslint
+↓
+commit
+```
+
+## 🔗 Link tham khảo
+- https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks
+
+## ❓ Câu hỏi còn lại
+- Husky hoạt động như thế nào?
+- Nên chạy test gì ở pre-commit?
+
+---
+
+# 210. CI/CD Pipeline là gì?
+
+## 📝 Tóm tắt
+CI/CD Pipeline tự động hóa quá trình build, test và deploy ứng dụng.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Push Code
+↓
+Lint
+↓
+Test
+↓
+Build
+↓
+Deploy
+```
+
+## 🔗 Link tham khảo
+- https://docs.github.com/en/actions
+
+## ❓ Câu hỏi còn lại
+- Frontend CI/CD tối thiểu cần những bước nào?
+- Khi nào nên dùng Preview Deployment?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-06-12 — Frontend Testing, Reliability & Code Quality</strong></summary>
 
 ---
