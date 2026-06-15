@@ -4,6 +4,231 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-06-15 — TypeScript Advanced Types & Type Safety</strong></summary>
+
+---
+
+# 211. Generics trong TypeScript là gì?
+
+## 📝 Tóm tắt
+Generics cho phép tạo các hàm, interface hoặc type có thể hoạt động với nhiều kiểu dữ liệu khác nhau mà vẫn đảm bảo type safety.
+
+## 💻 Ví dụ thực tế
+
+```ts
+function identity<T>(value: T): T {
+  return value;
+}
+```
+
+## 🔗 Link tham khảo
+- https://www.typescriptlang.org/docs/handbook/2/generics.html
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên giới hạn Generic bằng extends?
+- Generic có ảnh hưởng compile time không?
+
+---
+
+# 212. Utility Types là gì?
+
+## 📝 Tóm tắt
+Utility Types là các type được TypeScript cung cấp sẵn để biến đổi kiểu dữ liệu.
+
+## 💻 Ví dụ thực tế
+
+```ts
+Partial<User>
+Required<User>
+Pick<User, "id">
+```
+
+## 🔗 Link tham khảo
+- https://www.typescriptlang.org/docs/handbook/utility-types.html
+
+## ❓ Câu hỏi còn lại
+- Utility Type nào được dùng nhiều nhất?
+- Có thể tự tạo Utility Type không?
+
+---
+
+# 213. Mapped Types là gì?
+
+## 📝 Tóm tắt
+Mapped Types cho phép tạo type mới bằng cách lặp qua các key của type cũ.
+
+## 💻 Ví dụ thực tế
+
+```ts
+type ReadonlyUser = {
+  readonly [K in keyof User]: User[K];
+};
+```
+
+## 🔗 Link tham khảo
+- https://www.typescriptlang.org/docs/handbook/2/mapped-types.html
+
+## ❓ Câu hỏi còn lại
+- Partial được xây dựng bằng Mapped Type thế nào?
+- Khi nào Mapped Type gây khó đọc?
+
+---
+
+# 214. Conditional Types là gì?
+
+## 📝 Tóm tắt
+Conditional Types cho phép tạo type dựa trên điều kiện.
+
+## 💻 Ví dụ thực tế
+
+```ts
+type IsString<T> =
+  T extends string
+    ? true
+    : false;
+```
+
+## 🔗 Link tham khảo
+- https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
+
+## ❓ Câu hỏi còn lại
+- Infer thường đi cùng Conditional Type thế nào?
+- Khi nào Conditional Type quá phức tạp?
+
+---
+
+# 215. Infer Keyword là gì?
+
+## 📝 Tóm tắt
+infer cho phép TypeScript suy luận một kiểu dữ liệu bên trong Conditional Type.
+
+## 💻 Ví dụ thực tế
+
+```ts
+type Return<T> =
+  T extends (...args: any[]) => infer R
+    ? R
+    : never;
+```
+
+## 🔗 Link tham khảo
+- https://www.typescriptlang.org/docs/handbook/2/conditional-types.html
+
+## ❓ Câu hỏi còn lại
+- ReturnType được xây dựng như thế nào?
+- Infer có dùng được nhiều lần không?
+
+---
+
+# 216. keyof là gì?
+
+## 📝 Tóm tắt
+keyof trả về tập hợp các key của một object type.
+
+## 💻 Ví dụ thực tế
+
+```ts
+type UserKeys = keyof User;
+```
+
+## 🔗 Link tham khảo
+- https://www.typescriptlang.org/docs/handbook/2/keyof-types.html
+
+## ❓ Câu hỏi còn lại
+- keyof kết hợp Generic ra sao?
+- keyof có hoạt động với union không?
+
+---
+
+# 217. Discriminated Union là gì?
+
+## 📝 Tóm tắt
+Discriminated Union giúp TypeScript tự động thu hẹp kiểu dữ liệu dựa trên một thuộc tính chung.
+
+## 💻 Ví dụ thực tế
+
+```ts
+type Shape =
+  | { type: "circle" }
+  | { type: "square" };
+```
+
+## 🔗 Link tham khảo
+- https://www.typescriptlang.org/docs/handbook/2/narrowing.html
+
+## ❓ Câu hỏi còn lại
+- Vì sao Redux Action thường dùng pattern này?
+- Khi nào nên dùng enum thay vì string literal?
+
+---
+
+# 218. Type Narrowing là gì?
+
+## 📝 Tóm tắt
+Type Narrowing giúp TypeScript xác định kiểu dữ liệu cụ thể hơn trong từng nhánh code.
+
+## 💻 Ví dụ thực tế
+
+```ts
+if (typeof value === "string") {
+  value.toUpperCase();
+}
+```
+
+## 🔗 Link tham khảo
+- https://www.typescriptlang.org/docs/handbook/2/narrowing.html
+
+## ❓ Câu hỏi còn lại
+- User Defined Type Guard là gì?
+- Narrowing hoạt động với Array thế nào?
+
+---
+
+# 219. Type Assertion là gì?
+
+## 📝 Tóm tắt
+Type Assertion cho phép lập trình viên chỉ định kiểu dữ liệu mà TypeScript nên tin tưởng.
+
+## 💻 Ví dụ thực tế
+
+```ts
+const input =
+  document.getElementById(
+    "email"
+  ) as HTMLInputElement;
+```
+
+## 🔗 Link tham khảo
+- https://www.typescriptlang.org/docs/handbook/2/everyday-types.html
+
+## ❓ Câu hỏi còn lại
+- Khi nào Type Assertion gây bug runtime?
+- Nên dùng Assertion hay Type Guard?
+
+---
+
+# 220. unknown và any khác nhau thế nào?
+
+## 📝 Tóm tắt
+any bỏ qua kiểm tra kiểu dữ liệu, còn unknown yêu cầu phải kiểm tra trước khi sử dụng.
+
+## 💻 Ví dụ thực tế
+
+```ts
+let a: any;
+let b: unknown;
+```
+
+## 🔗 Link tham khảo
+- https://www.typescriptlang.org/docs/handbook/2/functions.html
+
+## ❓ Câu hỏi còn lại
+- Có nên cấm any trong dự án?
+- unknown giúp tăng type safety thế nào?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-06-14 — Modern Frontend Build Systems & Engineering Practices</strong></summary>
 
 ---
