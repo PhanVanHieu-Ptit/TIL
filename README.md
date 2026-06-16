@@ -4,6 +4,238 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-06-16 — Advanced State Management & React Architecture</strong></summary>
+
+---
+
+# 221. Flux Architecture là gì?
+
+## 📝 Tóm tắt
+Flux là kiến trúc quản lý state theo luồng dữ liệu một chiều giúp ứng dụng dễ dự đoán hơn.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Action
+↓
+Dispatcher
+↓
+Store
+↓
+View
+```
+
+## 🔗 Link tham khảo
+- https://facebook.github.io/flux/
+
+## ❓ Câu hỏi còn lại
+- Flux khác Redux ở điểm nào?
+- Dispatcher có còn được dùng hiện nay không?
+
+---
+
+# 222. Redux Middleware là gì?
+
+## 📝 Tóm tắt
+Middleware cho phép can thiệp vào quá trình dispatch action để xử lý logic bất đồng bộ hoặc logging.
+
+## 💻 Ví dụ thực tế
+
+```ts
+store.dispatch(fetchUsers());
+```
+
+## 🔗 Link tham khảo
+- https://redux.js.org/understanding/history-and-design/middleware
+
+## ❓ Câu hỏi còn lại
+- Middleware chạy theo thứ tự nào?
+- Middleware khác Reducer ra sao?
+
+---
+
+# 223. Redux Thunk là gì?
+
+## 📝 Tóm tắt
+Redux Thunk cho phép dispatch function thay vì chỉ dispatch object.
+
+## 💻 Ví dụ thực tế
+
+```ts
+export const fetchUsers =
+  () => async (dispatch) => {
+    const data = await api.getUsers();
+  };
+```
+
+## 🔗 Link tham khảo
+- https://redux.js.org/usage/writing-logic-thunks
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên dùng Thunk?
+- Thunk khác Saga thế nào?
+
+---
+
+# 224. Redux Saga là gì?
+
+## 📝 Tóm tắt
+Redux Saga sử dụng Generator Function để quản lý side effects phức tạp.
+
+## 💻 Ví dụ thực tế
+
+```ts
+yield call(api.fetchUsers);
+yield put(success());
+```
+
+## 🔗 Link tham khảo
+- https://redux-saga.js.org/
+
+## ❓ Câu hỏi còn lại
+- Saga phù hợp với dự án nào?
+- Saga có khó debug hơn Thunk không?
+
+---
+
+# 225. Zustand là gì?
+
+## 📝 Tóm tắt
+Zustand là thư viện quản lý state nhẹ, đơn giản và ít boilerplate hơn Redux.
+
+## 💻 Ví dụ thực tế
+
+```ts
+const useStore = create(() => ({
+  count: 0,
+}));
+```
+
+## 🔗 Link tham khảo
+- https://zustand-demo.pmnd.rs/
+
+## ❓ Câu hỏi còn lại
+- Zustand xử lý persistence thế nào?
+- Khi nào Zustand không phù hợp?
+
+---
+
+# 226. Jotai là gì?
+
+## 📝 Tóm tắt
+Jotai quản lý state dựa trên atom, cho phép cập nhật dữ liệu theo mức độ rất nhỏ.
+
+## 💻 Ví dụ thực tế
+
+```ts
+const countAtom = atom(0);
+```
+
+## 🔗 Link tham khảo
+- https://jotai.org/
+
+## ❓ Câu hỏi còn lại
+- Atom khác Store thế nào?
+- Jotai và Recoil khác nhau ra sao?
+
+---
+
+# 227. Recoil là gì?
+
+## 📝 Tóm tắt
+Recoil là thư viện state management của Meta dựa trên atom và selector.
+
+## 💻 Ví dụ thực tế
+
+```ts
+const userState = atom({
+  key: "user",
+  default: null,
+});
+```
+
+## 🔗 Link tham khảo
+- https://recoiljs.org/
+
+## ❓ Câu hỏi còn lại
+- Recoil có còn được duy trì mạnh không?
+- Khi nào nên chọn Recoil?
+
+---
+
+# 228. Selector trong State Management là gì?
+
+## 📝 Tóm tắt
+Selector là hàm dùng để tính toán hoặc lấy dữ liệu từ state một cách tối ưu.
+
+## 💻 Ví dụ thực tế
+
+```ts
+const userName = useSelector(
+  state => state.user.name
+);
+```
+
+## 🔗 Link tham khảo
+- https://redux.js.org/
+
+## ❓ Câu hỏi còn lại
+- Memoized Selector hoạt động thế nào?
+- Reselect giúp tối ưu gì?
+
+---
+
+# 229. Reselect là gì?
+
+## 📝 Tóm tắt
+Reselect là thư viện tạo memoized selector giúp tránh tính toán lại không cần thiết.
+
+## 💻 Ví dụ thực tế
+
+```ts
+const selectCompletedTodos =
+  createSelector(
+    [selectTodos],
+    todos =>
+      todos.filter(t => t.done)
+  );
+```
+
+## 🔗 Link tham khảo
+- https://github.com/reduxjs/reselect
+
+## ❓ Câu hỏi còn lại
+- Memoization có tốn bộ nhớ không?
+- Khi nào không cần Reselect?
+
+---
+
+# 230. Event-Driven Architecture trong Frontend là gì?
+
+## 📝 Tóm tắt
+Event-Driven Architecture cho phép các module giao tiếp thông qua event thay vì gọi trực tiếp nhau.
+
+## 💻 Ví dụ thực tế
+
+```txt
+User Login
+↓
+Emit Event
+↓
+Notification Module
+Analytics Module
+```
+
+## 🔗 Link tham khảo
+- https://martinfowler.com/articles/201701-event-driven.html
+
+## ❓ Câu hỏi còn lại
+- Khi nào Event-Driven gây khó debug?
+- Micro Frontend áp dụng mô hình này thế nào?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-06-15 — TypeScript Advanced Types & Type Safety</strong></summary>
 
 ---
