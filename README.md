@@ -4,6 +4,234 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-06-17 — Browser Performance & Rendering Optimization</strong></summary>
+
+---
+
+# 231. Critical Rendering Path là gì?
+
+## 📝 Tóm tắt
+Critical Rendering Path là quá trình trình duyệt chuyển đổi HTML, CSS và JavaScript thành giao diện hiển thị trên màn hình.
+
+## 💻 Ví dụ thực tế
+
+```txt
+HTML
+↓
+DOM
+↓
+CSSOM
+↓
+Render Tree
+↓
+Layout
+↓
+Paint
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/Performance/Critical_rendering_path
+
+## ❓ Câu hỏi còn lại
+- CSS ảnh hưởng CRP như thế nào?
+- Làm sao giảm thời gian render đầu tiên?
+
+---
+
+# 232. Reflow là gì?
+
+## 📝 Tóm tắt
+Reflow xảy ra khi trình duyệt phải tính toán lại vị trí và kích thước của các phần tử.
+
+## 💻 Ví dụ thực tế
+
+```js
+element.style.width = "300px";
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/articles/avoid-large-complex-layouts-and-layout-thrashing
+
+## ❓ Câu hỏi còn lại
+- Những CSS property nào gây reflow?
+- Reflow ảnh hưởng FPS ra sao?
+
+---
+
+# 233. Repaint là gì?
+
+## 📝 Tóm tắt
+Repaint xảy ra khi giao diện cần được vẽ lại nhưng không thay đổi layout.
+
+## 💻 Ví dụ thực tế
+
+```css
+color: red;
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/Performance
+
+## ❓ Câu hỏi còn lại
+- Repaint nhẹ hơn Reflow như thế nào?
+- Browser tối ưu repaint ra sao?
+
+---
+
+# 234. Layout Thrashing là gì?
+
+## 📝 Tóm tắt
+Layout Thrashing xảy ra khi code liên tục đọc và ghi layout khiến browser phải reflow nhiều lần.
+
+## 💻 Ví dụ thực tế
+
+```js
+element.offsetWidth;
+element.style.width = "200px";
+element.offsetWidth;
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/articles/avoid-large-complex-layouts-and-layout-thrashing
+
+## ❓ Câu hỏi còn lại
+- Làm sao phát hiện Layout Thrashing?
+- requestAnimationFrame giúp gì?
+
+---
+
+# 235. Composite Layer là gì?
+
+## 📝 Tóm tắt
+Composite Layer là lớp riêng biệt được GPU xử lý để tối ưu animation và rendering.
+
+## 💻 Ví dụ thực tế
+
+```css
+transform: translateX(100px);
+```
+
+## 🔗 Link tham khảo
+- https://developer.chrome.com/docs/devtools/layers
+
+## ❓ Câu hỏi còn lại
+- Khi nào browser tạo layer mới?
+- Quá nhiều layer có gây vấn đề không?
+
+---
+
+# 236. GPU Acceleration là gì?
+
+## 📝 Tóm tắt
+GPU Acceleration tận dụng GPU để xử lý animation và rendering thay vì CPU.
+
+## 💻 Ví dụ thực tế
+
+```css
+transform: translate3d(
+  0,
+  0,
+  0
+);
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/Performance
+
+## ❓ Câu hỏi còn lại
+- Khi nào GPU rendering không hiệu quả?
+- GPU Memory được quản lý thế nào?
+
+---
+
+# 237. First Contentful Paint (FCP) là gì?
+
+## 📝 Tóm tắt
+FCP đo thời gian từ lúc tải trang đến khi nội dung đầu tiên xuất hiện trên màn hình.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Load Page
+↓
+Logo xuất hiện
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/fcp/
+
+## ❓ Câu hỏi còn lại
+- FCP bao nhiêu là tốt?
+- CSS Blocking ảnh hưởng FCP ra sao?
+
+---
+
+# 238. Largest Contentful Paint (LCP) là gì?
+
+## 📝 Tóm tắt
+LCP đo thời gian hiển thị phần tử nội dung lớn nhất trong viewport.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Hero Banner
+Product Image
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/lcp/
+
+## ❓ Câu hỏi còn lại
+- LCP bao nhiêu được đánh giá tốt?
+- Image Optimization ảnh hưởng thế nào?
+
+---
+
+# 239. Cumulative Layout Shift (CLS) là gì?
+
+## 📝 Tóm tắt
+CLS đo mức độ dịch chuyển bất ngờ của layout trong quá trình tải trang.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Button nhảy vị trí
+↓
+User click nhầm
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/cls/
+
+## ❓ Câu hỏi còn lại
+- Làm sao giảm CLS?
+- Quảng cáo ảnh hưởng CLS thế nào?
+
+---
+
+# 240. Interaction to Next Paint (INP) là gì?
+
+## 📝 Tóm tắt
+INP đo độ phản hồi tổng thể của giao diện sau các tương tác của người dùng.
+
+## 💻 Ví dụ thực tế
+
+```txt
+User Click
+↓
+UI Update
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/inp/
+
+## ❓ Câu hỏi còn lại
+- INP thay thế metric nào?
+- React Concurrent Rendering ảnh hưởng INP ra sao?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-06-16 — Advanced State Management & React Architecture</strong></summary>
 
 ---
