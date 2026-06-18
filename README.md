@@ -4,6 +4,241 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-06-18 — Security, Authentication & Web Protection</strong></summary>
+
+---
+
+# 241. Authentication là gì?
+
+## 📝 Tóm tắt
+Authentication là quá trình xác minh danh tính của người dùng trước khi cho phép truy cập hệ thống.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Email + Password
+↓
+Verify User
+↓
+Login Success
+```
+
+## 🔗 Link tham khảo
+- https://owasp.org/www-project-top-ten/
+
+## ❓ Câu hỏi còn lại
+- Authentication khác Authorization thế nào?
+- Có những hình thức Authentication nào?
+
+---
+
+# 242. Authorization là gì?
+
+## 📝 Tóm tắt
+Authorization xác định người dùng được phép thực hiện những hành động nào sau khi đăng nhập.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Admin
+↓
+Create User
+
+Viewer
+↓
+Read Only
+```
+
+## 🔗 Link tham khảo
+- https://auth0.com/docs
+
+## ❓ Câu hỏi còn lại
+- RBAC và ABAC khác nhau thế nào?
+- Frontend nên xử lý quyền đến mức nào?
+
+---
+
+# 243. Session-Based Authentication là gì?
+
+## 📝 Tóm tắt
+Session-Based Authentication lưu trạng thái đăng nhập trên server và gửi Session ID về client.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Login
+↓
+Session ID
+↓
+Cookie
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies
+
+## ❓ Câu hỏi còn lại
+- Session Scaling hoạt động ra sao?
+- Session Store thường dùng gì?
+
+---
+
+# 244. JWT Authentication là gì?
+
+## 📝 Tóm tắt
+JWT sử dụng token chứa thông tin đã ký để xác thực người dùng mà không cần lưu session trên server.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Header
+Payload
+Signature
+```
+
+## 🔗 Link tham khảo
+- https://jwt.io/introduction
+
+## ❓ Câu hỏi còn lại
+- JWT nên lưu ở đâu?
+- JWT có thể bị đánh cắp như thế nào?
+
+---
+
+# 245. XSS (Cross-Site Scripting) là gì?
+
+## 📝 Tóm tắt
+XSS xảy ra khi kẻ tấn công chèn và thực thi JavaScript độc hại trên trình duyệt người dùng.
+
+## 💻 Ví dụ thực tế
+
+```html
+<script>
+alert("XSS");
+</script>
+```
+
+## 🔗 Link tham khảo
+- https://owasp.org/www-community/attacks/xss/
+
+## ❓ Câu hỏi còn lại
+- React giảm thiểu XSS bằng cách nào?
+- dangerouslySetInnerHTML có rủi ro gì?
+
+---
+
+# 246. CSRF (Cross-Site Request Forgery) là gì?
+
+## 📝 Tóm tắt
+CSRF lợi dụng phiên đăng nhập của người dùng để thực hiện hành động ngoài ý muốn.
+
+## 💻 Ví dụ thực tế
+
+```txt
+User Login
+↓
+Visit Malicious Site
+↓
+Transfer Money
+```
+
+## 🔗 Link tham khảo
+- https://owasp.org/www-community/attacks/csrf
+
+## ❓ Câu hỏi còn lại
+- SameSite Cookie giúp gì?
+- CSRF Token hoạt động ra sao?
+
+---
+
+# 247. Content Security Policy (CSP) là gì?
+
+## 📝 Tóm tắt
+CSP là cơ chế bảo mật giúp kiểm soát nguồn tài nguyên mà trang web được phép tải.
+
+## 💻 Ví dụ thực tế
+
+```http
+Content-Security-Policy:
+script-src 'self'
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+
+## ❓ Câu hỏi còn lại
+- CSP giúp giảm XSS thế nào?
+- CSP có ảnh hưởng Third-party Script không?
+
+---
+
+# 248. CORS là gì?
+
+## 📝 Tóm tắt
+CORS là cơ chế cho phép hoặc từ chối các request giữa các domain khác nhau.
+
+## 💻 Ví dụ thực tế
+
+```txt
+frontend.com
+↓
+api.com
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+
+## ❓ Câu hỏi còn lại
+- Preflight Request là gì?
+- Vì sao Postman không bị CORS?
+
+---
+
+# 249. Refresh Token là gì?
+
+## 📝 Tóm tắt
+Refresh Token được dùng để cấp lại Access Token khi Access Token hết hạn.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Access Token
+↓ Expired
+Refresh Token
+↓
+New Access Token
+```
+
+## 🔗 Link tham khảo
+- https://oauth.net/2/
+
+## ❓ Câu hỏi còn lại
+- Refresh Token Rotation là gì?
+- Refresh Token nên lưu ở đâu?
+
+---
+
+# 250. OAuth 2.0 là gì?
+
+## 📝 Tóm tắt
+OAuth 2.0 là framework ủy quyền cho phép ứng dụng truy cập tài nguyên thay mặt người dùng.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Login with Google
+Login with GitHub
+```
+
+## 🔗 Link tham khảo
+- https://oauth.net/2/
+
+## ❓ Câu hỏi còn lại
+- OAuth khác OpenID Connect thế nào?
+- Authorization Code Flow hoạt động ra sao?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-06-17 — Browser Performance & Rendering Optimization</strong></summary>
 
 ---
