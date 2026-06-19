@@ -4,6 +4,242 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-06-19 — React Internals, Scheduling & Concurrent Rendering</strong></summary>
+
+---
+
+# 251. React Fiber là gì?
+
+## 📝 Tóm tắt
+React Fiber là kiến trúc rendering mới của React giúp chia nhỏ công việc render thành các đơn vị có thể tạm dừng và tiếp tục.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Render Task
+↓
+Fiber Nodes
+↓
+Incremental Rendering
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/
+
+## ❓ Câu hỏi còn lại
+- Fiber khác React Stack Reconciler thế nào?
+- Vì sao Fiber giúp UI mượt hơn?
+
+---
+
+# 252. Reconciliation là gì?
+
+## 📝 Tóm tắt
+Reconciliation là quá trình React so sánh Virtual DOM mới với Virtual DOM cũ để xác định những gì cần cập nhật.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Old VDOM
+↓
+Diff
+↓
+New VDOM
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/learn/render-and-commit
+
+## ❓ Câu hỏi còn lại
+- React diff tree như thế nào?
+- Key ảnh hưởng reconciliation ra sao?
+
+---
+
+# 253. Concurrent Rendering là gì?
+
+## 📝 Tóm tắt
+Concurrent Rendering cho phép React chuẩn bị nhiều phiên bản UI đồng thời và ưu tiên tác vụ quan trọng hơn.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Typing
+↓
+High Priority
+
+Large List Render
+↓
+Low Priority
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useTransition
+
+## ❓ Câu hỏi còn lại
+- Concurrent Rendering có chạy đa luồng không?
+- Khi nào React chuyển đổi priority?
+
+---
+
+# 254. React Scheduler là gì?
+
+## 📝 Tóm tắt
+Scheduler là cơ chế giúp React phân phối thời gian xử lý giữa các tác vụ để tránh block UI.
+
+## 💻 Ví dụ thực tế
+
+```txt
+User Input
+↓
+Scheduler
+↓
+Render Queue
+```
+
+## 🔗 Link tham khảo
+- https://github.com/facebook/react
+
+## ❓ Câu hỏi còn lại
+- Scheduler quyết định priority thế nào?
+- Browser Event Loop liên quan gì?
+
+---
+
+# 255. useTransition là gì?
+
+## 📝 Tóm tắt
+useTransition cho phép đánh dấu một số cập nhật state là ít quan trọng hơn để giữ giao diện phản hồi nhanh.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+const [isPending, startTransition] =
+  useTransition();
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useTransition
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên dùng useTransition?
+- Có thay thế debounce được không?
+
+---
+
+# 256. useDeferredValue là gì?
+
+## 📝 Tóm tắt
+useDeferredValue trì hoãn việc cập nhật một giá trị để tránh render nặng khi người dùng đang tương tác.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+const deferredSearch =
+  useDeferredValue(search);
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useDeferredValue
+
+## ❓ Câu hỏi còn lại
+- useDeferredValue khác useTransition thế nào?
+- Search lớn nên dùng hook nào?
+
+---
+
+# 257. React Batching là gì?
+
+## 📝 Tóm tắt
+Batching là cơ chế gộp nhiều lần cập nhật state thành một lần render để tăng hiệu năng.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+setCount(1);
+setName("Hieu");
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/learn/queueing-a-series-of-state-updates
+
+## ❓ Câu hỏi còn lại
+- Automatic Batching xuất hiện từ React phiên bản nào?
+- Khi nào batching không xảy ra?
+
+---
+
+# 258. Render Phase và Commit Phase là gì?
+
+## 📝 Tóm tắt
+Render Phase tính toán những gì cần thay đổi, Commit Phase áp dụng thay đổi vào DOM thật.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Render
+↓
+Diff
+↓
+Commit
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/learn/render-and-commit
+
+## ❓ Câu hỏi còn lại
+- useEffect chạy ở phase nào?
+- Commit Phase có bị interrupt không?
+
+---
+
+# 259. React Strict Mode là gì?
+
+## 📝 Tóm tắt
+Strict Mode giúp phát hiện các vấn đề tiềm ẩn bằng cách chạy thêm các kiểm tra trong môi trường phát triển.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+<React.StrictMode>
+  <App />
+</React.StrictMode>
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/StrictMode
+
+## ❓ Câu hỏi còn lại
+- Vì sao useEffect chạy 2 lần?
+- Strict Mode có chạy trên production không?
+
+---
+
+# 260. Hydration Mismatch là gì?
+
+## 📝 Tóm tắt
+Hydration Mismatch xảy ra khi HTML từ server khác với kết quả render phía client.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Server:
+Hello
+
+Client:
+Hello World
+```
+
+## 🔗 Link tham khảo
+- https://nextjs.org/docs/messages/react-hydration-error
+
+## ❓ Câu hỏi còn lại
+- Làm sao debug Hydration Error?
+- Những nguyên nhân phổ biến là gì?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-06-18 — Security, Authentication & Web Protection</strong></summary>
 
 ---
