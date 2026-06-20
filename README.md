@@ -4,6 +4,245 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-06-20 — Frontend System Design & Large-Scale Architecture</strong></summary>
+
+---
+
+# 261. BFF (Backend For Frontend) là gì?
+
+## 📝 Tóm tắt
+BFF là một lớp backend được thiết kế riêng cho từng loại frontend để tối ưu dữ liệu và trải nghiệm người dùng.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Web App
+↓
+Web BFF
+↓
+Microservices
+
+Mobile App
+↓
+Mobile BFF
+↓
+Microservices
+```
+
+## 🔗 Link tham khảo
+- https://samnewman.io/patterns/architectural/bff/
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên tạo BFF riêng?
+- BFF khác API Gateway thế nào?
+
+---
+
+# 262. API Gateway là gì?
+
+## 📝 Tóm tắt
+API Gateway là điểm truy cập trung tâm giúp định tuyến request tới các service phía sau.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Frontend
+↓
+API Gateway
+↓
+Auth Service
+User Service
+Order Service
+```
+
+## 🔗 Link tham khảo
+- https://microservices.io/patterns/apigateway.html
+
+## ❓ Câu hỏi còn lại
+- API Gateway có thể cache không?
+- Khi nào API Gateway trở thành bottleneck?
+
+---
+
+# 263. Micro Frontend là gì?
+
+## 📝 Tóm tắt
+Micro Frontend chia ứng dụng frontend lớn thành nhiều phần độc lập do các team khác nhau quản lý.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Shell App
+├─ Dashboard
+├─ Orders
+└─ Profile
+```
+
+## 🔗 Link tham khảo
+- https://micro-frontends.org/
+
+## ❓ Câu hỏi còn lại
+- Chia domain theo cách nào?
+- Shared dependency xử lý ra sao?
+
+---
+
+# 264. Module Federation là gì?
+
+## 📝 Tóm tắt
+Module Federation cho phép nhiều ứng dụng chia sẻ code runtime mà không cần build chung.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Host App
+↓
+Remote App
+```
+
+## 🔗 Link tham khảo
+- https://webpack.js.org/concepts/module-federation/
+
+## ❓ Câu hỏi còn lại
+- Version conflict xử lý thế nào?
+- Có hỗ trợ Vite không?
+
+---
+
+# 265. Design System là gì?
+
+## 📝 Tóm tắt
+Design System là tập hợp các quy tắc, component và guideline giúp tạo giao diện nhất quán.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Button
+Input
+Modal
+Typography
+```
+
+## 🔗 Link tham khảo
+- https://www.designsystems.com/
+
+## ❓ Câu hỏi còn lại
+- Design System khác UI Library thế nào?
+- Team nào chịu trách nhiệm bảo trì?
+
+---
+
+# 266. Component Library là gì?
+
+## 📝 Tóm tắt
+Component Library là bộ component tái sử dụng được dùng trong nhiều dự án.
+
+## 💻 Ví dụ thực tế
+
+```txt
+@company/ui
+```
+
+## 🔗 Link tham khảo
+- https://storybook.js.org/
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên tách package riêng?
+- Semantic Versioning áp dụng thế nào?
+
+---
+
+# 267. Storybook là gì?
+
+## 📝 Tóm tắt
+Storybook là công cụ phát triển và kiểm thử component độc lập khỏi ứng dụng chính.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Button Stories
+Input Stories
+Modal Stories
+```
+
+## 🔗 Link tham khảo
+- https://storybook.js.org/
+
+## ❓ Câu hỏi còn lại
+- Storybook hỗ trợ visual testing thế nào?
+- Có nên dùng cho dự án nhỏ không?
+
+---
+
+# 268. Frontend Observability là gì?
+
+## 📝 Tóm tắt
+Frontend Observability giúp theo dõi lỗi, hiệu năng và hành vi người dùng trong môi trường production.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Logs
+Metrics
+Traces
+```
+
+## 🔗 Link tham khảo
+- https://opentelemetry.io/
+
+## ❓ Câu hỏi còn lại
+- Frontend nên thu thập metric nào?
+- Error Tracking hoạt động thế nào?
+
+---
+
+# 269. Error Boundary là gì?
+
+## 📝 Tóm tắt
+Error Boundary giúp bắt lỗi JavaScript trong cây component React và hiển thị fallback UI.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+<ErrorBoundary>
+  <Dashboard />
+</ErrorBoundary>
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary
+
+## ❓ Câu hỏi còn lại
+- Error Boundary không bắt được lỗi nào?
+- Có nên dùng nhiều Error Boundary không?
+
+---
+
+# 270. Frontend System Design Interview thường đánh giá gì?
+
+## 📝 Tóm tắt
+Frontend System Design đánh giá khả năng thiết kế ứng dụng lớn, khả năng mở rộng, hiệu năng và maintainability.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Architecture
+Performance
+Scalability
+Monitoring
+Security
+```
+
+## 🔗 Link tham khảo
+- https://frontendinterviewhandbook.com/
+
+## ❓ Câu hỏi còn lại
+- Cần chuẩn bị những chủ đề nào?
+- Những lỗi thiết kế phổ biến là gì?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-06-19 — React Internals, Scheduling & Concurrent Rendering</strong></summary>
 
 ---
