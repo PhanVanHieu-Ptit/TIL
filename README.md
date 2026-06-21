@@ -4,6 +4,235 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-06-21 — Browser APIs & Modern Web Capabilities</strong></summary>
+
+---
+
+# 271. Intersection Observer API là gì?
+
+## 📝 Tóm tắt
+Intersection Observer giúp theo dõi khi một phần tử xuất hiện hoặc biến mất trong viewport mà không cần lắng nghe sự kiện scroll liên tục.
+
+## 💻 Ví dụ thực tế
+
+```ts
+const observer =
+  new IntersectionObserver(
+    entries => {
+      console.log(
+        entries[0].isIntersecting
+      );
+    }
+  );
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
+
+## ❓ Câu hỏi còn lại
+- Lazy Loading hoạt động thế nào với API này?
+- Observer có ảnh hưởng hiệu năng không?
+
+---
+
+# 272. Resize Observer là gì?
+
+## 📝 Tóm tắt
+Resize Observer cho phép theo dõi sự thay đổi kích thước của một phần tử.
+
+## 💻 Ví dụ thực tế
+
+```ts
+const observer =
+  new ResizeObserver(entries => {
+    console.log(
+      entries[0].contentRect.width
+    );
+  });
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver
+
+## ❓ Câu hỏi còn lại
+- Có thể thay thế window resize không?
+- Observer bị trigger khi nào?
+
+---
+
+# 273. Mutation Observer là gì?
+
+## 📝 Tóm tắt
+Mutation Observer theo dõi sự thay đổi trong DOM như thêm, xoá hoặc cập nhật node.
+
+## 💻 Ví dụ thực tế
+
+```ts
+const observer =
+  new MutationObserver(
+    mutations => {}
+  );
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
+
+## ❓ Câu hỏi còn lại
+- Mutation Observer có thay thế event không?
+- Theo dõi subtree có tốn tài nguyên không?
+
+---
+
+# 274. Web Workers là gì?
+
+## 📝 Tóm tắt
+Web Workers cho phép chạy JavaScript ở luồng nền để tránh block UI chính.
+
+## 💻 Ví dụ thực tế
+
+```ts
+const worker =
+  new Worker("worker.js");
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API
+
+## ❓ Câu hỏi còn lại
+- Worker giao tiếp với Main Thread thế nào?
+- Có truy cập DOM được không?
+
+---
+
+# 275. Service Worker là gì?
+
+## 📝 Tóm tắt
+Service Worker là script chạy nền giúp hỗ trợ cache, offline mode và push notification.
+
+## 💻 Ví dụ thực tế
+
+```ts
+navigator.serviceWorker
+  .register("/sw.js");
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API
+
+## ❓ Câu hỏi còn lại
+- Service Worker lưu cache ở đâu?
+- Có thể cập nhật tự động không?
+
+---
+
+# 276. Push Notification là gì?
+
+## 📝 Tóm tắt
+Push Notification cho phép server gửi thông báo đến trình duyệt ngay cả khi website không mở.
+
+## 💻 Ví dụ thực tế
+
+```txt
+New Message
+↓
+Browser Notification
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/push-notifications-overview/
+
+## ❓ Câu hỏi còn lại
+- Notification hoạt động với Service Worker thế nào?
+- Browser nào hỗ trợ tốt nhất?
+
+---
+
+# 277. Broadcast Channel API là gì?
+
+## 📝 Tóm tắt
+Broadcast Channel cho phép các tab cùng origin giao tiếp với nhau.
+
+## 💻 Ví dụ thực tế
+
+```ts
+const channel =
+  new BroadcastChannel("auth");
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/Broadcast_Channel_API
+
+## ❓ Câu hỏi còn lại
+- Logout nhiều tab xử lý thế nào?
+- Có giới hạn dữ liệu gửi không?
+
+---
+
+# 278. Clipboard API là gì?
+
+## 📝 Tóm tắt
+Clipboard API cho phép đọc hoặc ghi dữ liệu vào clipboard của người dùng.
+
+## 💻 Ví dụ thực tế
+
+```ts
+await navigator.clipboard.writeText(
+  "Hello"
+);
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API
+
+## ❓ Câu hỏi còn lại
+- Browser yêu cầu quyền gì?
+- Có thể copy hình ảnh không?
+
+---
+
+# 279. WebSocket là gì?
+
+## 📝 Tóm tắt
+WebSocket cung cấp kết nối hai chiều liên tục giữa client và server.
+
+## 💻 Ví dụ thực tế
+
+```ts
+const socket =
+  new WebSocket(url);
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
+
+## ❓ Câu hỏi còn lại
+- WebSocket khác HTTP Polling thế nào?
+- Reconnect nên xử lý ra sao?
+
+---
+
+# 280. Server-Sent Events (SSE) là gì?
+
+## 📝 Tóm tắt
+SSE cho phép server gửi dữ liệu liên tục xuống client qua một kết nối HTTP duy nhất.
+
+## 💻 Ví dụ thực tế
+
+```ts
+const source =
+  new EventSource("/events");
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events
+
+## ❓ Câu hỏi còn lại
+- SSE khác WebSocket thế nào?
+- Khi nào nên chọn SSE?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-06-20 — Frontend System Design & Large-Scale Architecture</strong></summary>
 
 ---
