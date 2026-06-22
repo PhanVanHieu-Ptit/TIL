@@ -1,7 +1,241 @@
 # TIL
 Today I Learned
-
 # 📚 Frontend Learning Journal
+
+<details>
+<summary><strong>📅 2026-06-22 — Networking, Protocols & Data Transfer</strong></summary>
+
+---
+
+# 281. TCP là gì?
+
+## 📝 Tóm tắt
+TCP (Transmission Control Protocol) là giao thức truyền dữ liệu đáng tin cậy, đảm bảo dữ liệu đến đúng thứ tự và không bị mất.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Browser
+↓
+TCP Connection
+↓
+Web Server
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Glossary/TCP
+
+## ❓ Câu hỏi còn lại
+- TCP 3-way handshake hoạt động thế nào?
+- TCP gây ảnh hưởng gì đến tốc độ tải trang?
+
+---
+
+# 282. UDP là gì?
+
+## 📝 Tóm tắt
+UDP (User Datagram Protocol) là giao thức truyền dữ liệu nhanh nhưng không đảm bảo dữ liệu đến nơi đầy đủ.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Video Call
+Live Streaming
+Online Gaming
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Glossary/UDP
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên dùng UDP thay vì TCP?
+- WebRTC sử dụng UDP ra sao?
+
+---
+
+# 283. HTTP là gì?
+
+## 📝 Tóm tắt
+HTTP là giao thức truyền tải dữ liệu giữa client và server trên web.
+
+## 💻 Ví dụ thực tế
+
+```http
+GET /users
+POST /login
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/HTTP
+
+## ❓ Câu hỏi còn lại
+- HTTP là stateless nghĩa là gì?
+- HTTP request gồm những thành phần nào?
+
+---
+
+# 284. HTTPS là gì?
+
+## 📝 Tóm tắt
+HTTPS là HTTP kết hợp TLS/SSL để mã hóa dữ liệu truyền giữa client và server.
+
+## 💻 Ví dụ thực tế
+
+```txt
+HTTPS
+↓
+Encrypted Traffic
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Glossary/HTTPS
+
+## ❓ Câu hỏi còn lại
+- TLS Handshake hoạt động thế nào?
+- HTTPS có làm chậm website không?
+
+---
+
+# 285. HTTP/1.1, HTTP/2 và HTTP/3 khác nhau thế nào?
+
+## 📝 Tóm tắt
+Các phiên bản HTTP cải thiện hiệu năng bằng cách giảm độ trễ và tối ưu truyền dữ liệu.
+
+## 💻 Ví dụ thực tế
+
+```txt
+HTTP/1.1 → Multiple Connections
+
+HTTP/2 → Multiplexing
+
+HTTP/3 → QUIC
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/HTTP
+
+## ❓ Câu hỏi còn lại
+- Multiplexing hoạt động thế nào?
+- HTTP/3 dùng UDP vì sao?
+
+---
+
+# 286. DNS là gì?
+
+## 📝 Tóm tắt
+DNS chuyển đổi tên miền thành địa chỉ IP để trình duyệt tìm được server.
+
+## 💻 Ví dụ thực tế
+
+```txt
+google.com
+↓
+142.x.x.x
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Glossary/DNS
+
+## ❓ Câu hỏi còn lại
+- DNS Cache hoạt động ra sao?
+- DNS Lookup gồm những bước nào?
+
+---
+
+# 287. CDN là gì?
+
+## 📝 Tóm tắt
+CDN (Content Delivery Network) phân phối nội dung từ server gần người dùng nhất để giảm độ trễ.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Vietnam User
+↓
+Singapore CDN
+↓
+Image Response
+```
+
+## 🔗 Link tham khảo
+- https://www.cloudflare.com/learning/cdn/what-is-a-cdn/
+
+## ❓ Câu hỏi còn lại
+- CDN cache theo cơ chế nào?
+- Khi nào CDN không hiệu quả?
+
+---
+
+# 288. Compression là gì?
+
+## 📝 Tóm tắt
+Compression giúp giảm kích thước dữ liệu truyền qua mạng để tải trang nhanh hơn.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Original JS
+↓
+Gzip/Brotli
+↓
+Smaller Bundle
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/HTTP/Compression
+
+## ❓ Câu hỏi còn lại
+- Brotli khác Gzip thế nào?
+- Loại file nào nên nén?
+
+---
+
+# 289. Caching Headers là gì?
+
+## 📝 Tóm tắt
+Caching Headers giúp trình duyệt biết dữ liệu nào có thể lưu cache và trong bao lâu.
+
+## 💻 Ví dụ thực tế
+
+```http
+Cache-Control:
+max-age=3600
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching
+
+## ❓ Câu hỏi còn lại
+- ETag hoạt động thế nào?
+- Cache-Control khác Expires ra sao?
+
+---
+
+# 290. Network Waterfall là gì?
+
+## 📝 Tóm tắt
+Network Waterfall là biểu đồ hiển thị thứ tự và thời gian tải của từng request trên trang web.
+
+## 💻 Ví dụ thực tế
+
+```txt
+HTML
+↓
+CSS
+↓
+JS
+↓
+API
+```
+
+## 🔗 Link tham khảo
+- https://developer.chrome.com/docs/devtools/network
+
+## ❓ Câu hỏi còn lại
+- Làm sao phân tích bottleneck từ Waterfall?
+- Những request nào thường gây chậm trang?
+
+</details>
 
 <details>
 <summary><strong>📅 2026-06-21 — Browser APIs & Modern Web Capabilities</strong></summary>
