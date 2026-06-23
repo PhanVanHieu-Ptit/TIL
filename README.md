@@ -1,6 +1,366 @@
 # TIL
 Today I Learned
 # 📚 Frontend Learning Journal
+<details>
+<summary><strong>📅 23-06-2026 - Full-Stack Product Developer (PWA, AI-Assisted Development)</strong></summary>
+<details>
+<summary><strong>PWA là gì?</strong></summary>
+
+### Trả lời
+
+PWA (Progressive Web App) là web app được thiết kế để mang lại trải nghiệm gần giống native app.
+
+**Đặc điểm chính:**
+
+- Có thể cài đặt lên thiết bị
+- Hoạt động offline
+- Tốc độ tải nhanh nhờ caching
+- Hỗ trợ push notification
+
+**Điểm cốt lõi:**
+
+> PWA giúp web app hoạt động như app native mà không cần phát hành qua App Store hoặc Google Play.
+
+</details>
+
+<details>
+<summary><strong>Service Worker hoạt động như thế nào?</strong></summary>
+
+### Trả lời
+
+Service Worker là một script chạy nền, độc lập với UI.
+
+```text
+Browser ↔ Service Worker ↔ Network / Cache
+```
+
+Nó có thể:
+
+- Intercept HTTP requests
+- Cache dữ liệu
+- Trả dữ liệu từ cache khi offline
+- Background sync
+
+**Vai trò chính:**
+
+> Là nền tảng giúp PWA hỗ trợ offline mode và caching.
+
+</details>
+
+<details>
+<summary><strong>Cache First vs Network First?</strong></summary>
+
+### Cache First
+
+Ưu tiên cache trước.
+
+Nếu cache không có thì gọi network.
+
+Thường dùng cho:
+
+- CSS
+- JS
+- Images
+- Icons
+
+### Network First
+
+Ưu tiên gọi server trước.
+
+Nếu thất bại mới fallback cache.
+
+Thường dùng cho:
+
+- Dashboard
+- API data
+- Dữ liệu nghiệp vụ
+
+**Bonus:**
+
+Stale-While-Revalidate giúp trả dữ liệu nhanh từ cache và cập nhật nền từ server.
+
+</details>
+
+<details>
+<summary><strong>Làm sao hỗ trợ Offline Mode?</strong></summary>
+
+### Trả lời
+
+Kết hợp:
+
+- Service Worker
+- Cache API
+
+Chiến lược:
+
+- Cache static assets
+- Cache API response quan trọng
+- Fallback sang cache khi mất mạng
+- Hiển thị trạng thái offline
+- Đồng bộ dữ liệu khi online trở lại
+
+**Mục tiêu:**
+
+> Người dùng vẫn có thể sử dụng ứng dụng khi mất kết nối internet.
+
+</details>
+
+<details>
+<summary><strong>Bạn dùng Cursor/Copilot thế nào?</strong></summary>
+
+### Trả lời
+
+Tôi sử dụng AI như một pair programmer:
+
+- Explain codebase
+- Debug lỗi
+- Generate unit test
+- Refactor code
+- Tạo boilerplate
+
+**Quan trọng:**
+
+> Tôi luôn review lại code AI tạo ra trước khi merge.
+
+</details>
+
+<details>
+<summary><strong>AI giúp onboarding codebase như thế nào?</strong></summary>
+
+### Trả lời
+
+Khi nhận dự án mới:
+
+- Yêu cầu AI tóm tắt kiến trúc
+- Giải thích auth flow
+- Giải thích state flow
+- Phân tích dependency giữa các module
+
+Ví dụ prompt:
+
+```text
+Analyze this project and explain:
+- Architecture
+- Auth flow
+- Data flow
+- State management
+```
+
+**Lợi ích:**
+
+> Giảm đáng kể thời gian tìm hiểu hệ thống.
+
+</details>
+
+<details>
+<summary><strong>Supabase là gì?</strong></summary>
+
+### Trả lời
+
+Supabase là Backend-as-a-Service xây dựng trên PostgreSQL.
+
+Bao gồm:
+
+- Database
+- Authentication
+- Storage
+- Realtime
+- Edge Functions
+
+**Ưu điểm:**
+
+> Giúp xây dựng ứng dụng fullstack nhanh mà không cần tự phát triển backend từ đầu.
+
+</details>
+
+<details>
+<summary><strong>Row Level Security (RLS) là gì?</strong></summary>
+
+### Trả lời
+
+RLS là cơ chế bảo mật ở cấp độ từng record trong database.
+
+Ví dụ:
+
+- User A chỉ xem được dữ liệu của User A
+- User B chỉ xem được dữ liệu của User B
+
+**Ý nghĩa:**
+
+> Security được enforce ngay tại database layer.
+
+</details>
+
+<details>
+<summary><strong>Cloudflare Workers là gì?</strong></summary>
+
+### Trả lời
+
+Cloudflare Workers là nền tảng serverless chạy tại edge network.
+
+Ưu điểm:
+
+- Latency thấp
+- Không cần quản lý server
+- Scale tự động
+
+Use cases:
+
+- API Gateway
+- Authentication
+- Caching layer
+- Webhooks
+
+</details>
+
+<details>
+<summary><strong>Làm sao tối ưu React app chậm?</strong></summary>
+
+### Trả lời
+
+1. Đo đạc bằng React Profiler
+2. Xác định component re-render không cần thiết
+3. Tối ưu bằng:
+   - React.memo
+   - useMemo
+   - useCallback
+   - Lazy loading
+   - Virtualization
+4. Đo lại kết quả
+
+> Không tối ưu theo cảm tính, luôn đo đạc trước.
+
+</details>
+
+<details>
+<summary><strong>Redux vs Context?</strong></summary>
+
+### Context
+
+- Theme
+- Locale
+- Auth đơn giản
+
+### Redux
+
+- App lớn
+- State phức tạp
+- Nhiều nguồn cập nhật
+
+> Redux phù hợp với ứng dụng cần tính dự đoán cao và khả năng debug tốt.
+
+</details>
+
+<details>
+<summary><strong>React Query hoạt động như thế nào?</strong></summary>
+
+### Trả lời
+
+React Query quản lý server state:
+
+- Caching
+- Auto refetch
+- Background update
+- Loading state
+- Error state
+- Request deduplication
+
+> Giảm đáng kể boilerplate khi làm việc với API.
+
+</details>
+
+<details>
+<summary><strong>Bạn viết Unit Test cho component/API như thế nào?</strong></summary>
+
+### Component
+
+- Render đúng
+- User interaction
+- State update
+
+### API / Business Logic
+
+- Success case
+- Error case
+- Edge case
+
+Tools:
+
+- Jest / Vitest
+- React Testing Library
+- MSW
+
+> Ưu tiên test business logic hơn snapshot.
+
+</details>
+
+<details>
+<summary><strong>Kể một lần dùng AI giúp tăng tốc dự án</strong></summary>
+
+### STAR
+
+**Situation**
+
+Được giao công nghệ hoặc codebase mới.
+
+**Task**
+
+Hiểu nhanh và triển khai tính năng.
+
+**Action**
+
+- Dùng AI giải thích kiến trúc
+- Sinh sample code
+- Tạo prototype nhỏ
+- Verify bằng tài liệu chính thức
+
+**Result**
+
+Giảm thời gian onboarding và tăng tốc implementation.
+
+</details>
+
+<details>
+<summary><strong>Nếu tiếp quản codebase 50k dòng trong tuần đầu tiên bạn sẽ làm gì?</strong></summary>
+
+### Day 1-2
+
+- Setup môi trường
+- Chạy project local
+- Đọc README
+- Xác định:
+  - Routing
+  - Auth
+  - State Management
+  - API Layer
+
+### Day 2-3
+
+Sử dụng AI để:
+
+- Summarize architecture
+- Explain modules
+- Explain dependencies
+
+### Day 3-5
+
+- Đọc code theo feature
+- Fix bug nhỏ
+- Theo dõi luồng dữ liệu end-to-end
+
+### End of Week
+
+Mục tiêu:
+
+- Tự debug được
+- Tự deploy được
+- Tự implement feature nhỏ
+
+> Mục tiêu tuần đầu là trở nên productive một cách an toàn, không phải hiểu 100% hệ thống.
+
+</details>
+</details>
+
 
 <details>
 <summary><strong>📅 2026-06-22 — Networking, Protocols & Data Transfer</strong></summary>
