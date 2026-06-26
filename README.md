@@ -1,6 +1,245 @@
 # TIL
 Today I Learned
+
 # 📚 Frontend Learning Journal
+
+<details>
+<summary><strong>📅 2026-06-26 — JavaScript Engine, Memory Management & Event Loop</strong></summary>
+
+---
+
+# 291. JavaScript Engine là gì?
+
+## 📝 Tóm tắt
+JavaScript Engine là chương trình thực thi mã JavaScript, chịu trách nhiệm parse, compile và chạy code.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Source Code
+↓
+Parser
+↓
+Compiler
+↓
+Execution
+```
+
+## 🔗 Link tham khảo
+- https://v8.dev/
+
+## ❓ Câu hỏi còn lại
+- V8 tối ưu code như thế nào?
+- SpiderMonkey và JavaScriptCore khác gì V8?
+
+---
+
+# 292. Execution Context là gì?
+
+## 📝 Tóm tắt
+Execution Context là môi trường mà JavaScript thực thi code, quản lý biến, scope và giá trị `this`.
+
+## 💻 Ví dụ thực tế
+
+```js
+function hello() {
+  const name = "Hiếu";
+}
+
+hello();
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript
+
+## ❓ Câu hỏi còn lại
+- Global Context và Function Context khác nhau thế nào?
+- Context được tạo và hủy khi nào?
+
+---
+
+# 293. Call Stack là gì?
+
+## 📝 Tóm tắt
+Call Stack là cấu trúc dữ liệu theo nguyên tắc LIFO dùng để quản lý các hàm đang thực thi.
+
+## 💻 Ví dụ thực tế
+
+```txt
+main()
+↓
+foo()
+↓
+bar()
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Glossary/Call_stack
+
+## ❓ Câu hỏi còn lại
+- Stack Overflow xảy ra khi nào?
+- Browser giới hạn Call Stack ra sao?
+
+---
+
+# 294. Heap Memory là gì?
+
+## 📝 Tóm tắt
+Heap là vùng nhớ dùng để lưu trữ object, array và function được cấp phát động.
+
+## 💻 Ví dụ thực tế
+
+```js
+const user = {
+  name: "Hiếu",
+};
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Memory_Management
+
+## ❓ Câu hỏi còn lại
+- Primitive và Object được lưu ở đâu?
+- Heap Fragmentation là gì?
+
+---
+
+# 295. Garbage Collection là gì?
+
+## 📝 Tóm tắt
+Garbage Collection là cơ chế tự động giải phóng bộ nhớ không còn được tham chiếu.
+
+## 💻 Ví dụ thực tế
+
+```js
+let user = {
+  name: "A",
+};
+
+user = null;
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Memory_Management
+
+## ❓ Câu hỏi còn lại
+- Mark-and-Sweep hoạt động như thế nào?
+- GC có làm ứng dụng bị giật không?
+
+---
+
+# 296. Memory Leak là gì?
+
+## 📝 Tóm tắt
+Memory Leak xảy ra khi bộ nhớ không còn cần thiết nhưng vẫn được giữ lại, khiến ứng dụng tiêu tốn RAM theo thời gian.
+
+## 💻 Ví dụ thực tế
+
+```js
+setInterval(() => {}, 1000);
+```
+
+## 🔗 Link tham khảo
+- https://developer.chrome.com/docs/devtools/memory
+
+## ❓ Câu hỏi còn lại
+- React thường gặp Memory Leak ở đâu?
+- Chrome DevTools hỗ trợ phát hiện thế nào?
+
+---
+
+# 297. Event Loop là gì?
+
+## 📝 Tóm tắt
+Event Loop là cơ chế điều phối việc thực thi Call Stack, Microtask Queue và Macrotask Queue để JavaScript xử lý tác vụ bất đồng bộ.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Call Stack
+↓
+Microtask Queue
+↓
+Macrotask Queue
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop
+
+## ❓ Câu hỏi còn lại
+- Browser Event Loop khác Node.js thế nào?
+- Rendering diễn ra ở bước nào?
+
+---
+
+# 298. Microtask Queue và Macrotask Queue khác nhau thế nào?
+
+## 📝 Tóm tắt
+Microtask Queue được ưu tiên xử lý trước Macrotask Queue sau khi Call Stack rỗng.
+
+## 💻 Ví dụ thực tế
+
+```js
+Promise.resolve().then(...);
+
+setTimeout(...);
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API/Microtask_guide
+
+## ❓ Câu hỏi còn lại
+- queueMicrotask() dùng khi nào?
+- MutationObserver thuộc queue nào?
+
+---
+
+# 299. Debounce và Throttle khác nhau thế nào?
+
+## 📝 Tóm tắt
+Debounce trì hoãn việc thực thi cho đến khi sự kiện ngừng xảy ra, còn Throttle giới hạn số lần thực thi trong một khoảng thời gian.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Search Input
+→ Debounce
+
+Scroll Event
+→ Throttle
+```
+
+## 🔗 Link tham khảo
+- https://lodash.com/docs/
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên dùng requestAnimationFrame thay cho Throttle?
+- Debounce có phù hợp với autosave không?
+
+---
+
+# 300. requestAnimationFrame là gì?
+
+## 📝 Tóm tắt
+requestAnimationFrame lên lịch thực thi callback ngay trước lần vẽ (paint) tiếp theo của trình duyệt, giúp animation mượt và tiết kiệm tài nguyên.
+
+## 💻 Ví dụ thực tế
+
+```js
+requestAnimationFrame(() => {
+  updatePosition();
+});
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame
+
+## ❓ Câu hỏi còn lại
+- requestAnimationFrame khác setTimeout như thế nào?
+- Khi tab bị ẩn thì callback hoạt động ra sao?
+
+</details>
+
 <details>
 <summary><strong>📅 23-06-2026 - Full-Stack Product Developer (PWA, AI-Assisted Development)</strong></summary>
 <details>
