@@ -4,6 +4,235 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-06-29 — CSS Rendering, Layout & Modern Responsive Design</strong></summary>
+
+---
+
+# 301. Block Formatting Context (BFC) là gì?
+
+## 📝 Tóm tắt
+Block Formatting Context (BFC) là một vùng layout độc lập, giúp kiểm soát cách các phần tử block được sắp xếp và tránh ảnh hưởng lẫn nhau.
+
+## 💻 Ví dụ thực tế
+
+```css
+.container {
+  overflow: hidden;
+}
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_display/Block_formatting_context
+
+## ❓ Câu hỏi còn lại
+- Những thuộc tính nào tạo ra BFC?
+- BFC giúp giải quyết những vấn đề layout nào?
+
+---
+
+# 302. Stacking Context là gì?
+
+## 📝 Tóm tắt
+Stacking Context quyết định thứ tự chồng lớp (z-axis) của các phần tử trên trang.
+
+## 💻 Ví dụ thực tế
+
+```css
+.modal {
+  position: fixed;
+  z-index: 9999;
+}
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_positioned_layout/Stacking_context
+
+## ❓ Câu hỏi còn lại
+- Khi nào z-index không hoạt động?
+- Thuộc tính nào tạo Stacking Context mới?
+
+---
+
+# 303. CSS Containment là gì?
+
+## 📝 Tóm tắt
+CSS Containment giúp giới hạn phạm vi ảnh hưởng của việc render, layout hoặc paint để tăng hiệu năng.
+
+## 💻 Ví dụ thực tế
+
+```css
+.card {
+  contain: layout paint;
+}
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/CSS/contain
+
+## ❓ Câu hỏi còn lại
+- contain: content khác contain: strict thế nào?
+- Khi nào không nên sử dụng contain?
+
+---
+
+# 304. CSS Container Queries là gì?
+
+## 📝 Tóm tắt
+Container Queries cho phép component thay đổi giao diện dựa trên kích thước của container thay vì viewport.
+
+## 💻 Ví dụ thực tế
+
+```css
+@container (min-width: 600px) {
+  .card {
+    display: flex;
+  }
+}
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_container_queries
+
+## ❓ Câu hỏi còn lại
+- Container Queries khác Media Queries như thế nào?
+- Những trình duyệt nào đã hỗ trợ?
+
+---
+
+# 305. CSS Subgrid là gì?
+
+## 📝 Tóm tắt
+Subgrid cho phép phần tử con kế thừa hệ thống grid của phần tử cha để tạo layout nhất quán.
+
+## 💻 Ví dụ thực tế
+
+```css
+.child {
+  display: grid;
+  grid-template-columns: subgrid;
+}
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout/Subgrid
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên dùng Subgrid thay vì Grid lồng nhau?
+- Browser nào hỗ trợ Subgrid đầy đủ?
+
+---
+
+# 306. aspect-ratio trong CSS là gì?
+
+## 📝 Tóm tắt
+Thuộc tính `aspect-ratio` giúp duy trì tỷ lệ chiều rộng và chiều cao của phần tử mà không cần tính toán thủ công.
+
+## 💻 Ví dụ thực tế
+
+```css
+.thumbnail {
+  aspect-ratio: 16 / 9;
+}
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/CSS/aspect-ratio
+
+## ❓ Câu hỏi còn lại
+- aspect-ratio hoạt động với ảnh như thế nào?
+- Có thể kết hợp với Grid và Flexbox không?
+
+---
+
+# 307. clamp() trong CSS là gì?
+
+## 📝 Tóm tắt
+`clamp()` cho phép thiết lập giá trị tối thiểu, lý tưởng và tối đa, rất hữu ích cho responsive typography.
+
+## 💻 Ví dụ thực tế
+
+```css
+font-size: clamp(16px, 2vw, 24px);
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/CSS/clamp
+
+## ❓ Câu hỏi còn lại
+- clamp() khác min() và max() thế nào?
+- Khi nào nên dùng cho spacing?
+
+---
+
+# 308. CSS Logical Properties là gì?
+
+## 📝 Tóm tắt
+Logical Properties giúp viết CSS theo hướng viết (writing mode) thay vì cố định trái/phải, hỗ trợ đa ngôn ngữ tốt hơn.
+
+## 💻 Ví dụ thực tế
+
+```css
+.card {
+  margin-inline: 16px;
+}
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_logical_properties_and_values
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên dùng margin-inline?
+- Logical Properties hỗ trợ RTL như thế nào?
+
+---
+
+# 309. CSS Scroll Snap là gì?
+
+## 📝 Tóm tắt
+Scroll Snap giúp trình duyệt tự động căn chỉnh vị trí cuộn đến các phần tử được chỉ định.
+
+## 💻 Ví dụ thực tế
+
+```css
+.container {
+  scroll-snap-type: x mandatory;
+}
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll_snap
+
+## ❓ Câu hỏi còn lại
+- Scroll Snap có phù hợp cho carousel không?
+- Có ảnh hưởng trải nghiệm người dùng không?
+
+---
+
+# 310. prefers-reduced-motion là gì?
+
+## 📝 Tóm tắt
+`prefers-reduced-motion` là media query giúp giảm hoặc tắt animation khi người dùng có nhu cầu hạn chế chuyển động.
+
+## 💻 Ví dụ thực tế
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none;
+  }
+}
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion
+
+## ❓ Câu hỏi còn lại
+- Những animation nào nên tắt?
+- Có nên áp dụng mặc định cho mọi website?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-06-26 — JavaScript Engine, Memory Management & Event Loop</strong></summary>
 
 ---
