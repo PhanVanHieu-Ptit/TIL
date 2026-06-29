@@ -470,7 +470,7 @@ requestAnimationFrame(() => {
 </details>
 
 <details>
-<summary><strong>📅 23-06-2026 - Full-Stack Product Developer (PWA, AI-Assisted Development)</strong></summary>
+<summary><strong>📅 2026-06-23 - Full-Stack Product Developer (PWA, AI-Assisted Development)</strong></summary>
 <details>
 <summary><strong>PWA là gì?</strong></summary>
 
