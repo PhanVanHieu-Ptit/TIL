@@ -4,6 +4,227 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-06-30 — React Hooks Deep Dive & Custom Hook Patterns</strong></summary>
+
+---
+
+# 311. Custom Hook là gì?
+
+## 📝 Tóm tắt
+Custom Hook là hàm JavaScript bắt đầu bằng `use` dùng để tái sử dụng logic stateful giữa nhiều component.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+function useWindowSize() {
+  // ...
+}
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/learn/reusing-logic-with-custom-hooks
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên tạo Custom Hook?
+- Có nên tách quá nhiều Hook nhỏ không?
+
+---
+
+# 312. Rules of Hooks là gì?
+
+## 📝 Tóm tắt
+Rules of Hooks quy định Hook chỉ được gọi ở đầu component hoặc Custom Hook và không được gọi trong điều kiện hoặc vòng lặp.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+function App() {
+  const [count, setCount] =
+    useState(0);
+}
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/rules/rules-of-hooks
+
+## ❓ Câu hỏi còn lại
+- Vì sao React yêu cầu thứ tự Hook cố định?
+- ESLint phát hiện vi phạm như thế nào?
+
+---
+
+# 313. useRef và useState khác nhau như thế nào?
+
+## 📝 Tóm tắt
+`useState` cập nhật sẽ kích hoạt render lại component, trong khi `useRef` lưu giá trị giữa các lần render nhưng không gây re-render.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+const inputRef =
+  useRef<HTMLInputElement>(null);
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useRef
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên dùng useRef thay vì useState?
+- useRef có phù hợp lưu cache không?
+
+---
+
+# 314. useMemo hoạt động như thế nào?
+
+## 📝 Tóm tắt
+`useMemo` ghi nhớ kết quả của một phép tính để tránh tính toán lại khi dependencies không thay đổi.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+const total = useMemo(
+  () => calcTotal(items),
+  [items]
+);
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useMemo
+
+## ❓ Câu hỏi còn lại
+- useMemo có luôn cải thiện hiệu năng không?
+- Chi phí của memoization là gì?
+
+---
+
+# 315. useCallback hoạt động như thế nào?
+
+## 📝 Tóm tắt
+`useCallback` ghi nhớ một function để tránh tạo mới ở mỗi lần render.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+const handleClick =
+  useCallback(() => {}, []);
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useCallback
+
+## ❓ Câu hỏi còn lại
+- useCallback khác useMemo như thế nào?
+- Có nên dùng cho mọi event handler không?
+
+---
+
+# 316. useLayoutEffect khác useEffect như thế nào?
+
+## 📝 Tóm tắt
+`useLayoutEffect` chạy đồng bộ sau khi DOM được cập nhật nhưng trước khi trình duyệt vẽ giao diện, còn `useEffect` chạy sau khi giao diện đã được hiển thị.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+useLayoutEffect(() => {
+  inputRef.current?.focus();
+}, []);
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useLayoutEffect
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên ưu tiên useLayoutEffect?
+- Có ảnh hưởng hiệu năng không?
+
+---
+
+# 317. useImperativeHandle là gì?
+
+## 📝 Tóm tắt
+`useImperativeHandle` cho phép component con chủ động cung cấp API cho component cha thông qua `ref`.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+useImperativeHandle(ref, () => ({
+  focus() {},
+}));
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useImperativeHandle
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên dùng thay vì props?
+- Có làm tăng mức độ coupling không?
+
+---
+
+# 318. useDebugValue là gì?
+
+## 📝 Tóm tắt
+`useDebugValue` hiển thị thông tin của Custom Hook trong React DevTools để hỗ trợ debug.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+useDebugValue(status);
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/useDebugValue
+
+## ❓ Câu hỏi còn lại
+- Có ảnh hưởng production không?
+- Khi nào nên thêm Debug Value?
+
+---
+
+# 319. React.memo là gì?
+
+## 📝 Tóm tắt
+`React.memo` ghi nhớ kết quả render của component và chỉ render lại khi props thay đổi.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+export default React.memo(Button);
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/memo
+
+## ❓ Câu hỏi còn lại
+- React.memo có thay thế useMemo không?
+- Khi nào memo gây phản tác dụng?
+
+---
+
+# 320. Hook Composition là gì?
+
+## 📝 Tóm tắt
+Hook Composition là kỹ thuật kết hợp nhiều Custom Hook nhỏ để xây dựng logic phức tạp nhưng vẫn dễ tái sử dụng và bảo trì.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+useAuth();
+usePermission();
+useProfile();
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/learn/reusing-logic-with-custom-hooks
+
+## ❓ Câu hỏi còn lại
+- Hook Composition khác Higher-Order Component thế nào?
+- Làm sao tránh Hook phụ thuộc lẫn nhau?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-06-29 — CSS Rendering, Layout & Modern Responsive Design</strong></summary>
 
 ---
