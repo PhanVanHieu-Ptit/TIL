@@ -4,6 +4,240 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-07-01 — React Data Fetching, Caching & Server State Management</strong></summary>
+
+---
+
+# 321. Client State và Server State khác nhau như thế nào?
+
+## 📝 Tóm tắt
+Client State là dữ liệu chỉ tồn tại trên frontend (UI, form, modal...), còn Server State là dữ liệu được lấy từ backend và cần đồng bộ với server.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Client State
+- Dark Mode
+- Modal Open
+
+Server State
+- Users
+- Orders
+- Products
+```
+
+## 🔗 Link tham khảo
+- https://tanstack.com/query/latest/docs/framework/react/overview
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên lưu Server State vào Redux?
+- Có nên trộn Client State và Server State không?
+
+---
+
+# 322. TanStack Query (React Query) là gì?
+
+## 📝 Tóm tắt
+TanStack Query là thư viện quản lý Server State, hỗ trợ cache, đồng bộ dữ liệu, retry và background refetch.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+const { data } = useQuery({
+  queryKey: ["users"],
+  queryFn: fetchUsers,
+});
+```
+
+## 🔗 Link tham khảo
+- https://tanstack.com/query/latest
+
+## ❓ Câu hỏi còn lại
+- TanStack Query thay thế Redux được không?
+- Khi nào không nên dùng?
+
+---
+
+# 323. Query Key là gì?
+
+## 📝 Tóm tắt
+Query Key là định danh duy nhất của một dữ liệu trong cache của TanStack Query.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+["users", page]
+```
+
+## 🔗 Link tham khảo
+- https://tanstack.com/query/latest/docs/framework/react/guides/query-keys
+
+## ❓ Câu hỏi còn lại
+- Query Key nên đặt theo quy ước nào?
+- Vì sao Query Key cần ổn định?
+
+---
+
+# 324. staleTime và gcTime khác nhau như thế nào?
+
+## 📝 Tóm tắt
+`staleTime` xác định khoảng thời gian dữ liệu được xem là còn mới, còn `gcTime` (trước đây là `cacheTime`) xác định thời gian dữ liệu được giữ trong cache sau khi không còn được sử dụng.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+useQuery({
+  staleTime: 60000,
+  gcTime: 300000,
+});
+```
+
+## 🔗 Link tham khảo
+- https://tanstack.com/query/latest/docs/framework/react/guides/important-defaults
+
+## ❓ Câu hỏi còn lại
+- Nên đặt staleTime theo loại dữ liệu như thế nào?
+- gcTime ảnh hưởng bộ nhớ ra sao?
+
+---
+
+# 325. Query Invalidation là gì?
+
+## 📝 Tóm tắt
+Query Invalidation đánh dấu dữ liệu trong cache là cũ để TanStack Query tự động tải lại khi cần.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+queryClient.invalidateQueries({
+  queryKey: ["users"],
+});
+```
+
+## 🔗 Link tham khảo
+- https://tanstack.com/query/latest/docs/framework/react/guides/query-invalidation
+
+## ❓ Câu hỏi còn lại
+- invalidateQueries khác refetchQueries thế nào?
+- Có nên invalidate toàn bộ cache không?
+
+---
+
+# 326. Optimistic Update là gì?
+
+## 📝 Tóm tắt
+Optimistic Update cập nhật giao diện ngay trước khi server phản hồi để mang lại trải nghiệm nhanh hơn.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Click Like
+↓
+UI +1
+↓
+API Request
+```
+
+## 🔗 Link tham khảo
+- https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates
+
+## ❓ Câu hỏi còn lại
+- Nếu API thất bại thì rollback thế nào?
+- Những trường hợp nào không nên dùng Optimistic Update?
+
+---
+
+# 327. Prefetching là gì?
+
+## 📝 Tóm tắt
+Prefetching là kỹ thuật tải dữ liệu trước khi người dùng thực sự cần đến để giảm thời gian chờ.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+queryClient.prefetchQuery({
+  queryKey: ["products"],
+});
+```
+
+## 🔗 Link tham khảo
+- https://tanstack.com/query/latest/docs/framework/react/guides/prefetching
+
+## ❓ Câu hỏi còn lại
+- Prefetch khi hover có hiệu quả không?
+- Có nên prefetch toàn bộ dữ liệu?
+
+---
+
+# 328. Infinite Query là gì?
+
+## 📝 Tóm tắt
+Infinite Query hỗ trợ tải dữ liệu theo từng trang và phù hợp với giao diện cuộn vô hạn.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+const {
+  fetchNextPage,
+} = useInfiniteQuery(...);
+```
+
+## 🔗 Link tham khảo
+- https://tanstack.com/query/latest/docs/framework/react/guides/infinite-queries
+
+## ❓ Câu hỏi còn lại
+- Infinite Query khác Pagination như thế nào?
+- Làm sao tránh tải trùng dữ liệu?
+
+---
+
+# 329. Suspense for Data Fetching là gì?
+
+## 📝 Tóm tắt
+Suspense cho phép React hiển thị fallback UI trong khi chờ dữ liệu hoặc tài nguyên được tải.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+<Suspense fallback={<Loading />}>
+  <UserList />
+</Suspense>
+```
+
+## 🔗 Link tham khảo
+- https://react.dev/reference/react/Suspense
+
+## ❓ Câu hỏi còn lại
+- Suspense có thay thế Loading State không?
+- TanStack Query tích hợp Suspense như thế nào?
+
+---
+
+# 330. Request Deduplication là gì?
+
+## 📝 Tóm tắt
+Request Deduplication giúp nhiều component dùng chung một request thay vì gửi nhiều request giống nhau đến server.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Component A
+        ↘
+         API Request
+        ↗
+Component B
+```
+
+## 🔗 Link tham khảo
+- https://tanstack.com/query/latest/docs/framework/react/overview
+
+## ❓ Câu hỏi còn lại
+- Request Deduplication hoạt động dựa trên Query Key như thế nào?
+- Những thư viện nào ngoài TanStack Query hỗ trợ tính năng này?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-06-30 — React Hooks Deep Dive & Custom Hook Patterns</strong></summary>
 
 ---
