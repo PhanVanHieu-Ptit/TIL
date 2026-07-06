@@ -4,6 +4,236 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-07-06 — Frontend Accessibility (a11y) & Inclusive Web Development</strong></summary>
+
+---
+
+# 331. Accessibility (a11y) là gì?
+
+## 📝 Tóm tắt
+Accessibility (a11y) là việc thiết kế và phát triển website để mọi người, bao gồm cả người khuyết tật, đều có thể sử dụng được.
+
+## 💻 Ví dụ thực tế
+
+```html
+<button>Mua ngay</button>
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Learn/Accessibility
+- https://www.w3.org/WAI/
+
+## ❓ Câu hỏi còn lại
+- Những lỗi accessibility phổ biến nhất là gì?
+- Làm thế nào để kiểm tra accessibility trong quá trình phát triển?
+
+---
+
+# 332. Semantic HTML là gì?
+
+## 📝 Tóm tắt
+Semantic HTML sử dụng các thẻ mang ý nghĩa rõ ràng để mô tả cấu trúc nội dung, giúp trình duyệt, công cụ tìm kiếm và công nghệ hỗ trợ hiểu trang web tốt hơn.
+
+## 💻 Ví dụ thực tế
+
+```html
+<header>
+<nav>
+<main>
+<section>
+<article>
+<footer>
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Glossary/Semantics
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên dùng `<section>` và khi nào nên dùng `<article>`?
+- Có nên dùng quá nhiều `<div>` không?
+
+---
+
+# 333. ARIA là gì?
+
+## 📝 Tóm tắt
+ARIA (Accessible Rich Internet Applications) bổ sung thông tin ngữ nghĩa cho các thành phần giao diện khi HTML thuần không đủ.
+
+## 💻 Ví dụ thực tế
+
+```html
+<div
+  role="button"
+  aria-label="Đóng"
+></div>
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA
+
+## ❓ Câu hỏi còn lại
+- Khi nào không nên dùng ARIA?
+- Nguyên tắc "No ARIA is better than bad ARIA" nghĩa là gì?
+
+---
+
+# 334. aria-label và aria-labelledby khác nhau như thế nào?
+
+## 📝 Tóm tắt
+`aria-label` cung cấp nhãn trực tiếp, còn `aria-labelledby` tham chiếu đến phần tử khác để lấy nội dung làm nhãn.
+
+## 💻 Ví dụ thực tế
+
+```html
+<button aria-label="Đóng"></button>
+
+<h2 id="title">Thông báo</h2>
+<div aria-labelledby="title"></div>
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Attributes
+
+## ❓ Câu hỏi còn lại
+- Khi nào nên ưu tiên `aria-labelledby`?
+- Screen reader đọc hai thuộc tính này như thế nào?
+
+---
+
+# 335. Keyboard Accessibility là gì?
+
+## 📝 Tóm tắt
+Keyboard Accessibility đảm bảo người dùng có thể thao tác toàn bộ website chỉ bằng bàn phím.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Tab
+Shift + Tab
+Enter
+Space
+Escape
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/Accessibility/Keyboard-navigable_JavaScript_widgets
+
+## ❓ Câu hỏi còn lại
+- Làm sao xử lý keyboard cho modal?
+- Những phím nào cần hỗ trợ cho custom component?
+
+---
+
+# 336. Focus Management là gì?
+
+## 📝 Tóm tắt
+Focus Management là việc điều khiển vị trí focus để người dùng sử dụng bàn phím và screen reader thuận tiện hơn.
+
+## 💻 Ví dụ thực tế
+
+```tsx
+inputRef.current?.focus();
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/Accessibility
+
+## ❓ Câu hỏi còn lại
+- Khi đóng modal nên trả focus về đâu?
+- Có nên tự động focus mọi input không?
+
+---
+
+# 337. Screen Reader là gì?
+
+## 📝 Tóm tắt
+Screen Reader là phần mềm đọc nội dung trên màn hình thành giọng nói hoặc chữ nổi để hỗ trợ người khiếm thị.
+
+## 💻 Ví dụ thực tế
+
+```txt
+NVDA
+VoiceOver
+JAWS
+```
+
+## 🔗 Link tham khảo
+- https://www.w3.org/WAI/fundamentals/accessibility-intro/
+
+## ❓ Câu hỏi còn lại
+- Nên kiểm thử với Screen Reader nào?
+- Những lỗi phổ biến khiến Screen Reader đọc sai là gì?
+
+---
+
+# 338. Color Contrast là gì?
+
+## 📝 Tóm tắt
+Color Contrast là tỷ lệ tương phản giữa màu chữ và màu nền, ảnh hưởng trực tiếp đến khả năng đọc nội dung.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Text
+⬜ White Background
+```
+
+## 🔗 Link tham khảo
+- https://www.w3.org/WAI/WCAG21/quickref/
+
+## ❓ Câu hỏi còn lại
+- WCAG yêu cầu tỷ lệ tương phản bao nhiêu?
+- Có công cụ nào kiểm tra Contrast tự động?
+
+---
+
+# 339. Skip Navigation là gì?
+
+## 📝 Tóm tắt
+Skip Navigation cung cấp liên kết giúp người dùng bàn phím bỏ qua menu và đi thẳng đến nội dung chính.
+
+## 💻 Ví dụ thực tế
+
+```html
+<a href="#main">
+  Skip to main content
+</a>
+```
+
+## 🔗 Link tham khảo
+- https://webaim.org/techniques/skipnav/
+
+## ❓ Câu hỏi còn lại
+- Có nên hiển thị Skip Link mọi lúc?
+- Những website nào đang áp dụng tốt?
+
+---
+
+# 340. Lighthouse Accessibility Audit là gì?
+
+## 📝 Tóm tắt
+Lighthouse Accessibility Audit tự động kiểm tra nhiều lỗi accessibility phổ biến và đưa ra gợi ý cải thiện.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Chrome DevTools
+↓
+Lighthouse
+↓
+Accessibility Report
+```
+
+## 🔗 Link tham khảo
+- https://developer.chrome.com/docs/lighthouse
+
+## ❓ Câu hỏi còn lại
+- Lighthouse có thay thế kiểm thử thủ công không?
+- Nên kết hợp với công cụ nào để kiểm tra toàn diện?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-07-01 — React Data Fetching, Caching & Server State Management</strong></summary>
 
 ---
