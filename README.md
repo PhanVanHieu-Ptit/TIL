@@ -4,6 +4,258 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-07-08 — Frontend Monitoring, Logging & Production Observability</strong></summary>
+
+---
+
+# 341. Frontend Monitoring là gì?
+
+## 📝 Tóm tắt
+Frontend Monitoring là quá trình theo dõi tình trạng hoạt động của ứng dụng trên môi trường production để phát hiện lỗi, suy giảm hiệu năng và các sự cố sớm nhất có thể.
+
+## 💻 Ví dụ thực tế
+
+```txt
+User
+↓
+Frontend App
+↓
+Monitoring Platform
+↓
+Alert
+```
+
+## 🔗 Link tham khảo
+- https://opentelemetry.io/docs/
+- https://web.dev/articles/vitals
+
+## ❓ Câu hỏi còn lại
+- Nên theo dõi những metric nào?
+- Bao lâu thì nên gửi dữ liệu monitoring?
+
+---
+
+# 342. Real User Monitoring (RUM) là gì?
+
+## 📝 Tóm tắt
+Real User Monitoring (RUM) thu thập dữ liệu hiệu năng và trải nghiệm từ chính người dùng khi sử dụng ứng dụng.
+
+## 💻 Ví dụ thực tế
+
+```txt
+User Click
+↓
+Page Load
+↓
+LCP, INP, CLS
+```
+
+## 🔗 Link tham khảo
+- https://web.dev/articles/vitals
+
+## ❓ Câu hỏi còn lại
+- RUM khác Synthetic Monitoring như thế nào?
+- Có nên thu thập toàn bộ người dùng không?
+
+---
+
+# 343. Synthetic Monitoring là gì?
+
+## 📝 Tóm tắt
+Synthetic Monitoring mô phỏng các kịch bản truy cập tự động để kiểm tra tình trạng hoạt động của website theo định kỳ.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Bot
+↓
+Login
+↓
+Search
+↓
+Logout
+```
+
+## 🔗 Link tham khảo
+- https://martinfowler.com/
+
+## ❓ Câu hỏi còn lại
+- Bao lâu nên chạy một lần?
+- Những luồng nào nên được kiểm tra?
+
+---
+
+# 344. Error Tracking là gì?
+
+## 📝 Tóm tắt
+Error Tracking giúp ghi nhận, phân loại và theo dõi lỗi JavaScript xảy ra trên môi trường production.
+
+## 💻 Ví dụ thực tế
+
+```txt
+TypeError
+↓
+Collect Stack Trace
+↓
+Developer Dashboard
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
+
+## ❓ Câu hỏi còn lại
+- Làm sao nhóm các lỗi giống nhau?
+- Những lỗi nào không nên ghi nhận?
+
+---
+
+# 345. Source Map là gì?
+
+## 📝 Tóm tắt
+Source Map giúp ánh xạ mã JavaScript đã được build hoặc minify về mã nguồn ban đầu để dễ debug.
+
+## 💻 Ví dụ thực tế
+
+```txt
+bundle.js
+↓
+Source Map
+↓
+App.tsx
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Tools/Debugger/How_to/Use_a_source_map
+
+## ❓ Câu hỏi còn lại
+- Có nên public Source Map?
+- Source Map ảnh hưởng bảo mật như thế nào?
+
+---
+
+# 346. Structured Logging là gì?
+
+## 📝 Tóm tắt
+Structured Logging ghi log theo định dạng có cấu trúc (ví dụ JSON) để dễ tìm kiếm và phân tích.
+
+## 💻 Ví dụ thực tế
+
+```json
+{
+  "level": "error",
+  "route": "/login",
+  "userId": "123"
+}
+```
+
+## 🔗 Link tham khảo
+- https://opentelemetry.io/docs/
+
+## ❓ Câu hỏi còn lại
+- Nên chuẩn hóa những trường dữ liệu nào?
+- Có nên log toàn bộ request không?
+
+---
+
+# 347. Correlation ID là gì?
+
+## 📝 Tóm tắt
+Correlation ID là mã định danh duy nhất giúp liên kết log giữa frontend, backend và các dịch vụ khác.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Frontend
+↓
+Request ID
+↓
+Backend
+↓
+Database
+```
+
+## 🔗 Link tham khảo
+- https://opentelemetry.io/docs/
+
+## ❓ Câu hỏi còn lại
+- Ai chịu trách nhiệm tạo Correlation ID?
+- Có nên truyền qua mọi request không?
+
+---
+
+# 348. Health Check là gì?
+
+## 📝 Tóm tắt
+Health Check là cơ chế kiểm tra nhanh xem ứng dụng hoặc dịch vụ có đang hoạt động bình thường hay không.
+
+## 💻 Ví dụ thực tế
+
+```txt
+GET /health
+↓
+200 OK
+```
+
+## 🔗 Link tham khảo
+- https://microservices.io/patterns/observability/health-check-api.html
+
+## ❓ Câu hỏi còn lại
+- Health Check nên kiểm tra những thành phần nào?
+- Khi nào trả về trạng thái lỗi?
+
+---
+
+# 349. Feature Flag Monitoring là gì?
+
+## 📝 Tóm tắt
+Feature Flag Monitoring theo dõi tác động của từng tính năng được bật/tắt để phát hiện lỗi hoặc suy giảm hiệu năng.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Enable Feature
+↓
+Collect Metrics
+↓
+Rollback
+```
+
+## 🔗 Link tham khảo
+- https://martinfowler.com/articles/feature-toggles.html
+
+## ❓ Câu hỏi còn lại
+- Nên theo dõi metric nào sau khi bật Feature Flag?
+- Bao lâu nên xóa Feature Flag cũ?
+
+---
+
+# 350. Incident Response là gì?
+
+## 📝 Tóm tắt
+Incident Response là quy trình phát hiện, xử lý và khắc phục sự cố nhằm giảm thời gian gián đoạn của hệ thống.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Alert
+↓
+Investigate
+↓
+Fix
+↓
+Postmortem
+```
+
+## 🔗 Link tham khảo
+- https://sre.google/sre-book/table-of-contents/
+
+## ❓ Câu hỏi còn lại
+- Sau mỗi sự cố nên thực hiện Postmortem như thế nào?
+- Những chỉ số nào đánh giá hiệu quả xử lý sự cố?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-07-06 — Frontend Accessibility (a11y) & Inclusive Web Development</strong></summary>
 
 ---
