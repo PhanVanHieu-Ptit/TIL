@@ -4,6 +4,255 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+<summary><strong>📅 2026-07-13 — Authentication, Authorization & Web Security</strong></summary>
+
+---
+
+# 351. Authentication và Authorization khác nhau như thế nào?
+
+## 📝 Tóm tắt
+Authentication xác minh danh tính của người dùng, còn Authorization xác định người dùng được phép thực hiện những hành động nào sau khi đã xác thực.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Login
+↓
+Authentication
+↓
+Authorization
+↓
+Access Dashboard
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/Security
+
+## ❓ Câu hỏi còn lại
+- Có thể Authorization mà không cần Authentication không?
+- RBAC và ABAC khác nhau như thế nào?
+
+---
+
+# 352. Session-based Authentication là gì?
+
+## 📝 Tóm tắt
+Session-based Authentication lưu trạng thái đăng nhập trên server và sử dụng Session ID để nhận diện người dùng trong các request tiếp theo.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Login
+↓
+Session ID
+↓
+Cookie
+↓
+Server
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies
+
+## ❓ Câu hỏi còn lại
+- Session hết hạn như thế nào?
+- Có nên lưu Session trên Redis không?
+
+---
+
+# 353. JWT (JSON Web Token) là gì?
+
+## 📝 Tóm tắt
+JWT là chuẩn định dạng token chứa các thông tin (claims) được ký số để xác thực và trao đổi dữ liệu giữa client và server.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Header
+.
+Payload
+.
+Signature
+```
+
+## 🔗 Link tham khảo
+- https://jwt.io/introduction
+
+## ❓ Câu hỏi còn lại
+- Nên lưu JWT ở đâu?
+- JWT có thể bị giả mạo không?
+
+---
+
+# 354. Access Token và Refresh Token khác nhau như thế nào?
+
+## 📝 Tóm tắt
+Access Token có thời gian sống ngắn để truy cập API, còn Refresh Token dùng để lấy Access Token mới khi token cũ hết hạn.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Login
+↓
+Access Token
+↓
+Expired
+↓
+Refresh Token
+↓
+New Access Token
+```
+
+## 🔗 Link tham khảo
+- https://oauth.net/2/
+
+## ❓ Câu hỏi còn lại
+- Refresh Token nên lưu ở đâu?
+- Khi nào cần thu hồi Refresh Token?
+
+---
+
+# 355. HttpOnly Cookie là gì?
+
+## 📝 Tóm tắt
+HttpOnly Cookie là cookie không thể truy cập bằng JavaScript, giúp giảm nguy cơ đánh cắp token thông qua XSS.
+
+## 💻 Ví dụ thực tế
+
+```http
+Set-Cookie:
+HttpOnly
+Secure
+SameSite=Lax
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies
+
+## ❓ Câu hỏi còn lại
+- HttpOnly có ngăn được CSRF không?
+- Khi nào nên kết hợp với SameSite?
+
+---
+
+# 356. Cross-Site Scripting (XSS) là gì?
+
+## 📝 Tóm tắt
+XSS là lỗ hổng cho phép kẻ tấn công chèn và thực thi mã JavaScript độc hại trên trình duyệt của người dùng.
+
+## 💻 Ví dụ thực tế
+
+```html
+<script>
+alert("XSS");
+</script>
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/XSS
+
+## ❓ Câu hỏi còn lại
+- React giảm thiểu XSS như thế nào?
+- Khi nào `dangerouslySetInnerHTML` trở nên nguy hiểm?
+
+---
+
+# 357. Cross-Site Request Forgery (CSRF) là gì?
+
+## 📝 Tóm tắt
+CSRF là kiểu tấn công lợi dụng trình duyệt đã đăng nhập để gửi các request ngoài ý muốn đến server.
+
+## 💻 Ví dụ thực tế
+
+```txt
+User Login
+↓
+Visit Malicious Site
+↓
+Auto Submit Request
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/CSRF
+
+## ❓ Câu hỏi còn lại
+- SameSite Cookie giúp giảm CSRF như thế nào?
+- CSRF Token hoạt động ra sao?
+
+---
+
+# 358. Content Security Policy (CSP) là gì?
+
+## 📝 Tóm tắt
+Content Security Policy là cơ chế bảo mật giúp kiểm soát nguồn tài nguyên được phép tải và thực thi trên website.
+
+## 💻 Ví dụ thực tế
+
+```http
+Content-Security-Policy:
+default-src 'self'
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+
+## ❓ Câu hỏi còn lại
+- CSP giúp giảm XSS như thế nào?
+- Những directive nào được sử dụng phổ biến?
+
+---
+
+# 359. CORS là gì?
+
+## 📝 Tóm tắt
+CORS (Cross-Origin Resource Sharing) là cơ chế cho phép hoặc từ chối các request giữa các origin khác nhau.
+
+## 💻 Ví dụ thực tế
+
+```txt
+Frontend
+↓
+OPTIONS
+↓
+API Server
+```
+
+## 🔗 Link tham khảo
+- https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+
+## ❓ Câu hỏi còn lại
+- Khi nào trình duyệt gửi Preflight Request?
+- Những header nào liên quan đến CORS?
+
+---
+
+# 360. OAuth 2.0 là gì?
+
+## 📝 Tóm tắt
+OAuth 2.0 là giao thức ủy quyền cho phép ứng dụng truy cập tài nguyên của người dùng trên một dịch vụ khác mà không cần biết mật khẩu của họ.
+
+## 💻 Ví dụ thực tế
+
+```txt
+User
+↓
+Google Login
+↓
+Authorization Code
+↓
+Access Token
+```
+
+## 🔗 Link tham khảo
+- https://oauth.net/2/
+
+## ❓ Câu hỏi còn lại
+- Authorization Code Flow hoạt động như thế nào?
+- PKCE giải quyết vấn đề gì?
+
+</details>
+
+<details>
 <summary><strong>📅 2026-07-08 — Frontend Monitoring, Logging & Production Observability</strong></summary>
 
 ---
