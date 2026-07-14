@@ -4,6 +4,495 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+  <summary><strong>📅 2026-07-14 — Frontend Senior Theory (161–170)</strong></summary>
+  
+
+> Mục tiêu: Ôn tập kiến thức nền tảng và mở rộng sang các chủ đề Senior Frontend Engineer. Các câu hỏi được sắp xếp từ cơ bản → nâng cao.
+
+---
+
+## 161. Virtual DOM thực sự là gì? Có phải React luôn cập nhật toàn bộ Virtual DOM không?
+
+### Trả lời
+
+Virtual DOM (VDOM) là một object JavaScript mô tả cấu trúc UI.
+
+Khi state hoặc props thay đổi:
+
+1. React tạo Virtual DOM mới.
+2. So sánh với Virtual DOM cũ (Diffing).
+3. Tìm ra những node thay đổi.
+4. Chỉ cập nhật DOM thật tại vị trí cần thiết.
+
+Không phải toàn bộ Virtual DOM đều được render lại lên DOM thật.
+
+Điều được tạo lại là cây Virtual DOM trong bộ nhớ, còn DOM thật chỉ cập nhật phần khác biệt.
+
+Ví dụ:
+
+```tsx
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <>
+      <button onClick={() => setCount(c => c + 1)}>
+        +
+      </button>
+
+      <h1>{count}</h1>
+
+      <Footer />
+    </>
+  );
+}
+```
+
+Ở ví dụ trên:
+
+- Counter render lại
+- Footer cũng được gọi lại
+- Nhưng nếu Footer không thay đổi thì DOM của Footer không bị cập nhật.
+
+---
+
+## 162. React Diffing Algorithm hoạt động như thế nào?
+
+### Trả lời
+
+React không so sánh toàn bộ hai cây DOM vì chi phí là O(n³).
+
+Thay vào đó React sử dụng heuristic O(n).
+
+Hai giả định:
+
+1. Hai element khác type ⇒ khác hoàn toàn.
+2. Developer cung cấp key để xác định danh tính của phần tử.
+
+Ví dụ:
+
+```tsx
+<div />
+<span />
+```
+
+React sẽ:
+
+- Unmount div
+- Mount span mới
+
+Không cố gắng reuse.
+
+Ví dụ list:
+
+```tsx
+[
+  A,
+  B,
+  C
+]
+```
+
+thành
+
+```tsx
+[
+  X,
+  A,
+  B,
+  C
+]
+```
+
+Nếu không có key:
+
+React nghĩ:
+
+- A → X
+- B → A
+- C → B
+
+=> Render lại gần như toàn bộ.
+
+Có key:
+
+```tsx
+[
+  { id: 1 },
+  { id: 2 },
+  { id: 3 }
+]
+```
+
+React biết:
+
+- thêm X
+- giữ nguyên A B C
+
+---
+
+## 163. Vì sao không nên dùng index làm key?
+
+### Trả lời
+
+Index không đại diện cho identity của item.
+
+Ví dụ:
+
+```tsx
+[
+  Apple,
+  Banana,
+  Orange
+]
+```
+
+Xóa Apple.
+
+Index mới:
+
+```
+0 Banana
+1 Orange
+```
+
+React nghĩ:
+
+Apple → Banana
+
+Banana → Orange
+
+Orange bị remove
+
+Điều này gây:
+
+- mất state
+- animation lỗi
+- input nhảy giá trị
+- performance giảm
+
+Index chỉ nên dùng khi:
+
+- List cố định
+- Không reorder
+- Không insert
+- Không delete
+
+---
+
+## 164. React.memo hoạt động như thế nào?
+
+### Trả lời
+
+React.memo cache kết quả render component.
+
+Ví dụ
+
+```tsx
+const Child = React.memo(() => {
+    console.log("render");
+    return <div>Hello</div>;
+});
+```
+
+Parent render lại.
+
+Nếu props không đổi:
+
+```
+React skip render Child
+```
+
+Nếu props đổi:
+
+```
+React render Child
+```
+
+Lưu ý:
+
+React.memo chỉ so sánh shallow comparison.
+
+Ví dụ
+
+```tsx
+data={{name:"A"}}
+```
+
+Mỗi render đều tạo object mới.
+
+=> memo không có tác dụng.
+
+---
+
+## 165. useMemo khác gì useCallback?
+
+### Trả lời
+
+useMemo cache giá trị.
+
+```tsx
+const value = useMemo(() => {
+    return heavyCalculation();
+}, []);
+```
+
+useCallback cache function.
+
+```tsx
+const onClick = useCallback(() => {
+    save();
+}, []);
+```
+
+Thực tế:
+
+```tsx
+useCallback(fn, deps)
+
+≈
+
+useMemo(() => fn, deps)
+```
+
+---
+
+## 166. Khi nào KHÔNG nên dùng useMemo?
+
+### Trả lời
+
+Nhiều người nghĩ useMemo luôn tăng performance.
+
+Thực tế:
+
+React vẫn phải:
+
+- lưu cache
+- so dependency
+- quản lý bộ nhớ
+
+Nếu phép tính chỉ là:
+
+```tsx
+const fullName = first + last;
+```
+
+thì useMemo còn tốn hơn.
+
+Chỉ dùng khi:
+
+- tính toán nặng
+- object truyền xuống memo component
+- dependency ít thay đổi
+
+Không dùng để "bọc mọi thứ".
+
+---
+
+## 167. Tại sao mutation lại nguy hiểm trong React?
+
+### Trả lời
+
+React dựa vào reference để biết dữ liệu thay đổi.
+
+Ví dụ sai:
+
+```tsx
+user.name = "Peter";
+
+setUser(user);
+```
+
+Reference không đổi.
+
+React có thể bỏ qua render.
+
+Đúng:
+
+```tsx
+setUser({
+    ...user,
+    name: "Peter"
+});
+```
+
+Reference mới.
+
+React biết cần render.
+
+---
+
+## 168. Event Delegation trong React là gì?
+
+### Trả lời
+
+React không gắn event cho từng element.
+
+Ví dụ:
+
+```tsx
+1000 button
+```
+
+Không phải:
+
+```
+1000 listener
+```
+
+React dùng Event Delegation.
+
+Chỉ có một listener lớn được gắn lên root container.
+
+Khi click:
+
+```
+Browser Event
+
+↓
+
+Root Listener
+
+↓
+
+Synthetic Event
+
+↓
+
+Component
+```
+
+Lợi ích:
+
+- ít listener
+- ít memory
+- quản lý event thống nhất
+- hoạt động giống nhau trên nhiều trình duyệt
+
+---
+
+## 169. React Fiber giải quyết vấn đề gì?
+
+### Trả lời
+
+Trước Fiber:
+
+Render phải chạy xong mới trả quyền cho browser.
+
+Nếu render:
+
+```
+100 ms
+```
+
+Browser bị block 100 ms.
+
+Fiber chia nhỏ công việc.
+
+Ví dụ:
+
+```
+Task 1
+
+↓
+
+Pause
+
+↓
+
+Browser render
+
+↓
+
+Task 2
+
+↓
+
+Pause
+
+↓
+
+Task 3
+```
+
+Lợi ích:
+
+- UI mượt hơn
+- Concurrent Rendering
+- Transition
+- Suspense
+- Streaming SSR
+
+Fiber là nền tảng của React hiện đại.
+
+---
+
+## 170. Một Senior Frontend sẽ đánh giá performance của một màn hình theo những tiêu chí nào?
+
+### Trả lời
+
+Thay vì chỉ nhìn FPS hoặc Lighthouse, Senior thường đánh giá toàn diện:
+
+### Rendering
+
+- Số lần render
+- Re-render không cần thiết
+- Component tree
+
+### Network
+
+- Request waterfall
+- Caching
+- Compression
+- HTTP/2 hoặc HTTP/3
+
+### JavaScript
+
+- Bundle size
+- Code splitting
+- Tree shaking
+- Lazy loading
+
+### Runtime
+
+- CPU usage
+- Memory leak
+- Long Task
+- Garbage Collection
+
+### Core Web Vitals
+
+- LCP
+- CLS
+- INP
+
+### React
+
+- React Profiler
+- Flamegraph
+- Commit duration
+
+### User Experience
+
+- Skeleton loading
+- Optimistic UI
+- Prefetch dữ liệu
+- Virtualization cho danh sách lớn
+
+Một Senior không chỉ tối ưu điểm Lighthouse mà còn tối ưu trải nghiệm thực tế của người dùng trên nhiều loại thiết bị và điều kiện mạng khác nhau.
+
+---
+
+## 🎯 Mức độ
+
+- **161–163:** React Rendering Foundation
+- **164–166:** React Optimization
+- **167–169:** React Internal
+- **170:** Senior Performance Mindset
+
+</details>
+   
+<details>
 <summary><strong>📅 2026-07-13 — Authentication, Authorization & Web Security</strong></summary>
 
 ---
