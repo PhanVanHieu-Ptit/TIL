@@ -4,6 +4,653 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+  <summary><strong>📅 2026-07-15 —  React Rendering, Browser Internals và React Architecture.</strong></summary>
+---
+
+# 171. Vì sao React sử dụng Shallow Comparison thay vì Deep Comparison?
+
+## 📚 Kiến thức cần nhớ
+
+React sử dụng **Object.is()** (hoặc so sánh tham chiếu) trong nhiều cơ chế như:
+
+- React.memo()
+- PureComponent
+- useMemo()
+- useCallback()
+- Dependency Array của Hooks
+
+Ví dụ:
+
+```tsx
+const a = { name: "React" };
+const b = { name: "React" };
+
+a === b; // false
+```
+
+Hai object có cùng dữ liệu nhưng khác địa chỉ bộ nhớ nên React coi là khác nhau.
+
+---
+
+## 🧠 Kiến thức mới
+
+Nếu React Deep Compare:
+
+```tsx
+{
+  user:{
+      profile:{
+          address:{
+             city:"HCM"
+          }
+      }
+}
+```
+
+Mỗi lần render React phải duyệt toàn bộ object.
+
+Độ phức tạp:
+
+```
+O(n)
+```
+
+hoặc lớn hơn với object lồng nhau.
+
+Trong khi Shallow Compare chỉ cần:
+
+```
+O(1)
+```
+
+để so sánh reference.
+
+Đây là một trong những lý do React yêu cầu dữ liệu phải **immutable**.
+
+---
+
+## ⚖️ Trade-off
+
+Ưu điểm
+
+- Nhanh.
+- Đơn giản.
+- Dễ tối ưu.
+
+Nhược điểm
+
+- Dễ render lại nếu tạo object mới liên tục.
+
+---
+
+## 💼 Case thực tế
+
+Sai:
+
+```tsx
+<Table columns={[...columns]} />
+```
+
+Mỗi render đều tạo array mới.
+
+Đúng:
+
+```tsx
+const memoColumns = useMemo(() => columns, []);
+```
+
+---
+
+## ⚠️ Sai lầm phổ biến
+
+Nghĩ rằng:
+
+```
+React.memo()
+```
+
+luôn giúp tăng performance.
+
+Nếu props luôn tạo object mới thì memo gần như vô tác dụng.
+
+---
+
+## 🎯 Interview Follow-up
+
+Nếu React chuyển sang Deep Compare thì hiệu năng sẽ thay đổi như thế nào?
+
+---
+
+# 172. Tại sao Closure là nguyên nhân của rất nhiều bug trong React Hooks?
+
+## 📚 Kiến thức cần nhớ
+
+Closure lưu lại biến tại thời điểm function được tạo.
+
+Ví dụ:
+
+```tsx
+const [count, setCount] = useState(0);
+
+useEffect(() => {
+    setInterval(() => {
+        console.log(count);
+    },1000);
+}, []);
+```
+
+Luôn in:
+
+```
+0
+```
+
+---
+
+## 🧠 Kiến thức mới
+
+Hook không lưu state.
+
+Function mới được tạo mỗi lần render.
+
+Closure giữ reference của render cũ.
+
+Đây gọi là:
+
+```
+Stale Closure
+```
+
+---
+
+## ⚖️ Cách xử lý
+
+Có thể sử dụng:
+
+- Dependency Array phù hợp.
+- Functional Update.
+
+```tsx
+setCount(c => c + 1);
+```
+
+hoặc
+
+```tsx
+useRef()
+```
+
+để lưu giá trị mới nhất khi phù hợp.
+
+---
+
+## 💼 Case thực tế
+
+Các bug thường gặp:
+
+- WebSocket
+- MQTT
+- Event Listener
+- setInterval
+- setTimeout
+
+---
+
+## ⚠️ Sai lầm phổ biến
+
+Thêm toàn bộ biến vào dependency mà không hiểu nguyên nhân.
+
+Điều này đôi khi khiến effect chạy liên tục.
+
+---
+
+## 🎯 Interview Follow-up
+
+Vì sao useRef có thể giải quyết Stale Closure?
+
+---
+
+# 173. Context API có thực sự thay thế được Redux không?
+
+## 📚 Kiến thức cần nhớ
+
+Context chỉ là cơ chế truyền dữ liệu.
+
+Redux là thư viện quản lý state.
+
+Hai khái niệm này không hoàn toàn tương đương.
+
+---
+
+## 🧠 Kiến thức mới
+
+Khi value của Context thay đổi:
+
+```tsx
+<UserContext.Provider value={value}>
+```
+
+mọi component sử dụng Context đó đều được thông báo để render lại, ngay cả khi chỉ sử dụng một phần của dữ liệu.
+
+---
+
+## ⚖️ Trade-off
+
+Context phù hợp:
+
+- Theme
+- Language
+- Auth
+
+Redux/Zustand phù hợp:
+
+- Dashboard
+- Trading
+- Maps
+- Editor
+- Realtime
+
+---
+
+## 💼 Case thực tế
+
+Một bản đồ có:
+
+```
+500 Marker
+
+↓
+
+Context update
+
+↓
+
+500 Marker render
+```
+
+Hiệu năng sẽ giảm đáng kể.
+
+---
+
+## ⚠️ Kiến thức mới
+
+Giải pháp hiện nay:
+
+- Zustand
+- Jotai
+- Context Selector
+- useSyncExternalStore
+
+---
+
+## 🎯 Interview Follow-up
+
+Vì sao Zustand thường có ít re-render hơn Context?
+
+---
+
+# 174. Browser xử lý một lần click như thế nào từ lúc người dùng nhấn chuột đến khi giao diện thay đổi?
+
+## 📚 Kiến thức cần nhớ
+
+Luồng xử lý tổng quát:
+
+```
+Mouse Click
+
+↓
+
+Browser Event
+
+↓
+
+Event Loop
+
+↓
+
+JavaScript Handler
+
+↓
+
+React Update
+
+↓
+
+Render
+
+↓
+
+Commit
+
+↓
+
+Style
+
+↓
+
+Layout
+
+↓
+
+Paint
+
+↓
+
+Composite
+
+↓
+
+GPU
+
+↓
+
+Monitor
+```
+
+---
+
+## 🧠 Kiến thức mới
+
+Không phải mọi thay đổi đều đi qua đầy đủ các bước.
+
+Ví dụ:
+
+```css
+transform
+opacity
+```
+
+chỉ cần:
+
+```
+Composite
+```
+
+---
+
+## 💼 Case thực tế
+
+Animation bằng:
+
+```css
+left
+```
+
+thường tốn chi phí hơn:
+
+```css
+transform
+```
+
+vì có thể phát sinh Layout.
+
+---
+
+## 🎯 Interview Follow-up
+
+Vì sao Chrome khuyến nghị animate bằng transform?
+
+---
+
+# 175. React Fiber khác Stack Reconciler cũ ở điểm nào?
+
+## 📚 Kiến thức cần nhớ
+
+Trước React Fiber:
+
+```
+Render
+
+↓
+
+Không thể dừng
+
+↓
+
+UI bị block
+```
+
+---
+
+## 🧠 Kiến thức mới
+
+Fiber chia nhỏ công việc.
+
+```
+Task
+
+↓
+
+Pause
+
+↓
+
+Browser Render
+
+↓
+
+Resume
+```
+
+Đây là nền tảng cho:
+
+- Concurrent Rendering
+- Suspense
+- Transition
+
+---
+
+## ⚖️ Trade-off
+
+Fiber tăng khả năng phản hồi của UI nhưng cũng làm kiến trúc React phức tạp hơn.
+
+---
+
+## 🎯 Interview Follow-up
+
+Fiber có phải Multi-thread không?
+
+---
+
+# 176. Vì sao React Fiber sử dụng Linked List thay vì Tree thông thường?
+
+## 📚 Kiến thức mới
+
+Fiber Node gồm:
+
+```text
+child
+
+sibling
+
+return
+
+alternate
+```
+
+Thay vì lưu danh sách con bằng mảng.
+
+---
+
+## Lợi ích
+
+Cho phép:
+
+- Tạm dừng.
+- Tiếp tục.
+- Bỏ qua.
+- Ưu tiên node.
+
+điều mà tree truyền thống khó thực hiện hiệu quả.
+
+---
+
+## 🎯 Interview Follow-up
+
+alternate Fiber dùng để làm gì?
+
+---
+
+# 177. React Scheduler khác Event Loop của JavaScript như thế nào?
+
+## 📚 Kiến thức cần nhớ
+
+Event Loop thuộc JavaScript Engine.
+
+Scheduler là cơ chế nội bộ của React để quyết định thứ tự xử lý các công việc render.
+
+---
+
+## 🧠 Kiến thức mới
+
+React phân loại mức ưu tiên cho công việc (ví dụ: cập nhật do người dùng tương tác thường được ưu tiên hơn cập nhật nền) để cải thiện trải nghiệm.
+
+---
+
+## 💼 Case thực tế
+
+Typing trong input luôn cần phản hồi nhanh hơn việc render danh sách lớn.
+
+---
+
+## 🎯 Interview Follow-up
+
+Nếu không có Scheduler thì Concurrent Rendering còn hoạt động được không?
+
+---
+
+# 178. Làm sao tìm nguyên nhân một Component render 200 lần?
+
+## 📚 Checklist của Senior
+
+Sử dụng:
+
+- React DevTools
+- React Profiler
+- Flamegraph
+- Highlight Updates
+
+Kiểm tra:
+
+- Props mới?
+- Context update?
+- State update?
+- Parent render?
+- Callback mới?
+- Object mới?
+
+---
+
+## 🧠 Kiến thức mới
+
+Không phải nhiều render là lỗi.
+
+Quan trọng là:
+
+- Render mất bao lâu.
+- Có commit lên DOM hay không.
+- Có ảnh hưởng đến trải nghiệm người dùng hay không.
+
+---
+
+## 🎯 Interview Follow-up
+
+Render 100 lần nhưng Commit chỉ 2 lần có đáng lo không?
+
+---
+
+# 179. Làm sao render 100.000 Marker trên bản đồ?
+
+## 📚 Kiến thức mới
+
+Senior thường kết hợp nhiều kỹ thuật:
+
+- Marker Clustering
+- Virtualization
+- Canvas
+- WebGL
+- Web Worker
+- Tile Loading
+- Lazy Rendering
+
+---
+
+## 💼 Case thực tế
+
+Google Maps không render toàn bộ marker bằng DOM.
+
+Tùy lớp dữ liệu và mức thu phóng, có thể sử dụng các kỹ thuật như clustering hoặc rendering bằng Canvas/WebGL để giảm số lượng phần tử cần hiển thị.
+
+---
+
+## ⚠️ Sai lầm phổ biến
+
+Hiển thị:
+
+```
+100.000 DOM Node
+```
+
+cùng lúc.
+
+---
+
+## 🎯 Interview Follow-up
+
+Canvas và WebGL khác nhau ở điểm nào khi render bản đồ?
+
+---
+
+# 180. Một Senior Frontend sẽ thiết kế Frontend Architecture cho dự án lớn như thế nào?
+
+## 📚 Kiến thức cần nhớ
+
+Một dự án lớn thường cần quan tâm:
+
+- Feature-based Structure
+- Shared Components
+- Design System
+- State Management
+- API Layer
+- Error Handling
+- Logging
+- Monitoring
+- Testing Strategy
+- CI/CD
+
+---
+
+## 🧠 Kiến thức mới
+
+Mục tiêu không phải là có cấu trúc "đẹp" mà là:
+
+- Dễ mở rộng.
+- Dễ review.
+- Dễ onboarding.
+- Dễ thay thế module.
+- Giảm Technical Debt.
+
+---
+
+## 💼 Case thực tế
+
+Một dự án với hơn 100 developer thường cần thêm các quy ước như:
+
+- Code Owners
+- ADR (Architecture Decision Record)
+- Monorepo hoặc kiến trúc phù hợp với quy mô
+- Shared UI Library
+- Convention thống nhất
+- Automated Quality Gate
+
+---
+
+## 🎯 Interview Follow-up
+
+Nếu phải migrate toàn bộ dự án từ Redux sang Zustand mà không được dừng phát triển tính năng, bạn sẽ lập kế hoạch như thế nào?
+</details>
+
+<details>
   <summary><strong>📅 2026-07-14 — Frontend Senior Theory (161–170)</strong></summary>
   
 
