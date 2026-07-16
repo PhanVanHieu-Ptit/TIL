@@ -2,10 +2,577 @@
 Today I Learned
 
 # 📚 Frontend Learning Journal
+<details>
+  <summary><strong>📅 2026-07-16 —  React Hooks, Concurrent Rendering, State Management và Performance </strong></summary>
+
+> Mục tiêu:
+>
+> - Ôn tập kiến thức nền.
+> - Học thêm kiến thức mới thường gặp trong các cuộc phỏng vấn Senior Frontend.
+> - Hiểu bản chất thay vì chỉ ghi nhớ API.
+
+---
+
+# 181. Tại sao React yêu cầu Hooks phải được gọi theo đúng thứ tự?
+
+## 📚 Kiến thức cần nhớ
+
+React **không lưu state bên trong function**.
+
+Thay vào đó, React lưu state trong Fiber Node theo **thứ tự Hooks được gọi**.
+
+Ví dụ:
+
+```tsx
+function App() {
+    const [name] = useState("");
+    const [age] = useState(18);
+}
+```
+
+React nội bộ lưu giống như:
+
+```text
+Fiber
+
+↓
+
+Hook #1 → name
+
+↓
+
+Hook #2 → age
+```
+
+Nếu thứ tự thay đổi, React sẽ đọc nhầm state.
+
+---
+
+## 🧠 Deep Dive
+
+Ví dụ sai:
+
+```tsx
+if (isAdmin) {
+    useEffect(() => {});
+}
+```
+
+Render lần 1
+
+```
+Hook1
+Hook2
+Hook3
+```
+
+Render lần 2
+
+```
+Hook1
+Hook3
+```
+
+Lúc này Hook3 sẽ bị React hiểu thành Hook2.
+
+Đó là lý do có Rule:
+
+```
+Never call Hooks conditionally.
+```
+
+---
+
+## ⚖️ Trade-off
+
+Việc bắt buộc thứ tự giúp React không cần gán ID cho từng Hook, từ đó giảm chi phí quản lý và tăng tốc độ render.
+
+---
+
+## 💼 Case thực tế
+
+Đây là nguyên nhân phổ biến gây lỗi:
+
+```
+Rendered fewer hooks than expected.
+```
+
+---
+
+## 🎯 Interview Follow-up 1
+
+### Vì sao React không gán ID cho từng Hook thay vì dùng thứ tự?
+
+**Trả lời**
+
+Nếu mỗi Hook có ID riêng:
+
+- React phải tạo và quản lý ID.
+- Phải map ID → state ở mỗi lần render.
+- Tăng chi phí bộ nhớ và thời gian tra cứu.
+
+Thiết kế dựa trên thứ tự giúp React tối ưu hơn trong phần lớn trường hợp.
+
+---
+
+## 🎯 Interview Follow-up 2
+
+### ESLint có thể phát hiện Hook gọi sai vị trí như thế nào?
+
+**Trả lời**
+
+Plugin `eslint-plugin-react-hooks` phân tích AST (Abstract Syntax Tree) của mã nguồn để phát hiện việc gọi Hook trong `if`, `for`, `while`, hoặc bên trong callback/hàm lồng nhau.
+
+---
+
+# 182. useRef khác gì useState?
+
+## 📚 Kiến thức cần nhớ
+
+| useState | useRef |
+|----------|---------|
+| Thay đổi sẽ render lại | Không render lại |
+| Dùng cho UI | Dùng lưu dữ liệu |
+
+---
+
+Ví dụ:
+
+```tsx
+const count = useRef(0);
+
+count.current++;
+```
+
+Component không render.
+
+---
+
+## 🧠 Deep Dive
+
+React coi `ref.current` là mutable.
+
+React không theo dõi sự thay đổi của nó.
+
+Do đó:
+
+```
+ref.current = ...
+```
+
+không kích hoạt Rendering.
+
+---
+
+## 💼 Case thực tế
+
+useRef thường dùng cho:
+
+- DOM Element
+- Timer ID
+- WebSocket
+- Previous State
+- AbortController
+
+---
+
+## 🎯 Interview Follow-up
+
+### Khi nào không nên dùng useRef để lưu state?
+
+**Trả lời**
+
+Nếu dữ liệu cần hiển thị lên giao diện, nên dùng `useState` hoặc một cơ chế quản lý state phù hợp.
+
+Nếu dùng `useRef`, UI sẽ không tự cập nhật khi giá trị thay đổi.
+
+---
+
+# 183. React Batch Update là gì?
+
+## 📚 Kiến thức cần nhớ
+
+React có thể gộp nhiều lần cập nhật state thành một lần render.
+
+Ví dụ:
+
+```tsx
+setCount(c => c + 1);
+setOpen(true);
+setLoading(false);
+```
+
+Thông thường React sẽ thực hiện một lần render thay vì ba lần.
+
+---
+
+## 🧠 Deep Dive
+
+Từ React 18, Automatic Batching được mở rộng cho nhiều ngữ cảnh bất đồng bộ (ví dụ Promise, `setTimeout`, native event trong các trường hợp được React quản lý).
+
+Điều này giúp giảm số lần render không cần thiết.
+
+---
+
+## 🎯 Interview Follow-up
+
+### Có trường hợp nào React không Batch không?
+
+**Trả lời**
+
+Có. Một số API như `flushSync()` được thiết kế để buộc React xử lý cập nhật ngay lập tức thay vì chờ batch.
+
+---
+
+# 184. useLayoutEffect khác gì useEffect?
+
+## 📚 Kiến thức cần nhớ
+
+```
+Render
+
+↓
+
+DOM Update
+
+↓
+
+useLayoutEffect
+
+↓
+
+Paint
+
+↓
+
+useEffect
+```
+
+---
+
+## 🧠 Deep Dive
+
+`useLayoutEffect` chạy sau khi DOM được cập nhật nhưng trước khi trình duyệt vẽ khung hình.
+
+Phù hợp khi cần:
+
+- Đo kích thước (`getBoundingClientRect`)
+- Đồng bộ scroll
+- Tránh nhấp nháy giao diện (flicker)
+
+---
+
+## ⚠️ Sai lầm phổ biến
+
+Lạm dụng `useLayoutEffect` có thể làm chậm quá trình Paint vì nó chặn browser tiếp tục render.
+
+---
+
+## 🎯 Interview Follow-up
+
+### Vì sao `useLayoutEffect` không phù hợp để fetch API?
+
+**Trả lời**
+
+Fetch dữ liệu không cần chạy trước khi Paint. Nếu đặt trong `useLayoutEffect`, có thể trì hoãn việc hiển thị giao diện mà không mang lại lợi ích.
+
+---
+
+# 185. Controlled Form có luôn tốt hơn Uncontrolled Form?
+
+## 📚 Kiến thức cần nhớ
+
+Không.
+
+Lựa chọn phụ thuộc vào yêu cầu của ứng dụng.
+
+---
+
+## 💼 Case thực tế
+
+Controlled:
+
+- Validation realtime
+- Dynamic Form
+- Wizard Form
+
+Uncontrolled:
+
+- Upload File
+- Form hàng trăm input
+- Tích hợp thư viện không thuộc React
+
+---
+
+## 🎯 Interview Follow-up
+
+### Vì sao React Hook Form ưu tiên Uncontrolled Component?
+
+**Trả lời**
+
+React Hook Form tận dụng `ref` để đọc giá trị trực tiếp từ DOM, giúp giảm số lần render khi người dùng nhập liệu và cải thiện hiệu năng với form lớn.
+
+---
+
+# 186. Selector Pattern là gì? Vì sao Zustand và Redux đều sử dụng?
+
+## 📚 Kiến thức cần nhớ
+
+Selector chỉ lấy phần dữ liệu cần thiết.
+
+Ví dụ:
+
+```tsx
+const name = useUserStore(state => state.name);
+```
+
+Không lấy toàn bộ store.
+
+---
+
+## 🧠 Deep Dive
+
+Nếu component subscribe toàn bộ store:
+
+```
+Store Update
+
+↓
+
+Component Render
+```
+
+Dù dữ liệu sử dụng không thay đổi.
+
+Selector giúp giảm số lượng render.
+
+---
+
+## 🎯 Interview Follow-up
+
+### Selector có phải lúc nào cũng loại bỏ re-render không?
+
+**Trả lời**
+
+Không.
+
+Nếu selector trả về object hoặc array mới ở mỗi lần gọi thì component vẫn có thể render lại do tham chiếu thay đổi.
+
+---
+
+# 187. Vì sao React khuyến khích Functional Update?
+
+## 📚 Kiến thức cần nhớ
+
+Sai:
+
+```tsx
+setCount(count + 1);
+setCount(count + 1);
+```
+
+Kết quả:
+
+```
+1
+```
+
+Đúng:
+
+```tsx
+setCount(c => c + 1);
+setCount(c => c + 1);
+```
+
+Kết quả:
+
+```
+2
+```
+
+---
+
+## 🧠 Deep Dive
+
+Functional Update luôn nhận giá trị state mới nhất mà React đang xử lý trong hàng đợi cập nhật (update queue), giúp tránh các lỗi liên quan đến stale state.
+
+---
+
+## 🎯 Interview Follow-up
+
+### Functional Update có luôn cần thiết không?
+
+**Trả lời**
+
+Không.
+
+Nếu state mới không phụ thuộc vào state cũ thì có thể truyền trực tiếp giá trị.
+
+Ví dụ:
+
+```tsx
+setOpen(true);
+```
+
+---
+
+# 188. React Profiler đo những gì?
+
+## 📚 Kiến thức cần nhớ
+
+Profiler hiển thị:
+
+- Render Duration
+- Commit Duration
+- Render Count
+- Flamegraph
+
+---
+
+## 🧠 Deep Dive
+
+Điều quan trọng không chỉ là số lần render.
+
+Cần xem:
+
+- Component nào render lâu.
+- Commit nào tốn thời gian.
+- Thành phần nào là nút thắt cổ chai.
+
+---
+
+## 🎯 Interview Follow-up
+
+### Render nhiều có luôn là vấn đề không?
+
+**Trả lời**
+
+Không.
+
+Một component render rất nhanh có thể không ảnh hưởng đến trải nghiệm người dùng.
+
+Ngược lại, chỉ một lần render nhưng kéo dài hàng chục mili giây cũng có thể gây giật giao diện.
+
+---
+
+# 189. Tại sao nên ưu tiên Composition hơn Inheritance trong React?
+
+## 📚 Kiến thức cần nhớ
+
+React được thiết kế theo hướng Composition.
+
+Ví dụ:
+
+```tsx
+<Card>
+    <Avatar />
+    <Content />
+</Card>
+```
+
+---
+
+## 🧠 Deep Dive
+
+Composition giúp:
+
+- Tái sử dụng tốt hơn.
+- Giảm coupling.
+- Dễ kiểm thử.
+- Linh hoạt khi mở rộng.
+
+Inheritance thường làm tăng phụ thuộc giữa các component.
+
+---
+
+## 🎯 Interview Follow-up
+
+### Render Props và Custom Hook có phải là Composition không?
+
+**Trả lời**
+
+Có.
+
+Đây đều là các kỹ thuật Composition, cho phép tái sử dụng logic mà không cần kế thừa component.
+
+---
+
+# 190. Làm thế nào để đánh giá một tối ưu performance có thực sự hiệu quả?
+
+## 📚 Kiến thức cần nhớ
+
+Không nên tối ưu dựa trên cảm giác.
+
+Cần đo lường trước và sau khi thay đổi.
+
+---
+
+## 🧠 Deep Dive
+
+Một quy trình phổ biến:
+
+1. Xác định vấn đề.
+2. Đo bằng công cụ.
+3. Đưa ra giả thuyết.
+4. Tối ưu.
+5. Đo lại.
+6. So sánh kết quả.
+
+---
+
+## 💼 Công cụ thường dùng
+
+- React Profiler
+- Chrome Performance Panel
+- Lighthouse
+- Web Vitals
+- Memory Panel
+
+---
+
+## 🎯 Interview Follow-up 1
+
+### Nếu Lighthouse tăng từ 92 lên 99 thì có thể kết luận ứng dụng nhanh hơn không?
+
+**Trả lời**
+
+Không.
+
+Lighthouse là chỉ số tổng hợp trong môi trường kiểm thử.
+
+Cần kết hợp thêm dữ liệu thực tế như Core Web Vitals (LCP, INP, CLS), React Profiler và phản hồi từ người dùng để đánh giá toàn diện.
+
+---
+
+## 🎯 Interview Follow-up 2
+
+### Khi nào không nên tối ưu performance?
+
+**Trả lời**
+
+Không nên tối ưu khi:
+
+- Chưa xác định được nút thắt hiệu năng.
+- Chi phí tối ưu lớn hơn lợi ích.
+- Làm mã nguồn khó đọc hoặc khó bảo trì mà không mang lại cải thiện đáng kể.
+
+Senior Frontend luôn ưu tiên **đo lường → phân tích → tối ưu**, thay vì tối ưu dựa trên giả định.
+
+---
+
+## 📚 Tài liệu nên đọc
+
+- React Docs – Rules of Hooks
+- React Docs – State Updates
+- React Docs – Synchronizing with Effects
+- React Docs – useLayoutEffect
+- React DevTools Profiler Documentation
+- Chrome Developers – Rendering Performance
+- web.dev – Core Web Vitals
+</details>
 
 <details>
   <summary><strong>📅 2026-07-15 —  React Rendering, Browser Internals và React Architecture.</strong></summary>
----
 
 # 171. Vì sao React sử dụng Shallow Comparison thay vì Deep Comparison?
 
