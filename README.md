@@ -2,6 +2,744 @@
 Today I Learned
 
 # 📚 Frontend Learning Journal
+
+<details>
+  <summary><strong>📅 2026-07-17 —  React Concurrent Rendering, Hydration, Server Components, Event System và JavaScript Runtime. </strong></summary>
+  
+> Mục tiêu:
+>
+> - Hiểu cách React hoạt động bên trong thay vì chỉ biết sử dụng API.
+> - Bổ sung kiến thức thường xuất hiện trong phỏng vấn Senior Frontend.
+> - Rèn luyện tư duy phân tích và đánh đổi (trade-off).
+
+---
+
+# 191. React Render Phase và Commit Phase khác nhau như thế nào?
+
+## 📚 Kiến thức cần nhớ
+
+Mỗi lần React cập nhật UI đều trải qua hai giai đoạn chính:
+
+```text
+State Update
+      │
+      ▼
+ Render Phase
+      │
+      ▼
+ Commit Phase
+```
+
+### Render Phase
+
+React sẽ:
+
+- Chạy lại component.
+- Tính toán JSX mới.
+- So sánh Fiber Tree.
+- Xác định những thay đổi cần áp dụng.
+
+Trong giai đoạn này **DOM chưa bị thay đổi**.
+
+### Commit Phase
+
+React mới thực sự:
+
+- Cập nhật DOM.
+- Gắn Event.
+- Chạy `useLayoutEffect`.
+- Sau khi Browser Paint sẽ chạy `useEffect`.
+
+---
+
+## 🧠 Deep Dive
+
+Render Phase có thể:
+
+- bị dừng (Interrupt)
+- bị hủy (Abort)
+- chạy lại (Restart)
+
+Commit Phase thì **không thể bị ngắt**.
+
+Một khi bắt đầu Commit, React phải hoàn thành việc cập nhật DOM để tránh giao diện ở trạng thái không nhất quán.
+
+---
+
+## ⚖️ Trade-off
+
+Tách Render và Commit giúp React có thể chuẩn bị trước nhiều phương án render mà chưa ảnh hưởng tới giao diện đang hiển thị.
+
+---
+
+## 💼 Case thực tế
+
+Nếu một component render mất:
+
+```
+40ms
+```
+
+React có thể chia nhỏ công việc (trong Concurrent Rendering) trước khi Commit.
+
+---
+
+## 🎯 Follow-up 1
+
+### Vì sao Commit Phase không được phép bị interrupt?
+
+### Trả lời
+
+Nếu DOM chỉ được cập nhật một phần rồi dừng giữa chừng:
+
+- UI có thể hiển thị trạng thái không nhất quán.
+- Event có thể gắn sai.
+- Người dùng nhìn thấy giao diện "nửa cũ nửa mới".
+
+Do đó Commit phải là thao tác nguyên tử (atomic).
+
+---
+
+# 192. Concurrent Rendering có phải là Multi-thread không?
+
+## 📚 Kiến thức cần nhớ
+
+Không.
+
+React vẫn chạy trên JavaScript Main Thread.
+
+Concurrent Rendering chỉ thay đổi cách React **lập lịch (Scheduling)**.
+
+---
+
+## 🧠 Deep Dive
+
+Ví dụ:
+
+```
+Task A
+
+↓
+
+Pause
+
+↓
+
+Browser xử lý Input
+
+↓
+
+Resume Task A
+```
+
+React chia nhỏ công việc.
+
+Không tạo thêm Thread mới.
+
+---
+
+## ⚠️ Sai lầm phổ biến
+
+Nhiều người nghĩ React sử dụng Worker.
+
+Thực tế:
+
+Concurrent Rendering ≠ Multi-thread.
+
+---
+
+## 🎯 Follow-up
+
+### Nếu React vẫn chạy trên Main Thread thì vì sao UI lại mượt hơn?
+
+### Trả lời
+
+Do React chủ động nhường quyền cho Browser giữa các đơn vị công việc nhỏ, giúp Browser vẫn có cơ hội xử lý:
+
+- Input
+- Animation
+- Paint
+
+Điều này cải thiện khả năng phản hồi của giao diện dù không có thêm thread.
+
+---
+
+# 193. Hydration là gì? Vì sao Hydration có thể thất bại?
+
+## 📚 Kiến thức cần nhớ
+
+Hydration là quá trình React "gắn" JavaScript vào HTML đã được render từ Server.
+
+```text
+Server HTML
+
+↓
+
+Browser
+
+↓
+
+Hydration
+
+↓
+
+Interactive UI
+```
+
+---
+
+## 🧠 Deep Dive
+
+Hydration yêu cầu:
+
+```
+HTML Server
+
+=
+
+HTML Client
+```
+
+Nếu khác nhau:
+
+React có thể cảnh báo hoặc phải bỏ phần HTML hiện có để render lại phía client.
+
+---
+
+## 💼 Case thực tế
+
+Ví dụ:
+
+```tsx
+<div>{Date.now()}</div>
+```
+
+Server:
+
+```
+100
+```
+
+Client:
+
+```
+150
+```
+
+Hydration sẽ không khớp.
+
+---
+
+## 🎯 Follow-up
+
+### Làm sao tránh Hydration Mismatch?
+
+### Trả lời
+
+Một số cách phổ biến:
+
+- Không render dữ liệu thay đổi theo thời gian trực tiếp trong SSR.
+- Chỉ sử dụng API của Browser (`window`, `document`) sau khi component được mount.
+- Đảm bảo dữ liệu Server và Client nhất quán.
+- Trì hoãn phần phụ thuộc môi trường client bằng `useEffect` hoặc cơ chế phù hợp của framework.
+
+---
+
+# 194. React Server Components giải quyết vấn đề gì?
+
+## 📚 Kiến thức cần nhớ
+
+Server Component được render trên Server.
+
+Client không cần tải JavaScript cho phần logic của component đó.
+
+---
+
+## 🧠 Deep Dive
+
+Ví dụ:
+
+```
+Database
+
+↓
+
+Server Component
+
+↓
+
+HTML
+
+↓
+
+Browser
+```
+
+Không cần:
+
+```
+Fetch
+
+↓
+
+Loading
+
+↓
+
+Hydration
+```
+
+cho toàn bộ component.
+
+---
+
+## ⚖️ Trade-off
+
+Ưu điểm
+
+- Bundle nhỏ hơn.
+- TTFB tốt hơn.
+- Ít JavaScript hơn.
+
+Nhược điểm
+
+- Không dùng được Hook phía Client như `useState`, `useEffect`.
+- Cần hiểu rõ ranh giới giữa Server và Client Component.
+
+---
+
+## 🎯 Follow-up
+
+### Có nên chuyển toàn bộ ứng dụng sang Server Component không?
+
+### Trả lời
+
+Không.
+
+Các thành phần cần:
+
+- tương tác người dùng,
+- quản lý state cục bộ,
+- truy cập Browser API,
+
+vẫn cần là Client Component.
+
+Thực tế thường kết hợp cả hai loại component.
+
+---
+
+# 195. Event Bubbling và Event Capturing khác nhau như thế nào?
+
+## 📚 Kiến thức cần nhớ
+
+Browser xử lý Event theo ba giai đoạn:
+
+```text
+Capture
+
+↓
+
+Target
+
+↓
+
+Bubble
+```
+
+Mặc định React lắng nghe theo pha Bubble.
+
+---
+
+## 🧠 Deep Dive
+
+Ví dụ:
+
+```html
+<div>
+    <button/>
+</div>
+```
+
+Click button:
+
+Capture:
+
+```
+div
+
+↓
+
+button
+```
+
+Bubble:
+
+```
+button
+
+↓
+
+div
+```
+
+---
+
+## 🎯 Follow-up
+
+### stopPropagation() ngăn điều gì?
+
+### Trả lời
+
+`stopPropagation()` ngăn sự kiện tiếp tục lan truyền sang các phần tử cha trong các pha còn lại.
+
+Nó **không hủy hành động mặc định** của trình duyệt.
+
+Muốn ngăn hành động mặc định cần dùng:
+
+```ts
+event.preventDefault()
+```
+
+---
+
+# 196. Synthetic Event của React khác Native Event như thế nào?
+
+## 📚 Kiến thức cần nhớ
+
+React không sử dụng trực tiếp Event của Browser cho mọi component.
+
+React tạo lớp bọc gọi là:
+
+```
+Synthetic Event
+```
+
+---
+
+## 🧠 Deep Dive
+
+Lợi ích:
+
+- API thống nhất giữa các trình duyệt.
+- Quản lý Event tập trung.
+- Hỗ trợ Event Delegation.
+
+---
+
+## 🎯 Follow-up
+
+### Có thể lấy Native Event không?
+
+### Trả lời
+
+Có.
+
+```tsx
+event.nativeEvent
+```
+
+sẽ trả về đối tượng sự kiện gốc của trình duyệt.
+
+---
+
+# 197. Tại sao React không cập nhật DOM ngay sau mỗi setState()?
+
+## 📚 Kiến thức cần nhớ
+
+Nếu mỗi lần:
+
+```tsx
+setState()
+```
+
+đều cập nhật DOM ngay:
+
+```
+setState()
+
+↓
+
+DOM Update
+
+↓
+
+Layout
+
+↓
+
+Paint
+```
+
+nhiều lần liên tiếp sẽ rất tốn chi phí.
+
+---
+
+## 🧠 Deep Dive
+
+React gom các cập nhật:
+
+```
+Update Queue
+
+↓
+
+Batch
+
+↓
+
+Render
+
+↓
+
+Commit
+```
+
+Giảm số lần:
+
+- Layout
+- Paint
+- DOM Mutation
+
+---
+
+## 🎯 Follow-up
+
+### Vì sao thao tác với DOM lại đắt hơn thao tác trên Virtual DOM?
+
+### Trả lời
+
+Virtual DOM chỉ là object JavaScript trong bộ nhớ.
+
+DOM thật liên quan đến:
+
+- Layout.
+- Paint.
+- Composite.
+- Cập nhật giao diện.
+
+Do đó thay đổi DOM thật thường có chi phí cao hơn.
+
+---
+
+# 198. useTransition giải quyết vấn đề gì?
+
+## 📚 Kiến thức cần nhớ
+
+Một số cập nhật:
+
+- không khẩn cấp.
+
+Ví dụ:
+
+```
+Search
+
+↓
+
+Render 5000 Row
+```
+
+Có thể làm lag input.
+
+---
+
+## 🧠 Deep Dive
+
+```tsx
+startTransition(() => {
+    setList(...)
+})
+```
+
+React sẽ ưu tiên:
+
+```
+Typing
+
+>
+
+Render List
+```
+
+---
+
+## 💼 Case thực tế
+
+- Search.
+- Filter.
+- Dashboard.
+- Data Grid.
+
+---
+
+## 🎯 Follow-up
+
+### Có nên bọc mọi setState bằng useTransition không?
+
+### Trả lời
+
+Không.
+
+`useTransition` phù hợp với các cập nhật có thể trì hoãn.
+
+Các cập nhật cần phản hồi ngay (ví dụ nhập liệu, thay đổi focus) không nên chuyển thành transition.
+
+---
+
+# 199. React có Garbage Collection không?
+
+## 📚 Kiến thức cần nhớ
+
+React **không tự có Garbage Collector**.
+
+Garbage Collection do JavaScript Engine (như V8) đảm nhiệm.
+
+---
+
+## 🧠 Deep Dive
+
+React chỉ:
+
+- tạo object.
+- bỏ reference.
+
+JavaScript Engine quyết định khi nào thu hồi bộ nhớ.
+
+---
+
+## ⚠️ Sai lầm phổ biến
+
+Memory Leak không phải do React tự giữ bộ nhớ.
+
+Nguyên nhân thường là:
+
+- Event Listener chưa cleanup.
+- Timer.
+- Subscription.
+- Closure giữ tham chiếu.
+- Cache không được giải phóng.
+
+---
+
+## 🎯 Follow-up
+
+### Nếu một object không còn được tham chiếu thì có được thu hồi ngay không?
+
+### Trả lời
+
+Không nhất thiết.
+
+JavaScript Engine quyết định thời điểm chạy Garbage Collection dựa trên thuật toán và trạng thái bộ nhớ.
+
+Lập trình viên không thể yêu cầu GC chạy ngay.
+
+---
+
+# 200. Khi tối ưu React, nên tối ưu điều gì trước tiên?
+
+## 📚 Kiến thức cần nhớ
+
+Senior thường ưu tiên:
+
+```
+Measure
+
+↓
+
+Analyze
+
+↓
+
+Optimize
+```
+
+Không tối ưu theo cảm tính.
+
+---
+
+## 🧠 Deep Dive
+
+Thứ tự ưu tiên phổ biến:
+
+1. Thuật toán.
+2. Network.
+3. Bundle Size.
+4. Rendering.
+5. Memoization.
+6. Micro Optimization.
+
+---
+
+## 💼 Case thực tế
+
+Ví dụ:
+
+```
+Render
+
+10ms
+```
+
+Nhưng API:
+
+```
+1200ms
+```
+
+Tối ưu render gần như không cải thiện đáng kể trải nghiệm người dùng.
+
+---
+
+## 🎯 Follow-up 1
+
+### Vì sao tối ưu thuật toán thường mang lại hiệu quả lớn hơn tối ưu React.memo?
+
+### Trả lời
+
+Nếu thuật toán giảm từ:
+
+```
+O(n²)
+
+↓
+
+O(n log n)
+```
+
+thời gian xử lý có thể giảm đáng kể trên tập dữ liệu lớn.
+
+Trong khi `React.memo` chỉ giúp giảm số lần render trong một số trường hợp cụ thể và vẫn có chi phí so sánh props.
+
+---
+
+## 🎯 Follow-up 2
+
+### Dấu hiệu nào cho thấy bạn đang "premature optimization"?
+
+### Trả lời
+
+Một số dấu hiệu:
+
+- Thêm `useMemo` hoặc `useCallback` ở hầu hết component mà chưa đo hiệu năng.
+- Tăng độ phức tạp của mã nguồn nhưng không có số liệu chứng minh lợi ích.
+- Tối ưu các phần không phải nút thắt (bottleneck).
+
+Senior Frontend ưu tiên xác định bottleneck bằng công cụ đo lường trước, sau đó mới quyết định chiến lược tối ưu.
+
+---
+
+## 📚 Tài liệu nên đọc
+
+- React Docs – Render and Commit
+- React Docs – Transitions
+- React Docs – Server Components
+- React Docs – Hydration
+- MDN – Event Propagation
+- MDN – Garbage Collection
+- Chrome Developers – Rendering Performance
+- web.dev – Optimizing JavaScript
+</details>
+
 <details>
   <summary><strong>📅 2026-07-16 —  React Hooks, Concurrent Rendering, State Management và Performance </strong></summary>
 
