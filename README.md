@@ -4,6 +4,731 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+  <summary><strong>📅 2026-07-20 — JavaScript Engine, Event Loop, Memory, Network và Rendering Pipeline. </strong></summary>
+
+> Mục tiêu:
+>
+> - Hiểu cơ chế hoạt động của JavaScript Runtime.
+> - Kết nối kiến thức Browser → React → Performance.
+> - Chuẩn bị cho các câu hỏi Senior/Staff Frontend.
+
+---
+
+# 201. Event Loop hoạt động như thế nào? Microtask luôn được ưu tiên hơn Macrotask phải không?
+
+## 📚 Kiến thức cần nhớ
+
+JavaScript chỉ có **một Call Stack** để thực thi code.
+
+Các tác vụ bất đồng bộ được đưa vào các hàng đợi khác nhau.
+
+```text
+Call Stack
+
+↓
+
+Microtask Queue
+
+↓
+
+Macrotask Queue
+```
+
+Ví dụ:
+
+```ts
+console.log("A");
+
+setTimeout(() => console.log("B"));
+
+Promise.resolve().then(() => console.log("C"));
+
+console.log("D");
+```
+
+Kết quả:
+
+```
+A
+D
+C
+B
+```
+
+---
+
+## 🧠 Deep Dive
+
+Một vòng lặp đơn giản của Event Loop:
+
+```text
+Execute Script
+
+↓
+
+Drain Microtask Queue
+
+↓
+
+Render Opportunity
+
+↓
+
+Run One Macrotask
+
+↓
+
+Drain Microtask
+
+↓
+
+Render
+
+...
+```
+
+Microtask thường bao gồm:
+
+- Promise.then
+- queueMicrotask
+- MutationObserver
+
+Macrotask thường bao gồm:
+
+- setTimeout
+- setInterval
+- MessageChannel callback
+- UI Event
+
+---
+
+## ⚠️ Sai lầm phổ biến
+
+Nhiều người nghĩ:
+
+```
+Promise luôn chạy trước Render.
+```
+
+Điều này không phải lúc nào cũng đúng trong mọi tình huống. Việc browser quyết định thời điểm render còn phụ thuộc vào trạng thái Event Loop và cơ hội render của trình duyệt.
+
+---
+
+## 🎯 Follow-up 1
+
+### Nếu Microtask chạy vô hạn thì chuyện gì xảy ra?
+
+### Trả lời
+
+Ví dụ:
+
+```ts
+function loop() {
+    queueMicrotask(loop);
+}
+
+loop();
+```
+
+Microtask Queue sẽ không bao giờ rỗng.
+
+Kết quả:
+
+- Browser không có cơ hội Render.
+- UI bị "đóng băng".
+- Macrotask không được xử lý.
+
+Đây được gọi là **Microtask Starvation**.
+
+---
+
+## 🎯 Follow-up 2
+
+### Vì sao React Scheduler không chỉ sử dụng Promise?
+
+### Trả lời
+
+Promise tạo Microtask.
+
+Nếu React luôn lập lịch bằng Microtask, Browser có thể không có cơ hội Paint trong các tác vụ dài.
+
+React Scheduler được thiết kế để phối hợp với browser nhằm cân bằng giữa khả năng phản hồi và tiến độ render, thay vì chỉ dựa vào Promise.
+
+---
+
+# 202. JavaScript Engine quản lý bộ nhớ như thế nào?
+
+## 📚 Kiến thức cần nhớ
+
+Thông thường, JavaScript Engine chia bộ nhớ thành nhiều vùng phục vụ các mục đích khác nhau (ví dụ: stack cho ngữ cảnh thực thi và heap cho object). Cách tổ chức chi tiết phụ thuộc vào từng engine.
+
+---
+
+## 🧠 Deep Dive
+
+Object:
+
+```ts
+const user = {
+    name: "Alice"
+};
+```
+
+được cấp phát trên Heap.
+
+Biến:
+
+```ts
+const user = ...
+```
+
+giữ tham chiếu tới object.
+
+Nếu không còn tham chiếu nào tới object, JavaScript Engine có thể thu hồi bộ nhớ trong một chu kỳ Garbage Collection sau đó.
+
+---
+
+## 💼 Case thực tế
+
+Memory Leak:
+
+```ts
+const cache = [];
+
+setInterval(() => {
+    cache.push(new Array(100000));
+},1000);
+```
+
+Nếu cache tăng liên tục mà không có cơ chế giải phóng, bộ nhớ sẽ ngày càng lớn.
+
+---
+
+## 🎯 Follow-up
+
+### WeakMap khác Map ở điểm nào?
+
+### Trả lời
+
+`WeakMap` chỉ cho phép key là object.
+
+Nếu object key không còn được tham chiếu ở nơi khác, JavaScript Engine có thể thu hồi object đó và mục tương ứng trong `WeakMap` sẽ không còn truy cập được.
+
+Điều này giúp tránh giữ tham chiếu mạnh không cần thiết trong một số trường hợp.
+
+---
+
+# 203. Debounce và Throttle khác nhau như thế nào?
+
+## 📚 Kiến thức cần nhớ
+
+Debounce:
+
+```
+Input
+
+↓↓↓↓↓↓↓
+
+......
+
+Run
+```
+
+Throttle:
+
+```
+Input
+
+↓
+
+Run
+
+↓
+
+Wait
+
+↓
+
+Run
+```
+
+---
+
+## 🧠 Deep Dive
+
+Debounce phù hợp:
+
+- Search
+- Auto Save
+
+Throttle phù hợp:
+
+- Scroll
+- Resize
+- Mouse Move
+
+---
+
+## 💼 Case thực tế
+
+Google Search thường không gửi request sau mỗi ký tự mà sẽ chờ người dùng dừng nhập trong một khoảng thời gian ngắn.
+
+---
+
+## 🎯 Follow-up
+
+### Có nên debounce mọi API không?
+
+### Trả lời
+
+Không.
+
+Ví dụ:
+
+- Login
+- Thanh toán
+- OTP
+
+thường cần phản hồi ngay.
+
+Debounce phù hợp khi nhiều sự kiện liên tiếp có thể được gộp lại.
+
+---
+
+# 204. HTTP Cache khác Service Worker Cache như thế nào?
+
+## 📚 Kiến thức cần nhớ
+
+HTTP Cache:
+
+- Do Browser quản lý.
+- Dựa trên Cache-Control, ETag...
+
+Service Worker Cache:
+
+- Do lập trình viên chủ động điều khiển.
+- Có thể hoạt động ngay cả khi offline.
+
+---
+
+## 🧠 Deep Dive
+
+```text
+Browser
+
+↓
+
+Service Worker ?
+
+↓
+
+HTTP Cache ?
+
+↓
+
+Network
+```
+
+Service Worker có thể quyết định:
+
+- Trả dữ liệu từ Cache.
+- Gửi Network.
+- Hoặc kết hợp cả hai.
+
+---
+
+## 🎯 Follow-up
+
+### Có nên cache toàn bộ API bằng Service Worker?
+
+### Trả lời
+
+Không.
+
+Các API chứa dữ liệu thay đổi thường xuyên hoặc thông tin nhạy cảm cần có chiến lược cache phù hợp để tránh hiển thị dữ liệu cũ hoặc gây rủi ro bảo mật.
+
+---
+
+# 205. CSR, SSR, SSG và ISR khác nhau như thế nào?
+
+## 📚 Kiến thức cần nhớ
+
+| Kiểu | Render |
+|-------|---------|
+| CSR | Client |
+| SSR | Server mỗi request |
+| SSG | Build Time |
+| ISR | Build + Regenerate |
+
+---
+
+## 🧠 Deep Dive
+
+Không có chiến lược nào tốt nhất cho mọi trường hợp.
+
+Ví dụ:
+
+Landing Page
+
+→ SSG
+
+Dashboard
+
+→ CSR
+
+News
+
+→ ISR
+
+Personalized Page
+
+→ SSR
+
+---
+
+## 🎯 Follow-up
+
+### Có nên dùng SSR cho toàn bộ website?
+
+### Trả lời
+
+Không.
+
+SSR giúp cải thiện một số khía cạnh như SEO hoặc thời gian hiển thị nội dung ban đầu trong nhiều trường hợp, nhưng cũng làm tăng tải cho server và độ phức tạp của hệ thống.
+
+Cần lựa chọn theo từng loại trang.
+
+---
+
+# 206. Browser thực hiện Request như thế nào sau khi người dùng nhập URL?
+
+## 📚 Kiến thức cần nhớ
+
+Một luồng tổng quát:
+
+```text
+URL
+
+↓
+
+DNS
+
+↓
+
+TCP/TLS
+
+↓
+
+HTTP Request
+
+↓
+
+Response
+
+↓
+
+Parse HTML
+
+↓
+
+Render
+```
+
+---
+
+## 🧠 Deep Dive
+
+Nếu dùng HTTPS:
+
+```
+DNS
+
+↓
+
+TCP
+
+↓
+
+TLS Handshake
+
+↓
+
+HTTP
+```
+
+Sau đó Browser:
+
+- Download CSS.
+- Download JS.
+- Download Image.
+
+---
+
+## 🎯 Follow-up
+
+### Vì sao CSS thường chặn Render còn JavaScript có thể chặn Parse HTML?
+
+### Trả lời
+
+Browser cần CSS để tính toán style trước khi hiển thị giao diện.
+
+Đối với JavaScript thông thường (không `defer`/`async`), browser thường tạm dừng việc phân tích HTML để thực thi script vì script có thể thay đổi cấu trúc tài liệu.
+
+---
+
+# 207. Long Task là gì? Vì sao nó ảnh hưởng đến INP?
+
+## 📚 Kiến thức cần nhớ
+
+Long Task:
+
+```
+> 50ms
+```
+
+trên Main Thread.
+
+---
+
+## 🧠 Deep Dive
+
+Ví dụ:
+
+```
+Click
+
+↓
+
+JS
+
+300ms
+
+↓
+
+Paint
+```
+
+Người dùng cảm thấy:
+
+```
+Lag
+```
+
+---
+
+## 🎯 Follow-up
+
+### Làm sao giảm Long Task?
+
+### Trả lời
+
+Một số hướng tiếp cận:
+
+- Chia nhỏ công việc.
+- Trì hoãn tác vụ không khẩn cấp.
+- Sử dụng Web Worker cho các phép tính nặng.
+- Tối ưu thuật toán.
+
+---
+
+# 208. Web Worker giải quyết vấn đề gì?
+
+## 📚 Kiến thức cần nhớ
+
+Web Worker chạy JavaScript trên thread riêng.
+
+Không truy cập trực tiếp DOM.
+
+---
+
+## 🧠 Deep Dive
+
+```
+Main Thread
+
+↓
+
+postMessage
+
+↓
+
+Worker
+
+↓
+
+Result
+
+↓
+
+UI
+```
+
+---
+
+## 💼 Case thực tế
+
+Dùng cho:
+
+- Image Processing
+- GIS
+- PDF
+- Compression
+- AI Inference
+
+---
+
+## 🎯 Follow-up
+
+### Vì sao Worker không được phép thao tác DOM?
+
+### Trả lời
+
+DOM không được thiết kế để truy cập đồng thời từ nhiều thread.
+
+Giới hạn này giúp tránh các vấn đề đồng bộ và giữ mô hình lập trình của browser đơn giản hơn.
+
+---
+
+# 209. Virtualization hoạt động như thế nào?
+
+## 📚 Kiến thức cần nhớ
+
+Ví dụ:
+
+```
+100.000 Row
+```
+
+Không cần render toàn bộ.
+
+Chỉ render:
+
+```
+30 Row
+```
+
+đang hiển thị.
+
+---
+
+## 🧠 Deep Dive
+
+```
+Scroll
+
+↓
+
+Recycle DOM
+
+↓
+
+Update Content
+```
+
+DOM được tái sử dụng thay vì tạo mới liên tục.
+
+---
+
+## 🎯 Follow-up
+
+### Vì sao Virtualization đôi khi làm hỏng Ctrl + F của Browser?
+
+### Trả lời
+
+Browser chỉ có thể tìm kiếm trên các node DOM đang tồn tại.
+
+Nếu phần lớn dữ liệu chưa được render vào DOM, chức năng tìm kiếm mặc định của browser sẽ không thấy chúng.
+
+---
+
+# 210. Khi thiết kế Frontend Architecture cho hệ thống lớn, nên tối ưu điều gì trước?
+
+## 📚 Kiến thức cần nhớ
+
+Senior thường ưu tiên:
+
+1. Khả năng mở rộng.
+2. Khả năng bảo trì.
+3. Tính nhất quán.
+4. Khả năng kiểm thử.
+5. Hiệu năng.
+
+---
+
+## 🧠 Deep Dive
+
+Một kiến trúc tốt không chỉ giải quyết bài toán hiện tại mà còn giảm chi phí thay đổi trong tương lai.
+
+Các yếu tố thường được xem xét:
+
+- Feature-based Architecture.
+- Design System.
+- Shared Package.
+- API Contract.
+- Logging.
+- Monitoring.
+- CI/CD.
+- Coding Convention.
+
+---
+
+## 💼 Case thực tế
+
+Hai dự án có cùng tính năng.
+
+- Dự án A: phát triển nhanh nhưng khó mở rộng.
+- Dự án B: đầu tư kiến trúc ngay từ đầu.
+
+Sau 3 năm, dự án B thường có chi phí bảo trì thấp hơn nếu kiến trúc ban đầu phù hợp với quy mô và nhu cầu phát triển.
+
+---
+
+## 🎯 Follow-up 1
+
+### Có phải Clean Architecture luôn là lựa chọn tốt nhất cho Frontend?
+
+### Trả lời
+
+Không.
+
+Clean Architecture mang lại nhiều lợi ích về tách biệt trách nhiệm, nhưng cũng làm tăng số lượng abstraction và cấu trúc dự án.
+
+Đối với các ứng dụng nhỏ, chi phí này có thể lớn hơn lợi ích.
+
+---
+
+## 🎯 Follow-up 2
+
+### Khi nào nên refactor thay vì tiếp tục thêm tính năng?
+
+### Trả lời
+
+Một số dấu hiệu:
+
+- Cùng một thay đổi phải sửa ở nhiều nơi.
+- Lỗi lặp lại do cấu trúc hiện tại.
+- Tốc độ phát triển giảm rõ rệt.
+- Đội ngũ mất nhiều thời gian để hiểu và chỉnh sửa mã nguồn.
+
+Trong các trường hợp này, refactor có thể mang lại lợi ích dài hạn lớn hơn việc tiếp tục bổ sung tính năng trên nền tảng hiện tại.
+
+---
+
+## 📚 Tài liệu nên đọc
+
+- MDN – Event Loop
+- MDN – Web Workers
+- MDN – HTTP Caching
+- web.dev – Rendering Performance
+- web.dev – INP
+- Chrome Developers – Long Tasks
+- React Docs – Concurrent Rendering
+- React Docs – Performance
+- WHATWG HTML Living Standard
+- V8 Blog
+</details>
+
+<details>
   <summary><strong>📅 2026-07-17 —  React Concurrent Rendering, Hydration, Server Components, Event System và JavaScript Runtime. </strong></summary>
   
 > Mục tiêu:
