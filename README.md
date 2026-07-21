@@ -4,6 +4,638 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+  <summary><strong>📅 2026-07-21 — React + JavaScript + Architecture </strong></summary>
+
+> Đây đều là những câu hỏi mà rất nhiều công ty Product, Big Tech và Startup sử dụng để đánh giá mức độ Senior.
+
+---
+
+# 211. React nói rằng "UI is a function of State". Điều đó thực sự có nghĩa là gì?
+
+## 📚 Kiến thức cần nhớ
+
+Một Component React có thể được xem như một hàm:
+
+```text
+UI = f(State)
+```
+
+Ví dụ:
+
+```tsx
+function Counter() {
+    const [count] = useState(0);
+
+    return <h1>{count}</h1>;
+}
+```
+
+Khi `state` thay đổi:
+
+```
+count:0
+
+↓
+
+count:1
+
+↓
+
+Render
+
+↓
+
+New UI
+```
+
+React không sửa trực tiếp UI.
+
+React luôn tính toán UI mới từ State mới.
+
+---
+
+## 🧠 Deep Dive
+
+Đây là Declarative Programming.
+
+Developer chỉ mô tả:
+
+```
+State hiện tại
+
+↓
+
+UI mong muốn
+```
+
+React quyết định:
+
+- Render
+- Diff
+- Commit
+
+---
+
+## 💼 Case thực tế
+
+Sai (Imperative):
+
+```ts
+element.innerHTML = "Loading...";
+```
+
+Đúng (Declarative):
+
+```tsx
+return loading
+    ? <Spinner/>
+    : <Table/>;
+```
+
+---
+
+## 🎯 Follow-up
+
+### Vì sao Declarative dễ maintain hơn Imperative?
+
+### Trả lời
+
+Với Declarative:
+
+- Không cần quản lý từng bước cập nhật DOM.
+- UI luôn phản ánh State hiện tại.
+- Giảm khả năng xảy ra trạng thái không nhất quán giữa dữ liệu và giao diện.
+
+---
+
+# 212. React có render lại toàn bộ cây Component sau mỗi setState() không?
+
+## 📚 Kiến thức cần nhớ
+
+React sẽ bắt đầu quá trình render từ component có state thay đổi.
+
+Các component con có thể được gọi lại trong Render Phase.
+
+Tuy nhiên:
+
+**Render lại component ≠ Cập nhật lại DOM.**
+
+---
+
+## 🧠 Deep Dive
+
+Ví dụ:
+
+```tsx
+<App>
+
+    <Sidebar/>
+
+    <Content/>
+
+    <Footer/>
+
+</App>
+```
+
+Nếu:
+
+```
+Content setState()
+```
+
+React sẽ bắt đầu từ `Content`.
+
+DOM chỉ thay đổi nếu kết quả render khác trước.
+
+---
+
+## ⚠️ Sai lầm phổ biến
+
+Nhiều người nhầm:
+
+```
+Component render
+
+=
+
+DOM update
+```
+
+Thực tế:
+
+```
+Render
+
+↓
+
+Diff
+
+↓
+
+Commit
+```
+
+---
+
+## 🎯 Follow-up
+
+### Vì sao React vẫn gọi lại function component dù DOM không đổi?
+
+### Trả lời
+
+React cần thực thi component để tạo Virtual DOM mới và so sánh với lần render trước.
+
+Chỉ sau khi Diff hoàn tất React mới biết DOM có cần cập nhật hay không.
+
+---
+
+# 213. Vì sao React yêu cầu Key phải ổn định (Stable Key)?
+
+## 📚 Kiến thức cần nhớ
+
+Key giúp React nhận diện identity của phần tử.
+
+Ví dụ:
+
+```tsx
+users.map(user => (
+    <Row key={user.id}/>
+))
+```
+
+---
+
+## 🧠 Deep Dive
+
+Nếu dùng:
+
+```tsx
+key={Math.random()}
+```
+
+Mỗi render:
+
+```
+Old Tree
+
+↓
+
+Destroy
+
+↓
+
+New Tree
+```
+
+State của component bị mất hoàn toàn.
+
+---
+
+## 💼 Case thực tế
+
+Các lỗi thường gặp:
+
+- Input mất focus.
+- Animation reset.
+- Scroll nhảy.
+- useEffect chạy lại.
+
+---
+
+## 🎯 Follow-up
+
+### Vì sao Index chỉ nên dùng trong một số trường hợp?
+
+### Trả lời
+
+Nếu danh sách:
+
+- không thêm,
+- không xóa,
+- không sắp xếp lại,
+
+thì index có thể chấp nhận được.
+
+Nếu danh sách thay đổi thứ tự, index không còn đại diện đúng cho identity của item.
+
+---
+
+# 214. useMemo và React.memo khác nhau như thế nào?
+
+## 📚 Kiến thức cần nhớ
+
+```
+useMemo
+
+↓
+
+Cache Value
+```
+
+```
+React.memo
+
+↓
+
+Cache Component Render
+```
+
+---
+
+## 🧠 Deep Dive
+
+Ví dụ:
+
+```tsx
+const columns = useMemo(...)
+```
+
+Giúp object không đổi reference.
+
+Sau đó:
+
+```tsx
+<Table columns={columns}/>
+```
+
+kết hợp với:
+
+```tsx
+React.memo(Table)
+```
+
+để tránh render lại không cần thiết.
+
+---
+
+## 🎯 Follow-up
+
+### Có nên dùng cả useMemo và React.memo ở mọi component?
+
+### Trả lời
+
+Không.
+
+Cả hai đều có chi phí:
+
+- lưu cache,
+- so sánh dependency hoặc props.
+
+Nếu component nhỏ hoặc phép tính đơn giản thì chi phí tối ưu có thể lớn hơn lợi ích.
+
+---
+
+# 215. Nếu một React Component render chậm, bạn sẽ debug như thế nào?
+
+## 📚 Checklist
+
+1. React Profiler.
+2. Flamegraph.
+3. Highlight Updates.
+4. Kiểm tra Props.
+5. Kiểm tra Context.
+6. Kiểm tra Memoization.
+7. Kiểm tra thuật toán.
+8. Kiểm tra API.
+
+---
+
+## 🧠 Deep Dive
+
+Senior không hỏi:
+
+```
+Render nhiều không?
+```
+
+Mà hỏi:
+
+```
+Render lâu ở đâu?
+```
+
+---
+
+## 🎯 Follow-up
+
+### Nếu Profiler cho thấy render chỉ mất 3ms nhưng người dùng vẫn thấy lag thì nguyên nhân có thể là gì?
+
+### Trả lời
+
+Có thể nằm ngoài React:
+
+- JavaScript Long Task.
+- API chậm.
+- Layout/Reflow.
+- Paint.
+- Animation.
+- Network.
+- Main Thread bị block.
+
+---
+
+# 216. Vì sao Context dễ gây re-render? Làm sao giảm vấn đề này?
+
+## 📚 Kiến thức cần nhớ
+
+Khi `value` của Provider thay đổi:
+
+```tsx
+<UserContext.Provider value={value}>
+```
+
+mọi component đang subscribe Context đó sẽ được thông báo.
+
+---
+
+## 🧠 Deep Dive
+
+Không phải component nào cũng cần toàn bộ dữ liệu.
+
+Ví dụ:
+
+```
+Context
+
+↓
+
+name
+age
+avatar
+theme
+```
+
+Component chỉ dùng:
+
+```
+theme
+```
+
+nhưng vẫn có thể render lại nếu `value` thay đổi.
+
+---
+
+## Giải pháp
+
+- Tách Context.
+- Selector Pattern.
+- Zustand.
+- Jotai.
+- useSyncExternalStore.
+
+---
+
+## 🎯 Follow-up
+
+### Vì sao Redux Toolkit và Zustand thường ít re-render hơn Context?
+
+### Trả lời
+
+Vì chúng cho phép component subscribe vào từng phần nhỏ của state thông qua selector, thay vì nhận toàn bộ giá trị của Context.
+
+---
+
+# 217. JavaScript là Single Thread, vậy Browser làm sao vừa tải dữ liệu vừa xử lý sự kiện?
+
+## 📚 Kiến thức cần nhớ
+
+JavaScript chạy trên một Main Thread.
+
+Tuy nhiên Browser còn có nhiều thành phần khác như:
+
+- Network.
+- Timer.
+- Rendering.
+- Storage.
+
+Các tác vụ này hoạt động ngoài Call Stack của JavaScript và khi hoàn thành sẽ đưa callback trở lại Event Loop.
+
+---
+
+## 🎯 Follow-up
+
+### Nếu JavaScript chạy vòng lặp vô hạn thì Browser có tải API được không?
+
+### Trả lời
+
+Browser vẫn có thể tiếp tục xử lý request ở tầng mạng.
+
+Tuy nhiên callback JavaScript để xử lý kết quả sẽ không được thực thi vì Main Thread đang bị chiếm.
+
+Người dùng sẽ thấy giao diện bị treo.
+
+---
+
+# 218. Làm sao tối ưu một danh sách có 50.000 item?
+
+## 📚 Kiến thức cần nhớ
+
+Không render toàn bộ.
+
+---
+
+## Giải pháp
+
+- Pagination.
+- Infinite Scroll.
+- Virtualization.
+- Lazy Loading.
+- Memoization.
+
+---
+
+## 🧠 Deep Dive
+
+Virtualization thường là lựa chọn hiệu quả vì chỉ render các item đang nằm trong vùng nhìn thấy.
+
+---
+
+## 🎯 Follow-up
+
+### Virtualization có nhược điểm gì?
+
+### Trả lời
+
+Một số hạn chế:
+
+- Khó hỗ trợ Ctrl + F của Browser.
+- Tính toán chiều cao phức tạp với item có kích thước động.
+- Có thể ảnh hưởng đến SEO nếu áp dụng cho nội dung cần được crawler lập chỉ mục.
+
+---
+
+# 219. Nếu được thiết kế lại một ứng dụng React từ đầu, bạn sẽ ưu tiên điều gì?
+
+## 📚 Kiến thức cần nhớ
+
+Senior thường ưu tiên theo thứ tự:
+
+1. Domain.
+2. Feature.
+3. Design System.
+4. API Contract.
+5. State Management.
+6. Testing.
+7. CI/CD.
+8. Monitoring.
+
+---
+
+## 🧠 Deep Dive
+
+Sai lầm phổ biến:
+
+Dành quá nhiều thời gian chọn thư viện trước khi hiểu Domain.
+
+Kiến trúc nên phục vụ bài toán nghiệp vụ, không phải ngược lại.
+
+---
+
+## 🎯 Follow-up
+
+### Vì sao chọn đúng kiến trúc quan trọng hơn chọn đúng State Management?
+
+### Trả lời
+
+State Management có thể thay thế.
+
+Kiến trúc sai sẽ ảnh hưởng:
+
+- Folder Structure.
+- Dependency.
+- Testing.
+- Scalability.
+- Onboarding.
+
+Chi phí sửa kiến trúc thường lớn hơn nhiều.
+
+---
+
+# 220. Theo bạn, tiêu chí quan trọng nhất để đánh giá một Senior Frontend Engineer là gì?
+
+## 📚 Kiến thức cần nhớ
+
+Senior không chỉ là người viết code nhanh.
+
+Một Senior cần có khả năng:
+
+- Phân tích vấn đề.
+- Thiết kế giải pháp.
+- Đánh giá trade-off.
+- Tối ưu hiệu năng khi cần.
+- Review code.
+- Hướng dẫn thành viên khác.
+- Ra quyết định kỹ thuật dựa trên dữ liệu.
+
+---
+
+## 🧠 Deep Dive
+
+Khi phỏng vấn, interviewer thường quan tâm:
+
+> **"Tại sao bạn chọn giải pháp này?"**
+
+hơn là:
+
+> **"Bạn biết thư viện nào?"**
+
+Khả năng giải thích quyết định kỹ thuật thường phản ánh rõ kinh nghiệm thực tế.
+
+---
+
+## 🎯 Follow-up 1
+
+### Nếu có hai giải pháp đều đúng, bạn sẽ chọn như thế nào?
+
+### Trả lời
+
+Đánh giá theo các tiêu chí:
+
+- Độ đơn giản.
+- Khả năng mở rộng.
+- Khả năng bảo trì.
+- Hiệu năng.
+- Thời gian triển khai.
+- Kinh nghiệm của đội ngũ.
+- Chi phí vận hành.
+
+Giải pháp "tốt nhất" luôn phụ thuộc vào bối cảnh dự án.
+
+---
+
+## 🎯 Follow-up 2 (Rất hay gặp)
+
+### Nếu bạn review một Pull Request và thấy code chạy đúng nhưng kiến trúc chưa tốt, bạn sẽ làm gì?
+
+### Trả lời
+
+Một Senior thường:
+
+1. Xác nhận chức năng đúng.
+2. Đánh giá mức độ ảnh hưởng của vấn đề kiến trúc.
+3. Đưa ra góp ý kèm lý do kỹ thuật và trade-off.
+4. Nếu ảnh hưởng nhỏ và deadline gấp, có thể tạo Technical Debt Ticket để refactor sau.
+5. Nếu ảnh hưởng lớn đến khả năng mở rộng hoặc bảo trì, đề xuất chỉnh sửa trước khi merge.
+
+Mục tiêu của review không chỉ là tìm lỗi, mà còn giúp mã nguồn bền vững hơn trong dài hạn.
+
+---
+
+## 📚 Tài liệu nên đọc
+
+- React Docs – Thinking in React
+- React Docs – Rendering Lists
+- React Docs – Optimizing Performance
+- React Docs – State as a Snapshot
+- React DevTools Profiler
+- MDN – Event Loop
+- web.dev – Rendering Performance
+- Martin Fowler – Technical Debt
+- Clean Architecture (Robert C. Martin)
+</details>
+
+<details>
   <summary><strong>📅 2026-07-20 — JavaScript Engine, Event Loop, Memory, Network và Rendering Pipeline. </strong></summary>
 
 > Mục tiêu:
