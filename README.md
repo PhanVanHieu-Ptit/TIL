@@ -4,6 +4,351 @@ Today I Learned
 # 📚 Frontend Learning Journal
 
 <details>
+  <summary><strong>📅 2026-07-22 — React + JavaScript + Architecture </strong></summary>
+
+# 221. Khi nào bạn sẽ dùng useMemo? Khi nào KHÔNG dùng?
+
+## 💬 Interview Answer
+
+> Mình xem `useMemo` là một công cụ tối ưu hiệu năng chứ không phải mặc định phải dùng.
+>
+> Mình chỉ dùng trong ba trường hợp chính.
+>
+> Thứ nhất là khi có một phép tính tốn kém, ví dụ xử lý danh sách lớn, grouping hoặc sorting mà kết quả không cần tính lại ở mọi lần render.
+>
+> Thứ hai là khi cần giữ reference ổn định của object hoặc array để tránh làm component con được bọc bởi `React.memo` render lại không cần thiết.
+>
+> Thứ ba là khi dependency của một Hook khác yêu cầu reference ổn định.
+>
+> Ngược lại, mình không dùng `useMemo` cho các phép tính đơn giản như nối chuỗi hay cộng trừ cơ bản vì chi phí quản lý cache đôi khi còn lớn hơn chi phí tính toán.
+
+---
+
+## 🎯 Follow-up
+
+### Làm sao biết useMemo thực sự có hiệu quả?
+
+### 💬 Trả lời
+
+> Mình sẽ đo bằng React Profiler thay vì dựa vào cảm giác.
+>
+> Nếu sau khi thêm `useMemo` mà thời gian render hoặc số lần render không cải thiện thì mình sẽ bỏ nó đi để tránh tăng độ phức tạp của code.
+
+---
+
+## ⚠️ Common Mistakes
+
+- Bọc gần như mọi biến bằng `useMemo`.
+- Dùng `useMemo` để "tăng performance" mà không đo.
+
+---
+
+## ⭐ Senior Tips
+
+Performance optimization nên bắt đầu bằng **measurement**, không phải **guessing**.
+
+---
+
+# 222. useCallback khác gì useMemo?
+
+## 💬 Interview Answer
+
+> Điểm khác biệt nằm ở giá trị được cache.
+>
+> `useMemo` cache kết quả của một phép tính.
+>
+> `useCallback` cache chính function.
+>
+> Thực chất:
+>
+> ```tsx
+> useCallback(fn, deps)
+> ```
+>
+> gần tương đương với:
+>
+> ```tsx
+> useMemo(() => fn, deps)
+> ```
+>
+> Mình thường dùng `useCallback` khi truyền callback xuống component con đã được `React.memo`, hoặc khi callback là dependency của `useEffect`.
+
+---
+
+## 🎯 Follow-up
+
+### Có nên bọc toàn bộ event handler bằng useCallback không?
+
+### 💬 Trả lời
+
+> Không.
+>
+> Nếu component con không quan tâm đến reference của callback thì việc dùng `useCallback` thường không mang lại lợi ích.
+>
+> Mình chỉ dùng khi reference của function thực sự ảnh hưởng đến việc render hoặc lifecycle.
+
+---
+
+# 223. React Query khác Redux ở điểm nào?
+
+## 💬 Interview Answer
+
+> Theo mình, hai thư viện này giải quyết hai bài toán khác nhau.
+>
+> Redux phù hợp để quản lý **client state**, ví dụ trạng thái đăng nhập, sidebar đang mở hay theme.
+>
+> React Query tập trung vào **server state**, tức là dữ liệu lấy từ API.
+>
+> React Query xử lý sẵn nhiều vấn đề như cache, retry, background refetch hay đồng bộ dữ liệu, nên mình sẽ không dùng Redux chỉ để lưu dữ liệu API nếu React Query đã đáp ứng được nhu cầu.
+
+---
+
+## 🎯 Follow-up
+
+### Nếu dự án đang dùng Redux thì có cần React Query nữa không?
+
+### 💬 Trả lời
+
+> Có thể có.
+>
+> Nếu Redux đang được dùng để lưu nhiều dữ liệu từ API thì React Query có thể giúp giảm đáng kể lượng code liên quan đến loading, error, cache và đồng bộ dữ liệu.
+>
+> Tuy nhiên quyết định này còn phụ thuộc vào quy mô dự án và chi phí migration.
+
+---
+
+# 224. Vì sao React khuyến khích Immutable Data?
+
+## 💬 Interview Answer
+
+> React dựa nhiều vào reference equality để quyết định dữ liệu có thay đổi hay không.
+>
+> Nếu mình mutate object:
+>
+> ```tsx
+> user.name = "Peter";
+> ```
+>
+> thì reference vẫn giữ nguyên.
+>
+> React có thể không nhận ra dữ liệu đã thay đổi.
+>
+> Khi tạo object mới:
+>
+> ```tsx
+> setUser({
+>   ...user,
+>   name: "Peter",
+> });
+> ```
+>
+> React dễ dàng nhận biết thay đổi thông qua reference mới.
+
+---
+
+## 🎯 Follow-up
+
+### Immutable có làm tốn bộ nhớ hơn không?
+
+### 💬 Trả lời
+
+> Có, vì mỗi lần cập nhật thường tạo object mới.
+>
+> Tuy nhiên đổi lại React có thể tối ưu việc so sánh dữ liệu đơn giản hơn.
+>
+> Với hầu hết ứng dụng, lợi ích về khả năng dự đoán và tối ưu render thường lớn hơn chi phí bộ nhớ tăng thêm.
+
+---
+
+# 225. Nếu một component render quá nhiều lần, bạn sẽ xử lý theo quy trình nào?
+
+## 💬 Interview Answer
+
+> Mình thường không tối ưu ngay.
+>
+> Quy trình của mình gồm:
+>
+> 1. Xác định component render nhiều bằng React Profiler.
+> 2. Kiểm tra nguyên nhân là state, props hay context.
+> 3. Xem component render có thực sự chậm không.
+> 4. Nếu cần mới cân nhắc `React.memo`, `useMemo`, `useCallback` hoặc thay đổi kiến trúc state.
+>
+> Mình cố gắng tránh tối ưu khi chưa xác định được bottleneck.
+
+---
+
+## 🎯 Follow-up
+
+### Render nhiều có luôn là vấn đề không?
+
+### 💬 Trả lời
+
+> Không.
+>
+> Một component render nhiều lần nhưng mỗi lần chỉ mất vài phần nghìn giây có thể không ảnh hưởng gì đến trải nghiệm người dùng.
+>
+> Điều quan trọng là chi phí render và tác động tới UI.
+
+---
+
+# 226. Bạn sẽ chọn Context, Redux hay Zustand?
+
+## 💬 Interview Answer
+
+> Mình không chọn theo xu hướng mà chọn theo bài toán.
+>
+> Với dữ liệu ít thay đổi như theme hoặc locale thì Context là đủ.
+>
+> Nếu cần quản lý state phức tạp giữa nhiều module thì Redux vẫn là lựa chọn mạnh nhờ hệ sinh thái và DevTools.
+>
+> Với nhiều dự án React hiện nay, mình thấy Zustand là lựa chọn cân bằng giữa API đơn giản và hiệu năng nhờ cơ chế selector.
+
+---
+
+## 🎯 Follow-up
+
+### Vì sao Context dễ gây re-render hơn Zustand?
+
+### 💬 Trả lời
+
+> Vì Context thông báo cho tất cả component đang subscribe khi `value` thay đổi.
+>
+> Trong khi Zustand cho phép component chỉ subscribe vào phần state mà nó thực sự sử dụng.
+
+---
+
+# 227. Nếu người dùng báo ứng dụng bị chậm, bạn sẽ bắt đầu từ đâu?
+
+## 💬 Interview Answer
+
+> Mình sẽ cố gắng tái hiện vấn đề trước.
+>
+> Sau đó mình phân loại nguyên nhân:
+>
+> - Network.
+> - JavaScript.
+> - Rendering.
+> - Memory.
+> - API.
+>
+> Tiếp theo mình dùng Chrome Performance, React Profiler hoặc Network Panel để thu thập dữ liệu.
+>
+> Chỉ sau khi xác định được bottleneck mình mới đề xuất giải pháp.
+
+---
+
+## 🎯 Follow-up
+
+### Tại sao không tối ưu React ngay?
+
+### 💬 Trả lời
+
+> Vì nguyên nhân có thể nằm ở backend hoặc network.
+>
+> Nếu API mất 3 giây thì việc giảm thời gian render từ 20ms xuống 10ms gần như không cải thiện trải nghiệm người dùng.
+
+---
+
+# 228. Bạn sẽ xử lý Memory Leak trong React như thế nào?
+
+## 💬 Interview Answer
+
+> Mình sẽ kiểm tra các nguyên nhân phổ biến trước:
+>
+> - Event Listener chưa cleanup.
+> - Timer chưa clear.
+> - Subscription chưa unsubscribe.
+> - Request chưa hủy khi component unmount.
+>
+> Sau đó mình dùng Memory Panel trong Chrome DevTools để xem object nào vẫn còn được giữ lại và lần theo reference.
+
+---
+
+## 🎯 Follow-up
+
+### Có phải mọi object còn trong Heap đều là Memory Leak?
+
+### 💬 Trả lời
+
+> Không.
+>
+> Một object chỉ được xem là leak khi nó không còn cần thiết nhưng vẫn bị giữ bởi một reference nào đó, khiến Garbage Collector không thể thu hồi.
+
+---
+
+# 229. Theo bạn, thế nào là một React Component tốt?
+
+## 💬 Interview Answer
+
+> Theo mình, một component tốt cần đáp ứng vài tiêu chí:
+>
+> - Chỉ có một trách nhiệm chính.
+> - Dễ đọc.
+> - Dễ kiểm thử.
+> - Dễ tái sử dụng khi cần.
+> - Không phụ thuộc quá nhiều vào component khác.
+>
+> Ngoài ra, mình cũng chú ý đến khả năng mở rộng thay vì chỉ tối ưu cho yêu cầu hiện tại.
+
+---
+
+## 🎯 Follow-up
+
+### Component càng nhỏ càng tốt đúng không?
+
+### 💬 Trả lời
+
+> Không hẳn.
+>
+> Nếu chia quá nhỏ sẽ làm tăng số lượng file, tăng độ phức tạp và khó theo dõi luồng dữ liệu.
+>
+> Mình thường tách component khi nó có trách nhiệm riêng hoặc có khả năng tái sử dụng.
+
+---
+
+# 230. Trong quá trình review code, điều gì quan trọng nhất đối với bạn?
+
+## 💬 Interview Answer
+
+> Mình không chỉ xem code có chạy đúng hay không.
+>
+> Mình thường review theo thứ tự:
+>
+> - Logic có đúng không.
+> - Có xử lý edge case không.
+> - Có ảnh hưởng đến performance không.
+> - Có dễ bảo trì không.
+> - Có tuân thủ convention của team không.
+>
+> Nếu góp ý thay đổi kiến trúc, mình luôn cố gắng giải thích lý do và trade-off thay vì chỉ nói "nên làm thế này".
+
+---
+
+## 🎯 Follow-up
+
+### Nếu đồng nghiệp không đồng ý với góp ý của bạn thì sao?
+
+### 💬 Trả lời
+
+> Mình sẽ trao đổi dựa trên dữ liệu và tiêu chí kỹ thuật thay vì quan điểm cá nhân.
+>
+> Nếu vẫn có nhiều lựa chọn hợp lý, mình ưu tiên giải pháp phù hợp với convention của team hoặc thống nhất thông qua buổi technical discussion.
+>
+> Mục tiêu của code review là cải thiện chất lượng sản phẩm và chia sẻ kiến thức, không phải chứng minh ai đúng ai sai.
+
+---
+
+## 📌 Ghi chú
+
+Đây là nhóm câu hỏi có xác suất rất cao trong các vòng phỏng vấn Senior Frontend tại nhiều công ty sản phẩm. Điểm mà interviewer thường đánh giá không chỉ là kiến thức React, mà còn là:
+
+- Khả năng giải thích bản chất.
+- Tư duy đánh đổi (trade-off).
+- Cách tiếp cận để debug và tối ưu.
+- Kinh nghiệm thực tế khi làm việc với dự án lớn.
+</details>
+
+<details>
   <summary><strong>📅 2026-07-21 — React + JavaScript + Architecture </strong></summary>
 
 > Đây đều là những câu hỏi mà rất nhiều công ty Product, Big Tech và Startup sử dụng để đánh giá mức độ Senior.
