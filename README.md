@@ -2,6 +2,296 @@
 Today I Learned
 
 # 📚 Frontend Learning Journal
+<details>
+  <summary><strong>📅 2026-07-23 — React Fiber, Suspense & Performance  </strong></summary>
+  
+  ## 231. Hãy giải thích React Fiber Architecture
+
+**Trả lời:**
+
+React Fiber là engine reconciliation của React, được giới thiệu nhằm giúp quá trình render trở nên **có thể tạm dừng (interruptible), thực hiện theo từng phần (incremental) và ưu tiên theo mức độ quan trọng (prioritizable).**
+
+Thay vì render toàn bộ component tree theo cách đồng bộ (synchronous), Fiber chia công việc thành nhiều đơn vị nhỏ (unit of work), cho phép React:
+
+- Tạm dừng quá trình render.
+- Tiếp tục render sau đó.
+- Ưu tiên các update quan trọng.
+- Hủy các công việc đã lỗi thời.
+
+Kiến trúc này là nền tảng cho các tính năng như:
+
+- Concurrent Rendering
+- Suspense
+- `startTransition()`
+
+> **Điểm cộng khi phỏng vấn:** React Fiber không phải là thư viện render mới, mà là thuật toán scheduling và reconciliation nội bộ của React.
+
+---
+
+## 232. Sự khác nhau giữa Render Phase và Commit Phase là gì?
+
+**Trả lời:**
+
+Quá trình render của React được chia thành hai giai đoạn.
+
+### Render Phase
+
+- Tính toán những gì cần thay đổi.
+- Có thể bị tạm dừng, tiếp tục hoặc chạy lại.
+- Không thao tác trực tiếp với DOM.
+
+### Commit Phase
+
+- Áp dụng toàn bộ thay đổi lên DOM thật.
+- Chạy `useLayoutEffect` trước, sau đó đến `useEffect`.
+- Không thể bị gián đoạn.
+
+> **Điểm cộng khi phỏng vấn:** Các thao tác nặng liên quan đến DOM nên được hạn chế trong Commit Phase vì giai đoạn này sẽ chặn luồng chính (main thread).
+
+---
+
+## 233. `useLayoutEffect` khác gì `useEffect`?
+
+**Trả lời:**
+
+Cả hai đều chạy sau khi React render, nhưng khác nhau về thời điểm thực thi.
+
+### useLayoutEffect
+
+Chạy **đồng bộ** sau khi DOM được cập nhật nhưng **trước khi trình duyệt vẽ giao diện (paint).**
+
+Thường dùng để:
+
+- Đo kích thước DOM.
+- Đọc vị trí phần tử.
+- Điều chỉnh scroll.
+- Tránh hiện tượng nhấp nháy giao diện (layout flicker).
+
+### useEffect
+
+Chạy **sau khi trình duyệt đã paint xong.**
+
+Thường dùng cho:
+
+- Gọi API.
+- Đăng ký sự kiện.
+- Logging.
+- Analytics.
+
+> **Điểm cộng khi phỏng vấn:** Mặc định nên ưu tiên `useEffect`. Chỉ sử dụng `useLayoutEffect` khi thật sự cần đọc hoặc chỉnh sửa layout trước khi paint.
+
+---
+
+## 234. Hãy giải thích React Suspense
+
+**Trả lời:**
+
+Suspense cho phép React trì hoãn việc render component cho đến khi dữ liệu hoặc component bất đồng bộ đã sẵn sàng.
+
+Các trường hợp sử dụng phổ biến:
+
+- Lazy load component.
+- Data Fetching (React 19+).
+- Streaming SSR.
+
+Ví dụ:
+
+```tsx
+<Suspense fallback={<Loading />}>
+  <Dashboard />
+</Suspense>
+```
+
+Trong thời gian chờ, React sẽ hiển thị component `fallback`. Khi dữ liệu hoặc component tải xong, giao diện chính sẽ được render.
+
+---
+
+## 235. `startTransition()` giải quyết vấn đề gì?
+
+**Trả lời:**
+
+`startTransition()` giúp React phân biệt giữa các update **quan trọng (urgent)** và **không quan trọng (non-urgent).**
+
+Ví dụ:
+
+**Urgent Update**
+
+- Nhập liệu.
+- Click button.
+- Điều hướng giao diện.
+
+**Non-Urgent Update**
+
+- Render danh sách lớn.
+- Lọc dữ liệu.
+- Hiển thị kết quả tìm kiếm.
+
+Ví dụ:
+
+```tsx
+startTransition(() => {
+  setFilteredData(result);
+});
+```
+
+React sẽ ưu tiên giữ cho thao tác của người dùng luôn mượt, còn việc render dữ liệu lớn có thể được thực hiện sau.
+
+---
+
+## 236. Điều gì gây ra re-render không cần thiết trong React?
+
+**Trả lời:**
+
+Một số nguyên nhân phổ biến:
+
+- Component cha render lại.
+- Tạo object mới mỗi lần render.
+- Tạo function mới mỗi lần render.
+- Context thay đổi.
+- State được cập nhật với reference mới.
+- Thiếu memoization.
+
+Các cách tối ưu:
+
+- `React.memo`
+- `useMemo`
+- `useCallback`
+- Tách Context nhỏ hơn.
+- Đặt state gần nơi sử dụng (State Colocation).
+
+> **Điểm cộng khi phỏng vấn:** Không nên tối ưu theo cảm tính. Luôn sử dụng React DevTools Profiler để xác định bottleneck trước khi áp dụng memoization.
+
+---
+
+## 237. Controlled Component và Uncontrolled Component khác nhau như thế nào?
+
+**Trả lời:**
+
+### Controlled Component
+
+Giá trị của input được quản lý hoàn toàn bởi React.
+
+```tsx
+<input value={name} onChange={handleChange} />
+```
+
+Ưu điểm:
+
+- Một nguồn dữ liệu duy nhất (Single Source of Truth).
+- Dễ validate.
+- Dễ đồng bộ state.
+
+### Uncontrolled Component
+
+Giá trị được quản lý bởi chính DOM.
+
+```tsx
+<input ref={inputRef} />
+```
+
+Ưu điểm:
+
+- Ít re-render hơn.
+- Phù hợp với form đơn giản hoặc `input type="file"`.
+
+---
+
+## 238. Hydration trong React là gì?
+
+**Trả lời:**
+
+Hydration là quá trình React gắn Event Listener và khôi phục trạng thái tương tác lên HTML đã được render từ server.
+
+Quy trình:
+
+```text
+Server
+   │
+Render HTML
+   │
+Browser nhận HTML
+   │
+React Hydrate
+   │
+Ứng dụng có thể tương tác
+```
+
+Hydration giúp:
+
+- Cải thiện SEO.
+- Hiển thị nội dung nhanh hơn.
+- Giảm thời gian người dùng chờ giao diện xuất hiện.
+
+---
+
+## 239. Code Splitting và Lazy Loading khác nhau như thế nào?
+
+**Trả lời:**
+
+### Code Splitting
+
+Là kỹ thuật chia bundle JavaScript thành nhiều phần nhỏ trong quá trình build.
+
+### Lazy Loading
+
+Là kỹ thuật chỉ tải những phần bundle cần thiết khi người dùng thực sự sử dụng.
+
+Ví dụ:
+
+```tsx
+const Dashboard = React.lazy(() => import('./Dashboard'));
+```
+
+Thông thường hai kỹ thuật này được kết hợp để giảm kích thước bundle ban đầu và cải thiện thời gian tải trang.
+
+---
+
+## 240. Bạn sẽ tối ưu performance của một ứng dụng React lớn như thế nào?
+
+**Trả lời:**
+
+Một quy trình tối ưu hiệu quả thường gồm các bước sau:
+
+### 1. Đo lường trước
+
+Sử dụng:
+
+- React DevTools Profiler.
+- Chrome Performance.
+- Lighthouse.
+
+### 2. Giảm re-render
+
+- `React.memo`
+- `useMemo`
+- `useCallback`
+
+### 3. Giảm kích thước bundle
+
+- Code Splitting.
+- Lazy Loading.
+- Tree Shaking.
+
+### 4. Tối ưu việc render
+
+- Virtualized List.
+- Pagination.
+- Infinite Scroll.
+
+### 5. Tối ưu việc lấy dữ liệu
+
+- Caching.
+- Request Deduplication.
+- Optimistic Update.
+
+### 6. Cải thiện trải nghiệm người dùng
+
+- Suspense.
+- `startTransition()`.
+- Skeleton Loading.
+
+> **Điểm cộng khi phỏng vấn:** Senior không tối ưu theo cảm tính mà luôn bắt đầu bằng việc đo lường, xác định bottleneck, sau đó mới lựa chọn giải pháp phù hợp.
+</details>
 
 <details>
   <summary><strong>📅 2026-07-22 — React + JavaScript + Architecture </strong></summary>
