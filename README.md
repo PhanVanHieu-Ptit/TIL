@@ -3,6 +3,266 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-07-24 —  React Concurrent Features & Rendering  </strong></summary>
+
+## 251. React Scheduler là gì? Nó khác Event Loop của JavaScript như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+React Scheduler là cơ chế nội bộ giúp React quyết định **khi nào** và **ưu tiên** công việc nào sẽ được thực hiện trước. Nó không thay thế JavaScript Event Loop mà hoạt động trên cùng một luồng (main thread), phối hợp với Event Loop để chia nhỏ (chunk) công việc render.
+
+Ví dụ:
+
+- Người dùng đang gõ vào ô tìm kiếm → ưu tiên cập nhật input.
+- Đồng thời cần render 10.000 item → React có thể trì hoãn việc render danh sách để tránh giật giao diện.
+
+Khác biệt:
+
+| React Scheduler | JavaScript Event Loop |
+|-----------------|----------------------|
+| Quản lý ưu tiên render của React | Quản lý thực thi toàn bộ JavaScript |
+| Chỉ ảnh hưởng React | Ảnh hưởng mọi tác vụ JavaScript |
+| Có thể chia nhỏ công việc render | Không tự chia nhỏ logic của ứng dụng |
+
+> **Điểm cộng khi phỏng vấn:** Concurrent Rendering không tạo thêm thread mới, React vẫn chạy trên main thread.
+
+---
+
+## 252. Reconciliation trong React hoạt động như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Reconciliation là quá trình React so sánh Virtual DOM cũ và mới để xác định phần nào cần cập nhật lên DOM thật.
+
+React tối ưu bằng một số giả định:
+
+- Hai component khác type → unmount và mount lại.
+- Cùng type → chỉ cập nhật props/state thay đổi.
+- Với danh sách, React dựa vào `key` để xác định phần tử nào được giữ lại.
+
+Nhờ vậy React tránh phải cập nhật toàn bộ DOM.
+
+> **Điểm cộng khi phỏng vấn:** Reconciliation là thuật toán diff của React, còn Fiber là kiến trúc giúp thực hiện reconciliation hiệu quả hơn.
+
+---
+
+## 253. Điều gì xảy ra khi gọi nhiều `setState` liên tiếp?
+
+**Trả lời (phỏng vấn):**
+
+React sẽ **batch** các state update trong cùng một chu kỳ xử lý để giảm số lần render.
+
+Ví dụ:
+
+```tsx
+setCount(c => c + 1);
+setCount(c => c + 1);
+setCount(c => c + 1);
+```
+
+Kết quả:
+
+```text
+count tăng thêm 3
+```
+
+Nếu viết:
+
+```tsx
+setCount(count + 1);
+setCount(count + 1);
+```
+
+Hai lần đều đọc cùng một giá trị `count`, nên kết quả có thể chỉ tăng 1.
+
+> **Điểm cộng khi phỏng vấn:** Từ React 18, Automatic Batching được áp dụng cho nhiều trường hợp hơn (event, promise, timeout...).
+
+---
+
+## 254. React Context có nhược điểm gì?
+
+**Trả lời (phỏng vấn):**
+
+Khi value của Context thay đổi, tất cả component đang sử dụng Context đó sẽ render lại, ngay cả khi chúng không dùng đến phần dữ liệu vừa thay đổi.
+
+Điều này có thể gây giảm hiệu năng nếu Context chứa quá nhiều state.
+
+Các cách cải thiện:
+
+- Chia nhỏ Context.
+- Đặt state gần nơi sử dụng.
+- Dùng Context Selector.
+- Sử dụng thư viện quản lý state như Zustand hoặc Redux Toolkit khi phù hợp.
+
+---
+
+## 255. Tại sao nên ưu tiên composition thay vì inheritance trong React?
+
+**Trả lời (phỏng vấn):**
+
+React khuyến khích Composition vì component có thể được kết hợp linh hoạt thay vì kế thừa.
+
+Ví dụ:
+
+```tsx
+<Card>
+  <UserProfile />
+</Card>
+```
+
+thay vì:
+
+```text
+UserCard extends Card
+```
+
+Ưu điểm:
+
+- Dễ tái sử dụng.
+- Ít phụ thuộc giữa các component.
+- Dễ mở rộng.
+- Phù hợp với triết lý component-based.
+
+---
+
+## 256. Khi nào nên sử dụng `useRef` thay vì `useState`?
+
+**Trả lời (phỏng vấn):**
+
+`useRef` dùng để lưu giá trị giữa các lần render nhưng **không gây re-render** khi giá trị thay đổi.
+
+Thường dùng cho:
+
+- DOM element.
+- Timer ID.
+- Previous value.
+- Instance của thư viện bên thứ ba.
+
+Trong khi đó, `useState` dùng khi thay đổi dữ liệu cần cập nhật giao diện.
+
+> **Điểm cộng khi phỏng vấn:** Không nên dùng `useRef` để lưu state cần hiển thị trên UI.
+
+---
+
+## 257. React Strict Mode dùng để làm gì?
+
+**Trả lời (phỏng vấn):**
+
+Strict Mode là công cụ hỗ trợ phát hiện các vấn đề tiềm ẩn trong quá trình phát triển.
+
+Ví dụ:
+
+- Phát hiện side effect không an toàn.
+- Cảnh báo API đã deprecated.
+- Kiểm tra component có hoạt động đúng khi render nhiều lần.
+
+Trong môi trường development, React có thể gọi render hoặc effect nhiều hơn một lần để giúp phát hiện bug.
+
+> **Điểm cộng khi phỏng vấn:** Strict Mode chỉ ảnh hưởng ở môi trường development, không áp dụng trong production.
+
+---
+
+## 258. Tại sao không nên lưu dữ liệu có thể tính toán được vào state?
+
+**Trả lời (phỏng vấn):**
+
+State nên chứa **nguồn dữ liệu gốc (source of truth)**.
+
+Nếu một giá trị có thể tính từ state khác thì nên tính trực tiếp hoặc dùng `useMemo` nếu phép tính tốn kém.
+
+Ví dụ không nên:
+
+```tsx
+const [firstName, setFirstName] = ...
+const [lastName, setLastName] = ...
+const [fullName, setFullName] = ...
+```
+
+Nên:
+
+```tsx
+const fullName = `${firstName} ${lastName}`;
+```
+
+Điều này giúp tránh dữ liệu bị không đồng bộ.
+
+---
+
+## 259. Tại sao React yêu cầu Hook phải được gọi ở top-level?
+
+**Trả lời (phỏng vấn):**
+
+React xác định state của Hook dựa trên **thứ tự gọi Hook** trong mỗi lần render.
+
+Nếu Hook nằm trong `if`, `for` hoặc function lồng nhau, thứ tự này có thể thay đổi giữa các lần render, khiến React gán nhầm state.
+
+Ví dụ sai:
+
+```tsx
+if (isLogin) {
+  useEffect(() => {});
+}
+```
+
+Đúng:
+
+```tsx
+useEffect(() => {
+  if (isLogin) {
+    // logic
+  }
+}, [isLogin]);
+```
+
+Đây là lý do tồn tại quy tắc **Rules of Hooks**.
+
+---
+
+## 260. Nếu ứng dụng React render chậm, bạn sẽ debug theo quy trình nào?
+
+**Trả lời (phỏng vấn):**
+
+Tôi thường tiếp cận theo quy trình sau:
+
+### 1. Xác định triệu chứng
+
+- Chậm khi tải trang?
+- Chậm khi tương tác?
+- Hay bị giật khi cuộn?
+
+### 2. Đo lường
+
+- React DevTools Profiler.
+- Chrome Performance.
+- Lighthouse.
+- Network.
+
+### 3. Xác định nguyên nhân
+
+- Re-render không cần thiết.
+- Bundle quá lớn.
+- API chậm.
+- DOM quá nhiều.
+- Thuật toán xử lý chưa tối ưu.
+
+### 4. Áp dụng giải pháp phù hợp
+
+- Memoization.
+- Code Splitting.
+- Lazy Loading.
+- Virtualization.
+- Caching.
+- Debounce/Throttle.
+- Web Worker (nếu phù hợp).
+
+### 5. Đo lường lại
+
+Đánh giá hiệu quả sau khi tối ưu và tiếp tục lặp lại nếu cần.
+
+> **Điểm cộng khi phỏng vấn:** Một Senior Frontend Engineer không tối ưu theo cảm tính mà luôn bắt đầu bằng việc đo lường, xác định bottleneck, sau đó mới lựa chọn giải pháp phù hợp.
+</details>
+
+<details>
   <summary><strong>📅 2026-07-23 — React Fiber, Suspense & Performance  </strong></summary>
   
   ## 231. Hãy giải thích React Fiber Architecture
