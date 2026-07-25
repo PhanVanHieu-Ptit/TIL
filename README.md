@@ -3,6 +3,282 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-07-25 —  React Hooks & State Management  </strong></summary>
+  
+## 261. Tại sao React khuyến khích Custom Hook?
+
+**Trả lời (phỏng vấn):**
+
+Custom Hook cho phép **tái sử dụng logic**, không phải tái sử dụng UI.
+
+Ví dụ nhiều component đều cần:
+
+- Gọi API
+- Theo dõi kích thước màn hình
+- Xử lý debounce
+- Kiểm tra quyền người dùng
+
+Thay vì copy logic nhiều nơi:
+
+```tsx
+function useWindowSize() {
+  // ...
+}
+```
+
+Lợi ích:
+
+- Tách biệt business logic và UI.
+- Dễ test.
+- Dễ bảo trì.
+- Tránh lặp code.
+
+> **Điểm cộng khi phỏng vấn:** Custom Hook không chia sẻ state giữa các component, mỗi lần gọi Hook sẽ tạo một state độc lập.
+
+---
+
+## 262. Khi nào nên tách component?
+
+**Trả lời (phỏng vấn):**
+
+Không nên tách component chỉ vì file quá dài.
+
+Một component nên được tách khi:
+
+- Có thể tái sử dụng.
+- Có một trách nhiệm rõ ràng (Single Responsibility).
+- Logic quá phức tạp.
+- Có thể render độc lập.
+- Muốn giảm re-render.
+
+Ví dụ:
+
+```text
+ProductPage
+├── ProductGallery
+├── ProductInfo
+├── ProductReview
+└── ProductRecommendation
+```
+
+Việc chia component hợp lý giúp code dễ đọc, dễ kiểm thử và tối ưu hiệu năng.
+
+---
+
+## 263. State Colocation là gì?
+
+**Trả lời (phỏng vấn):**
+
+State Colocation là nguyên tắc **đặt state gần nơi sử dụng nhất** thay vì đưa lên component cha hoặc global store.
+
+Ví dụ:
+
+Sai:
+
+```text
+App
+└── quản lý state Modal
+```
+
+Đúng:
+
+```text
+ProductModal
+└── tự quản lý trạng thái mở/đóng
+```
+
+Lợi ích:
+
+- Giảm prop drilling.
+- Giảm re-render.
+- Code dễ bảo trì hơn.
+
+> **Điểm cộng khi phỏng vấn:** Chỉ đưa state lên cao khi nhiều component thực sự cần dùng chung.
+
+---
+
+## 264. Khi nào nên sử dụng Context và khi nào nên dùng Redux hoặc Zustand?
+
+**Trả lời (phỏng vấn):**
+
+**Context** phù hợp với dữ liệu ít thay đổi:
+
+- Theme.
+- Language.
+- User hiện tại.
+- Authentication.
+
+**Redux Toolkit/Zustand** phù hợp khi:
+
+- State phức tạp.
+- Nhiều component cùng sử dụng.
+- Cần middleware.
+- Cần DevTools.
+- Có nhiều business logic.
+
+Không nên dùng Context thay thế hoàn toàn Redux nếu state thay đổi thường xuyên vì có thể gây re-render diện rộng.
+
+---
+
+## 265. Prop Drilling là gì? Có những cách nào để giải quyết?
+
+**Trả lời (phỏng vấn):**
+
+Prop Drilling là việc phải truyền props qua nhiều tầng component chỉ để component con cuối cùng sử dụng.
+
+Ví dụ:
+
+```text
+App
+└── Layout
+    └── Sidebar
+        └── UserInfo
+```
+
+`user` phải truyền qua tất cả các component trung gian.
+
+Các cách giải quyết:
+
+- Context API.
+- Composition.
+- Zustand.
+- Redux Toolkit.
+- Custom Hook.
+
+Không phải lúc nào Prop Drilling cũng là vấn đề. Nếu chỉ truyền qua 1–2 tầng thì thường chưa cần tối ưu.
+
+---
+
+## 266. Tại sao React khuyến khích One-way Data Flow?
+
+**Trả lời (phỏng vấn):**
+
+Trong React, dữ liệu chỉ truyền theo một chiều:
+
+```text
+Parent
+   │
+Props
+   ▼
+Child
+```
+
+Child không được sửa trực tiếp state của Parent.
+
+Lợi ích:
+
+- Dễ theo dõi dữ liệu.
+- Dễ debug.
+- Tránh side effect.
+- Kiến trúc rõ ràng hơn.
+
+Nếu Child cần thay đổi dữ liệu của Parent, Parent sẽ truyền callback xuống.
+
+---
+
+## 267. Điều gì xảy ra nếu một component quá lớn?
+
+**Trả lời (phỏng vấn):**
+
+Một component quá lớn thường dẫn đến:
+
+- Khó đọc.
+- Khó test.
+- Khó tái sử dụng.
+- Dễ phát sinh bug.
+- Re-render nhiều hơn mức cần thiết.
+
+Senior thường chia component theo:
+
+- UI.
+- Business logic.
+- Data fetching.
+- Custom Hook.
+
+Thay vì một file hàng nghìn dòng, mỗi phần sẽ có trách nhiệm rõ ràng.
+
+---
+
+## 268. Container Component và Presentational Component là gì?
+
+**Trả lời (phỏng vấn):**
+
+Đây là một pattern phổ biến để tách logic và giao diện.
+
+### Container Component
+
+Chịu trách nhiệm:
+
+- Gọi API.
+- Quản lý state.
+- Xử lý business logic.
+
+### Presentational Component
+
+Chỉ nhận props và render giao diện.
+
+Ví dụ:
+
+```text
+UserContainer
+    │
+    ▼
+UserCard
+```
+
+Hiện nay pattern này thường được kết hợp với Custom Hook để giảm số lượng component trung gian.
+
+---
+
+## 269. Tại sao không nên fetch API trực tiếp trong nhiều component?
+
+**Trả lời (phỏng vấn):**
+
+Nếu mỗi component tự gọi API sẽ dễ dẫn đến:
+
+- Gọi trùng request.
+- Khó cache.
+- Khó xử lý loading.
+- Khó xử lý error.
+- Logic bị lặp lại.
+
+Giải pháp:
+
+- Custom Hook.
+- React Query.
+- SWR.
+- Redux Toolkit Query.
+
+Các thư viện này hỗ trợ:
+
+- Cache.
+- Retry.
+- Request Deduplication.
+- Background Refetch.
+- Đồng bộ dữ liệu.
+
+---
+
+## 270. Nếu thiết kế kiến trúc cho một ứng dụng React lớn, bạn sẽ ưu tiên những nguyên tắc nào?
+
+**Trả lời (phỏng vấn):**
+
+Tôi thường ưu tiên các nguyên tắc sau:
+
+1. **Tách rõ UI và Business Logic**
+2. **Đặt state gần nơi sử dụng (State Colocation)**
+3. **Tái sử dụng logic bằng Custom Hook**
+4. **Ưu tiên Composition hơn Inheritance**
+5. **Module hóa theo tính năng (Feature-based Structure)**
+6. **Giảm phụ thuộc giữa các module**
+7. **Tối ưu hiệu năng dựa trên số liệu đo lường**
+8. **Viết component dễ kiểm thử**
+9. **Đảm bảo khả năng mở rộng**
+10. **Giữ code nhất quán theo coding convention của dự án**
+
+> **Điểm cộng khi phỏng vấn:** Với dự án lớn, mục tiêu không chỉ là "code chạy được" mà còn phải dễ mở rộng, dễ bảo trì và đủ linh hoạt để nhiều nhóm phát triển cùng lúc.
+</details>
+<details>
   <summary><strong>📅 2026-07-24 —  React Concurrent Features & Rendering  </strong></summary>
 
 ## 251. React Scheduler là gì? Nó khác Event Loop của JavaScript như thế nào?
