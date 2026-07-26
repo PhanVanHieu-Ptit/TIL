@@ -3,6 +3,336 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-07-26 —  Browser Internals & JavaScript Runtime  </strong></summary>
+  
+## 271. Event Loop là gì? Hãy mô tả quá trình JavaScript thực thi một đoạn code.
+
+**Trả lời (phỏng vấn):**
+
+JavaScript là ngôn ngữ **single-threaded**, chỉ thực thi một tác vụ tại một thời điểm.
+
+Để xử lý các tác vụ bất đồng bộ, JavaScript sử dụng **Event Loop** kết hợp với:
+
+- Call Stack
+- Web APIs
+- Task Queue (Macro Task Queue)
+- Microtask Queue
+
+Quy trình:
+
+```text
+Call Stack
+    │
+    ▼
+Thực thi code đồng bộ
+    │
+    ▼
+Web APIs (setTimeout, fetch...)
+    │
+    ▼
+Task Queue / Microtask Queue
+    │
+    ▼
+Event Loop
+    │
+    ▼
+Đưa callback trở lại Call Stack
+```
+
+Thứ tự ưu tiên:
+
+1. Code đồng bộ
+2. Microtask (`Promise.then`, `queueMicrotask`, `MutationObserver`)
+3. Render (nếu cần)
+4. Macrotask (`setTimeout`, `setInterval`, I/O...)
+
+> **Điểm cộng khi phỏng vấn:** Sau mỗi Macrotask, JavaScript sẽ xử lý toàn bộ Microtask trước khi chuyển sang Macrotask tiếp theo.
+
+---
+
+## 272. Microtask và Macrotask khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+### Microtask
+
+Ví dụ:
+
+- Promise.then()
+- Promise.catch()
+- Promise.finally()
+- queueMicrotask()
+- MutationObserver
+
+### Macrotask
+
+Ví dụ:
+
+- setTimeout()
+- setInterval()
+- MessageChannel
+- I/O
+- UI Event
+
+Ví dụ:
+
+```tsx
+console.log(1);
+
+setTimeout(() => console.log(2));
+
+Promise.resolve().then(() => console.log(3));
+
+console.log(4);
+```
+
+Kết quả:
+
+```text
+1
+4
+3
+2
+```
+
+Vì Microtask luôn được thực thi trước Macrotask.
+
+---
+
+## 273. Tại sao JavaScript chỉ có một Call Stack?
+
+**Trả lời (phỏng vấn):**
+
+JavaScript được thiết kế là **single-threaded** để tránh các vấn đề đồng bộ dữ liệu như:
+
+- Race Condition.
+- Deadlock.
+- Mutex.
+- Shared Memory.
+
+Các tác vụ bất đồng bộ được trình duyệt hoặc Node.js xử lý bên ngoài JavaScript Runtime, sau đó callback mới được đưa trở lại Event Loop.
+
+Điều này giúp lập trình đơn giản hơn nhưng cũng yêu cầu tránh các tác vụ đồng bộ quá nặng làm chặn main thread.
+
+---
+
+## 274. Memory Leak trong JavaScript là gì? Làm thế nào để tránh?
+
+**Trả lời (phỏng vấn):**
+
+Memory Leak xảy ra khi bộ nhớ không còn được sử dụng nhưng vẫn không được Garbage Collector giải phóng.
+
+Nguyên nhân phổ biến:
+
+- Không remove Event Listener.
+- Không clear Interval/Timeout.
+- Closure giữ tham chiếu không cần thiết.
+- Cache tăng không giới hạn.
+- DOM node đã bị remove nhưng vẫn còn reference.
+
+Ví dụ:
+
+```tsx
+useEffect(() => {
+  window.addEventListener("resize", onResize);
+
+  return () => {
+    window.removeEventListener("resize", onResize);
+  };
+}, []);
+```
+
+> **Điểm cộng khi phỏng vấn:** Memory Leak thường gây tăng RAM theo thời gian thay vì gây lỗi ngay lập tức.
+
+---
+
+## 275. Garbage Collector hoạt động như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Garbage Collector tự động giải phóng các object không còn khả năng truy cập (reachable).
+
+Hiện nay, hầu hết JavaScript Engine sử dụng thuật toán **Mark-and-Sweep**.
+
+Quy trình:
+
+1. Bắt đầu từ Global Object.
+2. Đánh dấu toàn bộ object còn được tham chiếu.
+3. Object không được đánh dấu sẽ bị thu hồi bộ nhớ.
+
+Ví dụ:
+
+```tsx
+let user = {
+  name: "John",
+};
+
+user = null;
+```
+
+Object ban đầu không còn reference nên có thể được Garbage Collector thu hồi.
+
+> **Điểm cộng khi phỏng vấn:** Không thể dự đoán chính xác khi nào Garbage Collector sẽ chạy.
+
+---
+
+## 276. Deep Copy và Shallow Copy khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+### Shallow Copy
+
+Chỉ sao chép một cấp đầu tiên.
+
+```tsx
+const b = { ...a };
+```
+
+Nếu object con thay đổi thì cả hai object đều bị ảnh hưởng.
+
+### Deep Copy
+
+Sao chép toàn bộ object lồng nhau.
+
+Có thể dùng:
+
+- `structuredClone()`
+- Lodash `cloneDeep()`
+
+Deep Copy giúp tránh việc nhiều object cùng chia sẻ reference.
+
+---
+
+## 277. Tại sao `==` và `===` cho kết quả khác nhau?
+
+**Trả lời (phỏng vấn):**
+
+`===`
+
+- So sánh giá trị.
+- So sánh kiểu dữ liệu.
+- Không ép kiểu.
+
+`==`
+
+- Có ép kiểu trước khi so sánh.
+
+Ví dụ:
+
+```tsx
+0 == false      // true
+0 === false     // false
+
+"" == 0         // true
+"" === 0        // false
+```
+
+Trong hầu hết trường hợp, nên ưu tiên sử dụng `===` để tránh các kết quả khó đoán do ép kiểu ngầm.
+
+---
+
+## 278. Closure là gì? Cho ví dụ thực tế.
+
+**Trả lời (phỏng vấn):**
+
+Closure là khả năng một function ghi nhớ phạm vi (lexical scope) nơi nó được tạo ra, ngay cả khi scope đó đã kết thúc.
+
+Ví dụ:
+
+```tsx
+function counter() {
+  let count = 0;
+
+  return () => ++count;
+}
+
+const increase = counter();
+
+increase(); // 1
+increase(); // 2
+```
+
+Ứng dụng:
+
+- Custom Hook.
+- Memoization.
+- Debounce.
+- Throttle.
+- Module Pattern.
+
+> **Điểm cộng khi phỏng vấn:** Closure rất mạnh nhưng nếu giữ reference không cần thiết có thể gây Memory Leak.
+
+---
+
+## 279. Hoisting là gì?
+
+**Trả lời (phỏng vấn):**
+
+Hoisting là hành vi JavaScript đưa phần khai báo lên đầu phạm vi thực thi trước khi chạy code.
+
+Ví dụ:
+
+```tsx
+console.log(a);
+
+var a = 10;
+```
+
+Tương đương:
+
+```tsx
+var a;
+
+console.log(a);
+
+a = 10;
+```
+
+Kết quả:
+
+```text
+undefined
+```
+
+Đối với `let` và `const`, biến vẫn được hoisting nhưng nằm trong **Temporal Dead Zone (TDZ)** nên không thể truy cập trước khi khai báo.
+
+---
+
+## 280. Tại sao `this` trong JavaScript thường gây nhầm lẫn?
+
+**Trả lời (phỏng vấn):**
+
+Giá trị của `this` phụ thuộc vào **cách function được gọi**, không phải nơi function được khai báo.
+
+Ví dụ:
+
+```tsx
+const user = {
+  name: "Alice",
+  greet() {
+    console.log(this.name);
+  },
+};
+
+user.greet();
+```
+
+`this` trỏ tới `user`.
+
+Trong Arrow Function:
+
+```tsx
+const fn = () => {
+  console.log(this);
+};
+```
+
+Arrow Function **không có `this` riêng**, mà sử dụng `this` từ lexical scope bên ngoài.
+
+> **Điểm cộng khi phỏng vấn:** Đây là lý do Arrow Function thường được sử dụng trong callback hoặc class để tránh mất ngữ cảnh của `this`.
+</details>
+
+<details>
   <summary><strong>📅 2026-07-25 —  React Hooks & State Management  </strong></summary>
   
 ## 261. Tại sao React khuyến khích Custom Hook?
