@@ -3,6 +3,382 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-07-27 —  TypeScript Advanced  </strong></summary>
+
+## 281. `interface` và `type` khác nhau như thế nào? Khi nào nên dùng mỗi loại?
+
+**Trả lời (phỏng vấn):**
+
+Cả `interface` và `type` đều dùng để định nghĩa kiểu dữ liệu, nhưng có một số điểm khác biệt.
+
+### interface
+
+Ưu điểm:
+
+- Có thể khai báo nhiều lần (Declaration Merging).
+- Phù hợp để mô tả object hoặc class.
+- Có thể `extends`.
+
+```ts
+interface User {
+  name: string;
+}
+
+interface User {
+  age: number;
+}
+
+// Kết quả
+interface User {
+  name: string;
+  age: number;
+}
+```
+
+### type
+
+Linh hoạt hơn:
+
+- Union
+- Intersection
+- Tuple
+- Primitive
+- Conditional Type
+- Mapped Type
+
+```ts
+type Status = "loading" | "success" | "error";
+```
+
+> **Điểm cộng khi phỏng vấn:** Trong dự án React, nhiều team ưu tiên `interface` cho object và `type` cho Union hoặc Utility Type.
+
+---
+
+## 282. Generic trong TypeScript là gì? Tại sao cần Generic?
+
+**Trả lời (phỏng vấn):**
+
+Generic cho phép viết code **tái sử dụng** mà vẫn giữ được kiểu dữ liệu.
+
+Ví dụ:
+
+```ts
+function identity<T>(value: T): T {
+  return value;
+}
+```
+
+Sử dụng:
+
+```ts
+identity<number>(10);
+
+identity<string>("Hello");
+```
+
+Không cần viết:
+
+```ts
+identityNumber()
+
+identityString()
+
+identityBoolean()
+```
+
+> **Điểm cộng khi phỏng vấn:** Generic giúp TypeScript suy luận kiểu tốt hơn, giảm việc sử dụng `any`.
+
+---
+
+## 283. `unknown` khác gì `any`?
+
+**Trả lời (phỏng vấn):**
+
+### any
+
+TypeScript bỏ qua kiểm tra kiểu.
+
+```ts
+let value: any = 10;
+
+value.toUpperCase();
+```
+
+Không báo lỗi khi compile nhưng có thể lỗi khi chạy.
+
+### unknown
+
+An toàn hơn.
+
+```ts
+let value: unknown = "Hello";
+
+if (typeof value === "string") {
+  value.toUpperCase();
+}
+```
+
+Phải kiểm tra kiểu trước khi sử dụng.
+
+> **Điểm cộng khi phỏng vấn:** `unknown` là lựa chọn tốt hơn `any` trong hầu hết trường hợp.
+
+---
+
+## 284. `never` là gì?
+
+**Trả lời (phỏng vấn):**
+
+`never` biểu thị một giá trị **không bao giờ xảy ra**.
+
+Ví dụ:
+
+```ts
+function throwError(): never {
+  throw new Error();
+}
+```
+
+Hoặc:
+
+```ts
+while (true) {}
+```
+
+Ứng dụng phổ biến:
+
+- Exhaustive Checking.
+- Kiểm tra đầy đủ các trường hợp trong `switch`.
+
+```ts
+default:
+  const exhaustive: never = status;
+```
+
+---
+
+## 285. Utility Types trong TypeScript là gì?
+
+**Trả lời (phỏng vấn):**
+
+Utility Types giúp biến đổi kiểu dữ liệu mà không cần định nghĩa lại.
+
+Ví dụ:
+
+```ts
+interface User {
+  id: number;
+  name: string;
+}
+```
+
+```ts
+Partial<User>
+```
+
+↓
+
+```ts
+{
+  id?: number;
+  name?: string;
+}
+```
+
+Một số Utility Type phổ biến:
+
+- `Partial`
+- `Required`
+- `Readonly`
+- `Pick`
+- `Omit`
+- `Record`
+- `Exclude`
+- `Extract`
+
+---
+
+## 286. `Pick` và `Omit` khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Ví dụ:
+
+```ts
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+```
+
+### Pick
+
+Chỉ lấy các field cần thiết.
+
+```ts
+type UserInfo = Pick<User, "id" | "name">;
+```
+
+↓
+
+```ts
+{
+  id: number;
+  name: string;
+}
+```
+
+### Omit
+
+Loại bỏ field không cần.
+
+```ts
+type UserInfo = Omit<User, "email">;
+```
+
+↓
+
+```ts
+{
+  id: number;
+  name: string;
+}
+```
+
+---
+
+## 287. Conditional Type là gì?
+
+**Trả lời (phỏng vấn):**
+
+Conditional Type cho phép tạo kiểu dựa trên điều kiện.
+
+Cú pháp:
+
+```ts
+T extends U ? X : Y
+```
+
+Ví dụ:
+
+```ts
+type IsString<T> = T extends string ? true : false;
+```
+
+Kết quả:
+
+```ts
+type A = IsString<string>; // true
+
+type B = IsString<number>; // false
+```
+
+Đây là nền tảng của nhiều Utility Type trong TypeScript.
+
+---
+
+## 288. `infer` được dùng để làm gì?
+
+**Trả lời (phỏng vấn):**
+
+`infer` cho phép TypeScript suy luận kiểu bên trong Conditional Type.
+
+Ví dụ:
+
+```ts
+type Return<T> =
+  T extends (...args: any[]) => infer R
+    ? R
+    : never;
+```
+
+Sử dụng:
+
+```ts
+type A = Return<() => number>;
+```
+
+↓
+
+```ts
+number
+```
+
+`infer` thường được dùng để xây dựng Utility Type nâng cao.
+
+---
+
+## 289. Type Narrowing là gì?
+
+**Trả lời (phỏng vấn):**
+
+Type Narrowing là quá trình TypeScript thu hẹp kiểu dữ liệu dựa trên điều kiện.
+
+Ví dụ:
+
+```ts
+function print(value: string | number) {
+  if (typeof value === "string") {
+    console.log(value.toUpperCase());
+  }
+}
+```
+
+Sau khi kiểm tra:
+
+```ts
+typeof value === "string"
+```
+
+TypeScript hiểu rằng `value` chỉ còn là `string`.
+
+Ngoài `typeof`, còn có:
+
+- `instanceof`
+- `in`
+- Discriminated Union
+- Custom Type Guard
+
+---
+
+## 290. Type Guard là gì?
+
+**Trả lời (phỏng vấn):**
+
+Type Guard giúp TypeScript xác định chính xác kiểu dữ liệu trong runtime.
+
+Ví dụ:
+
+```ts
+interface Dog {
+  bark(): void;
+}
+
+interface Cat {
+  meow(): void;
+}
+
+function isDog(
+  animal: Dog | Cat
+): animal is Dog {
+  return "bark" in animal;
+}
+```
+
+Sử dụng:
+
+```ts
+if (isDog(animal)) {
+  animal.bark();
+}
+```
+
+Sau khi gọi `isDog()`, TypeScript hiểu `animal` là `Dog`.
+
+> **Điểm cộng khi phỏng vấn:** Type Guard đặc biệt hữu ích khi làm việc với API response, Union Type hoặc dữ liệu có nhiều biến thể.
+</details>
+
+<details>
   <summary><strong>📅 2026-07-26 —  Browser Internals & JavaScript Runtime  </strong></summary>
   
 ## 271. Event Loop là gì? Hãy mô tả quá trình JavaScript thực thi một đoạn code.
