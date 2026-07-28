@@ -3,6 +3,353 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-07-28 —  Web Performance & Browser Rendering </strong></summary>
+
+## 291. Critical Rendering Path (CRP) là gì?
+
+**Trả lời (phỏng vấn):**
+
+Critical Rendering Path (CRP) là quá trình trình duyệt chuyển đổi tài nguyên (HTML, CSS, JavaScript) thành giao diện hiển thị trên màn hình.
+
+Các bước chính:
+
+```text
+HTML
+  │
+  ▼
+DOM Tree
+
+CSS
+  │
+  ▼
+CSSOM
+
+DOM + CSSOM
+      │
+      ▼
+ Render Tree
+      │
+      ▼
+    Layout
+      │
+      ▼
+     Paint
+      │
+      ▼
+   Composite
+```
+
+Mục tiêu khi tối ưu CRP:
+
+- Giảm tài nguyên chặn render (Render Blocking Resources).
+- Giảm số lượng request.
+- Giảm kích thước CSS và JavaScript.
+- Hiển thị nội dung đầu tiên càng sớm càng tốt.
+
+> **Điểm cộng khi phỏng vấn:** Hiểu CRP giúp giải thích vì sao CSS thường chặn render và JavaScript có thể chặn quá trình parse HTML.
+
+---
+
+## 292. DOM Tree, CSSOM và Render Tree khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+### DOM Tree
+
+Được tạo từ HTML.
+
+Ví dụ:
+
+```html
+<body>
+  <h1>Hello</h1>
+</body>
+```
+
+↓
+
+```text
+body
+ └── h1
+```
+
+### CSSOM
+
+Được tạo từ các file CSS.
+
+Ví dụ:
+
+```css
+h1 {
+  color: red;
+}
+```
+
+↓
+
+```text
+CSS Rule
+ └── h1
+```
+
+### Render Tree
+
+Là sự kết hợp giữa DOM và CSSOM.
+
+Render Tree chỉ chứa những phần tử cần hiển thị.
+
+Ví dụ:
+
+```css
+display: none;
+```
+
+Element sẽ tồn tại trong DOM nhưng **không xuất hiện trong Render Tree**.
+
+---
+
+## 293. Reflow (Layout) và Repaint khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+### Reflow (Layout)
+
+Xảy ra khi thay đổi làm ảnh hưởng đến kích thước hoặc vị trí của phần tử.
+
+Ví dụ:
+
+- width
+- height
+- padding
+- margin
+- font-size
+- thêm hoặc xóa DOM
+
+Đây là thao tác có chi phí cao.
+
+### Repaint
+
+Xảy ra khi chỉ thay đổi giao diện mà không làm thay đổi layout.
+
+Ví dụ:
+
+- color
+- background-color
+- visibility
+
+Repaint thường rẻ hơn Reflow.
+
+> **Điểm cộng khi phỏng vấn:** Mỗi Reflow thường kéo theo Repaint, nhưng Repaint không nhất thiết gây Reflow.
+
+---
+
+## 294. Composite là gì?
+
+**Trả lời (phỏng vấn):**
+
+Sau khi Paint hoàn tất, trình duyệt sẽ thực hiện Composite để ghép các layer lại thành khung hình cuối cùng.
+
+Một số thuộc tính như:
+
+- `transform`
+- `opacity`
+
+thường chỉ cần Composite mà không cần Layout hoặc Paint.
+
+Ví dụ:
+
+```css
+transform: translateX(100px);
+```
+
+Đây là lý do animation bằng `transform` thường mượt hơn thay đổi `left`.
+
+---
+
+## 295. Tại sao animation bằng `transform` và `opacity` lại được khuyến khích?
+
+**Trả lời (phỏng vấn):**
+
+Hai thuộc tính này thường chỉ kích hoạt bước **Composite**.
+
+Trong khi đó:
+
+```css
+left: 100px;
+```
+
+có thể gây:
+
+- Layout
+- Paint
+- Composite
+
+Ngược lại:
+
+```css
+transform: translateX(100px);
+```
+
+thường chỉ cần Composite.
+
+Kết quả:
+
+- FPS cao hơn.
+- Ít giật.
+- Ít tiêu tốn CPU.
+
+> **Điểm cộng khi phỏng vấn:** Đây là một trong những nguyên tắc quan trọng khi tối ưu animation trên web.
+
+---
+
+## 296. Debounce và Throttle khác nhau như thế nào? Khi nào nên sử dụng?
+
+**Trả lời (phỏng vấn):**
+
+### Debounce
+
+Chỉ thực thi sau khi người dùng ngừng thao tác trong một khoảng thời gian.
+
+Phù hợp với:
+
+- Search.
+- Auto Save.
+- Validation.
+
+### Throttle
+
+Giới hạn số lần thực thi trong một khoảng thời gian cố định.
+
+Phù hợp với:
+
+- Scroll.
+- Resize.
+- Mouse Move.
+
+Ví dụ:
+
+```text
+Scroll liên tục
+
+Debounce
+-----------------
+...............✔
+
+Throttle
+-----------------
+✔....✔....✔....✔
+```
+
+---
+
+## 297. Tại sao `requestAnimationFrame()` phù hợp cho animation hơn `setTimeout()`?
+
+**Trả lời (phỏng vấn):**
+
+`requestAnimationFrame()` đồng bộ với chu kỳ render của trình duyệt (thường khoảng 60 FPS).
+
+Ưu điểm:
+
+- Animation mượt hơn.
+- Tiết kiệm tài nguyên.
+- Tự động tạm dừng khi tab không hoạt động.
+
+Trong khi đó, `setTimeout()` không đồng bộ với quá trình render nên dễ gây hiện tượng giật hoặc bỏ khung hình.
+
+---
+
+## 298. Lighthouse đánh giá những chỉ số hiệu năng nào?
+
+**Trả lời (phỏng vấn):**
+
+Các chỉ số quan trọng gồm:
+
+- First Contentful Paint (FCP)
+- Largest Contentful Paint (LCP)
+- Cumulative Layout Shift (CLS)
+- Interaction to Next Paint (INP)
+- Time to Interactive (TTI)
+- Speed Index
+
+Ngoài hiệu năng, Lighthouse còn đánh giá:
+
+- Accessibility.
+- Best Practices.
+- SEO.
+- Progressive Web App (PWA).
+
+> **Điểm cộng khi phỏng vấn:** Hiện nay INP đã thay thế FID (First Input Delay) trong Core Web Vitals.
+
+---
+
+## 299. Bạn sẽ tối ưu Largest Contentful Paint (LCP) như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Một số cách tối ưu:
+
+- Tối ưu phản hồi từ server.
+- Giảm thời gian tải tài nguyên quan trọng.
+- Sử dụng CDN.
+- Nén ảnh.
+- Dùng định dạng WebP hoặc AVIF.
+- Lazy Load các tài nguyên không quan trọng.
+- Preload Hero Image.
+- Giảm JavaScript chặn render.
+- Tối ưu CSS quan trọng (Critical CSS).
+
+> **Điểm cộng khi phỏng vấn:** Trong nhiều ứng dụng, Hero Image thường là phần tử được tính là LCP.
+
+---
+
+## 300. Nếu người dùng phản ánh ứng dụng "chậm", bạn sẽ điều tra theo quy trình nào?
+
+**Trả lời (phỏng vấn):**
+
+Tôi thường thực hiện theo các bước sau:
+
+### 1. Xác định phạm vi
+
+- Chậm khi tải trang?
+- Chậm khi thao tác?
+- Chỉ xảy ra trên mobile?
+- Chỉ xảy ra với dữ liệu lớn?
+
+### 2. Thu thập dữ liệu
+
+- Chrome DevTools.
+- React DevTools Profiler.
+- Lighthouse.
+- Performance Panel.
+- Network Panel.
+
+### 3. Xác định bottleneck
+
+- Bundle lớn.
+- API chậm.
+- Re-render không cần thiết.
+- Layout/Repaint quá nhiều.
+- Memory Leak.
+- JavaScript thực thi lâu.
+
+### 4. Đưa ra giải pháp
+
+- Code Splitting.
+- Lazy Loading.
+- Memoization.
+- Virtualization.
+- Caching.
+- Tối ưu ảnh.
+- Giảm Render Blocking Resources.
+
+### 5. Đo lường lại
+
+So sánh các chỉ số trước và sau khi tối ưu để xác nhận hiệu quả.
+
+> **Điểm cộng khi phỏng vấn:** Một Senior Frontend Engineer không tối ưu dựa trên cảm giác mà luôn dựa trên dữ liệu đo lường, xác định nguyên nhân gốc (root cause) rồi mới lựa chọn giải pháp phù hợp.
+</details>
+
+<details>
   <summary><strong>📅 2026-07-27 —  TypeScript Advanced  </strong></summary>
 
 ## 281. `interface` và `type` khác nhau như thế nào? Khi nào nên dùng mỗi loại?
