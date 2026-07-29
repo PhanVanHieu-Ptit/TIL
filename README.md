@@ -3,6 +3,332 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-07-29 —  Networking, HTTP & API Design  </strong></summary>
+
+## 301. HTTP và HTTPS khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+HTTP (HyperText Transfer Protocol) là giao thức truyền dữ liệu giữa client và server.
+
+HTTPS (HTTP Secure) là HTTP kết hợp với TLS/SSL để mã hóa dữ liệu trong quá trình truyền.
+
+HTTPS cung cấp ba thuộc tính quan trọng:
+
+- **Confidentiality**: Mã hóa dữ liệu, giảm nguy cơ bị đọc trộm trong quá trình truyền.
+- **Integrity**: Giúp phát hiện dữ liệu bị thay đổi trong quá trình truyền.
+- **Authentication**: Xác thực máy chủ thông qua chứng chỉ số (certificate).
+
+> **Điểm cộng khi phỏng vấn:** HTTPS không mã hóa dữ liệu đang lưu trên server, mà bảo vệ dữ liệu khi truyền qua mạng.
+
+---
+
+## 302. Idempotent là gì? Những HTTP Method nào là Idempotent?
+
+**Trả lời (phỏng vấn):**
+
+Một request được gọi là **Idempotent** nếu gửi nhiều lần cùng một request sẽ tạo ra cùng một trạng thái cuối cùng trên server.
+
+Ví dụ:
+
+| Method | Idempotent |
+|----------|------------|
+| GET | ✅ |
+| PUT | ✅ |
+| DELETE | ✅ |
+| HEAD | ✅ |
+| OPTIONS | ✅ |
+| POST | ❌ |
+| PATCH | Phụ thuộc cách thiết kế API |
+
+Ví dụ:
+
+```http
+PUT /users/1
+```
+
+Gửi nhiều lần vẫn chỉ cập nhật user thành cùng một giá trị.
+
+Trong khi:
+
+```http
+POST /orders
+```
+
+Mỗi lần gửi có thể tạo thêm một đơn hàng mới.
+
+---
+
+## 303. PUT và PATCH khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+### PUT
+
+Cập nhật toàn bộ tài nguyên.
+
+Ví dụ:
+
+```json
+{
+  "name": "Alice",
+  "age": 20
+}
+```
+
+Nếu thiếu trường, server có thể hiểu là muốn thay thế toàn bộ resource.
+
+### PATCH
+
+Chỉ cập nhật những trường cần thay đổi.
+
+Ví dụ:
+
+```json
+{
+  "age": 21
+}
+```
+
+Phù hợp khi chỉ muốn sửa một phần dữ liệu.
+
+> **Điểm cộng khi phỏng vấn:** Trong RESTful API, PUT thường mang tính Idempotent hơn PATCH, nhưng điều này còn phụ thuộc vào cách triển khai phía server.
+
+---
+
+## 304. CORS là gì? Tại sao trình duyệt chặn request?
+
+**Trả lời (phỏng vấn):**
+
+CORS (Cross-Origin Resource Sharing) là cơ chế bảo mật của trình duyệt nhằm kiểm soát việc một website truy cập tài nguyên từ một origin khác.
+
+Một origin bao gồm:
+
+- Protocol
+- Domain
+- Port
+
+Ví dụ:
+
+```
+https://example.com
+```
+
+và
+
+```
+https://api.example.com
+```
+
+được xem là khác origin.
+
+Nếu server không trả về các header CORS phù hợp, trình duyệt sẽ chặn request.
+
+Một số header phổ biến:
+
+- `Access-Control-Allow-Origin`
+- `Access-Control-Allow-Methods`
+- `Access-Control-Allow-Headers`
+
+> **Điểm cộng khi phỏng vấn:** CORS là cơ chế do trình duyệt thực thi. Request từ server đến server không bị ràng buộc bởi CORS.
+
+---
+
+## 305. Preflight Request là gì?
+
+**Trả lời (phỏng vấn):**
+
+Đối với một số request, trình duyệt sẽ gửi trước một request `OPTIONS` để hỏi server xem request chính có được phép thực hiện hay không.
+
+Ví dụ:
+
+```http
+OPTIONS /users
+```
+
+Server phản hồi:
+
+```http
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: GET, POST
+```
+
+Nếu server từ chối hoặc thiếu header cần thiết, request chính sẽ không được gửi.
+
+Preflight thường xảy ra khi:
+
+- Sử dụng method như `PUT`, `DELETE`, `PATCH`.
+- Gửi custom header.
+- Gửi một số Content-Type không thuộc nhóm "simple request".
+
+---
+
+## 306. Cookie, LocalStorage và SessionStorage khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+| Đặc điểm | Cookie | LocalStorage | SessionStorage |
+|----------|---------|--------------|----------------|
+| Tự gửi lên server | ✅ | ❌ | ❌ |
+| Dung lượng | Nhỏ | Lớn hơn Cookie | Lớn hơn Cookie |
+| Thời gian tồn tại | Theo cấu hình | Cho đến khi bị xóa | Đến khi đóng tab |
+
+Thông thường:
+
+- Cookie dùng cho Session hoặc Refresh Token (tùy kiến trúc hệ thống).
+- LocalStorage dùng lưu các dữ liệu không nhạy cảm như theme hoặc ngôn ngữ.
+- SessionStorage dùng cho dữ liệu chỉ tồn tại trong một phiên làm việc của tab.
+
+> **Điểm cộng khi phỏng vấn:** Không nên lưu Access Token trong LocalStorage nếu kiến trúc bảo mật của hệ thống yêu cầu giảm rủi ro từ XSS.
+
+---
+
+## 307. REST và GraphQL khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+### REST
+
+- Mỗi resource thường có một endpoint.
+- Server quyết định cấu trúc dữ liệu trả về.
+- Dễ cache qua HTTP.
+
+Ví dụ:
+
+```
+GET /users/1
+```
+
+### GraphQL
+
+- Một endpoint duy nhất.
+- Client chủ động chọn trường dữ liệu cần lấy.
+
+Ví dụ:
+
+```graphql
+{
+  user {
+    name
+    email
+  }
+}
+```
+
+Ưu điểm:
+
+- Giảm over-fetching.
+- Giảm under-fetching.
+
+Nhược điểm:
+
+- Cache phức tạp hơn.
+- Thiết kế và vận hành server thường phức tạp hơn REST.
+
+---
+
+## 308. Pagination, Infinite Scroll và Virtualization khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+### Pagination
+
+Chia dữ liệu thành nhiều trang.
+
+Ưu điểm:
+
+- Dễ điều hướng.
+- Phù hợp với dữ liệu lớn.
+
+### Infinite Scroll
+
+Tự động tải thêm dữ liệu khi cuộn.
+
+Ưu điểm:
+
+- Trải nghiệm liên tục.
+- Phù hợp với mạng xã hội.
+
+### Virtualization
+
+Chỉ render các phần tử đang hiển thị trên màn hình.
+
+Ưu điểm:
+
+- Giảm số lượng DOM node.
+- Cải thiện hiệu năng khi danh sách rất lớn.
+
+> **Điểm cộng khi phỏng vấn:** Infinite Scroll và Virtualization thường được kết hợp trong các ứng dụng hiển thị danh sách lớn.
+
+---
+
+## 309. Retry và Exponential Backoff là gì?
+
+**Trả lời (phỏng vấn):**
+
+Retry là việc gửi lại request khi gặp lỗi tạm thời.
+
+Nếu retry ngay lập tức nhiều lần có thể làm tăng tải cho server.
+
+Exponential Backoff là chiến lược tăng dần thời gian chờ giữa các lần retry.
+
+Ví dụ:
+
+```
+Lần 1: 1 giây
+
+Lần 2: 2 giây
+
+Lần 3: 4 giây
+
+Lần 4: 8 giây
+```
+
+Cách này giúp:
+
+- Giảm áp lực lên server.
+- Tăng khả năng request thành công khi hệ thống phục hồi.
+
+---
+
+## 310. Bạn sẽ thiết kế API Layer trong ứng dụng React như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Tôi thường tách API Layer thành các phần rõ ràng:
+
+```text
+src/
+├── api/
+│   ├── client.ts
+│   ├── auth.api.ts
+│   ├── user.api.ts
+│   └── product.api.ts
+│
+├── hooks/
+│   ├── useUser.ts
+│   ├── useProducts.ts
+│   └── useLogin.ts
+│
+├── types/
+├── services/
+└── utils/
+```
+
+Nguyên tắc thiết kế:
+
+- Chỉ có một HTTP Client dùng chung.
+- Tách từng module API theo domain.
+- Không gọi API trực tiếp trong component.
+- Chuẩn hóa xử lý lỗi.
+- Tách DTO và Domain Model khi cần.
+- Hỗ trợ hủy request (AbortController) nếu phù hợp.
+- Kết hợp React Query hoặc SWR để quản lý cache, loading và đồng bộ dữ liệu.
+
+> **Điểm cộng khi phỏng vấn:** API Layer nên đóng vai trò là lớp trừu tượng (abstraction layer), giúp component chỉ quan tâm đến dữ liệu và hành vi, không phụ thuộc vào chi tiết triển khai HTTP.
+</details>
+
+<details>
   <summary><strong>📅 2026-07-28 —  Web Performance & Browser Rendering </strong></summary>
 
 ## 291. Critical Rendering Path (CRP) là gì?
