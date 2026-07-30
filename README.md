@@ -3,6 +3,266 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-07-30 —  System Design & Frontend Architecture   </strong></summary>
+
+## 311. Frontend Architecture là gì? Một kiến trúc Frontend tốt cần đáp ứng những tiêu chí nào?
+
+**Trả lời (phỏng vấn):**
+
+Frontend Architecture là cách tổ chức mã nguồn, module, luồng dữ liệu và các thành phần của ứng dụng nhằm đảm bảo khả năng phát triển và bảo trì lâu dài.
+
+Một kiến trúc tốt nên đáp ứng:
+
+- Dễ mở rộng (Scalable).
+- Dễ bảo trì (Maintainable).
+- Dễ kiểm thử (Testable).
+- Tách biệt trách nhiệm (Separation of Concerns).
+- Tái sử dụng cao.
+- Hiệu năng tốt.
+- Dễ onboarding thành viên mới.
+
+> **Điểm cộng khi phỏng vấn:** Kiến trúc tốt không phải là kiến trúc phức tạp nhất, mà là kiến trúc phù hợp với quy mô và yêu cầu của dự án.
+
+---
+
+## 312. Bạn sẽ tổ chức cấu trúc thư mục cho một dự án React lớn như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Tôi ưu tiên tổ chức theo **Feature-based Structure** thay vì chia theo loại file.
+
+Ví dụ:
+
+```text
+src/
+├── app/
+├── shared/
+│   ├── components/
+│   ├── hooks/
+│   ├── utils/
+│   └── services/
+├── features/
+│   ├── auth/
+│   ├── user/
+│   ├── product/
+│   └── order/
+├── routes/
+├── layouts/
+└── assets/
+```
+
+Ưu điểm:
+
+- Module độc lập.
+- Dễ mở rộng.
+- Hạn chế phụ thuộc giữa các tính năng.
+- Phù hợp với nhiều nhóm phát triển.
+
+---
+
+## 313. Monolithic Frontend và Micro Frontend khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+### Monolithic Frontend
+
+- Một codebase.
+- Một pipeline CI/CD.
+- Một nhóm triển khai.
+
+Ưu điểm:
+
+- Đơn giản.
+- Dễ quản lý.
+
+Nhược điểm:
+
+- Khó mở rộng khi đội ngũ lớn.
+
+### Micro Frontend
+
+Ứng dụng được chia thành nhiều frontend độc lập.
+
+Ví dụ:
+
+```text
+Portal
+
+├── User App
+├── Payment App
+├── Report App
+└── Admin App
+```
+
+Ưu điểm:
+
+- Deploy độc lập.
+- Công nghệ có thể khác nhau.
+- Team làm việc song song.
+
+Nhược điểm:
+
+- Phức tạp hơn.
+- Tăng chi phí vận hành.
+- Khó đồng bộ UI và shared dependency.
+
+---
+
+## 314. Khi nào nên cân nhắc Micro Frontend?
+
+**Trả lời (phỏng vấn):**
+
+Micro Frontend phù hợp khi:
+
+- Nhiều team phát triển độc lập.
+- Quy mô ứng dụng rất lớn.
+- Chu kỳ release của từng module khác nhau.
+- Muốn triển khai từng phần mà không ảnh hưởng toàn hệ thống.
+
+Không nên áp dụng nếu:
+
+- Dự án nhỏ.
+- Một nhóm phát triển.
+- Chưa có nhu cầu triển khai độc lập.
+
+> **Điểm cộng khi phỏng vấn:** Micro Frontend giải quyết bài toán tổ chức và phát triển đội ngũ nhiều hơn là bài toán hiệu năng.
+
+---
+
+## 315. Dependency Injection (DI) là gì? Frontend có cần DI không?
+
+**Trả lời (phỏng vấn):**
+
+Dependency Injection là kỹ thuật cung cấp dependency từ bên ngoài thay vì tự khởi tạo bên trong component hoặc service.
+
+Ví dụ:
+
+```ts
+class UserService {
+  constructor(private apiClient: ApiClient) {}
+}
+```
+
+Lợi ích:
+
+- Giảm coupling.
+- Dễ mock khi test.
+- Dễ thay thế implementation.
+
+Trong React, DI thường được thực hiện thông qua:
+
+- Context API.
+- Props.
+- Custom Provider.
+
+---
+
+## 316. Inversion of Control (IoC) là gì?
+
+**Trả lời (phỏng vấn):**
+
+IoC là nguyên tắc thiết kế trong đó việc quản lý dependency hoặc luồng điều khiển được chuyển ra bên ngoài thay vì để object tự quản lý.
+
+Ví dụ:
+
+Thay vì:
+
+```ts
+const api = new ApiClient();
+```
+
+Có thể truyền từ bên ngoài:
+
+```ts
+new UserService(apiClient);
+```
+
+DI là một cách triển khai phổ biến của IoC.
+
+---
+
+## 317. Coupling và Cohesion là gì?
+
+**Trả lời (phỏng vấn):**
+
+### Coupling
+
+Mức độ phụ thuộc giữa các module.
+
+Mục tiêu:
+
+- Coupling càng thấp càng tốt.
+
+### Cohesion
+
+Mức độ liên quan giữa các chức năng trong cùng một module.
+
+Mục tiêu:
+
+- Cohesion càng cao càng tốt.
+
+Ví dụ:
+
+Một component vừa gọi API, xử lý business logic, validate dữ liệu và render UI thường có Cohesion thấp và khó bảo trì.
+
+---
+
+## 318. SOLID có ý nghĩa gì trong Frontend?
+
+**Trả lời (phỏng vấn):**
+
+SOLID vẫn áp dụng tốt cho Frontend.
+
+Ví dụ:
+
+- **S**: Component chỉ nên có một trách nhiệm.
+- **O**: Dễ mở rộng mà không cần sửa mã cũ.
+- **L**: Component con có thể thay thế component cha mà không làm thay đổi hành vi mong đợi.
+- **I**: Interface nhỏ, đúng mục đích.
+- **D**: Phụ thuộc vào abstraction thay vì implementation.
+
+> **Điểm cộng khi phỏng vấn:** Không cần áp dụng SOLID một cách máy móc, nhưng hiểu các nguyên tắc sẽ giúp thiết kế code dễ bảo trì hơn.
+
+---
+
+## 319. Làm thế nào để giảm Coupling giữa các module trong Frontend?
+
+**Trả lời (phỏng vấn):**
+
+Một số cách phổ biến:
+
+- Tách Business Logic khỏi UI.
+- Sử dụng Dependency Injection.
+- Giao tiếp qua interface hoặc abstraction.
+- Hạn chế import chéo giữa các feature.
+- Chia sẻ code thông qua thư viện dùng chung.
+- Thiết kế API rõ ràng giữa các module.
+
+Mục tiêu là để thay đổi một module không kéo theo thay đổi ở nhiều module khác.
+
+---
+
+## 320. Nếu được thiết kế lại một dự án React từ đầu, bạn sẽ ưu tiên những yếu tố nào?
+
+**Trả lời (phỏng vấn):**
+
+Tôi sẽ ưu tiên theo thứ tự:
+
+1. Xác định rõ kiến trúc tổng thể.
+2. Chọn cấu trúc thư mục theo Feature.
+3. Thiết lập Coding Convention và ESLint/Prettier.
+4. Thiết kế API Layer và Error Handling.
+5. Lựa chọn State Management phù hợp.
+6. Thiết lập Testing Strategy.
+7. Tối ưu Performance ngay từ kiến trúc.
+8. Thiết lập CI/CD.
+9. Chuẩn hóa Logging và Monitoring.
+10. Chuẩn bị tài liệu kỹ thuật và quy ước phát triển.
+
+> **Điểm cộng khi phỏng vấn:** Một Senior Frontend Engineer không chỉ nghĩ đến việc hoàn thành tính năng hiện tại mà còn cân nhắc khả năng mở rộng, bảo trì và vận hành của hệ thống trong nhiều năm sau.
+</details>
+  
+<details>
   <summary><strong>📅 2026-07-29 —  Networking, HTTP & API Design  </strong></summary>
 
 ## 301. HTTP và HTTPS khác nhau như thế nào?
