@@ -3,6 +3,285 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-07-31 —  Security & Authentication   </strong></summary>
+
+## 321. XSS là gì? Có những loại XSS nào?
+
+**Trả lời (phỏng vấn):**
+
+XSS (Cross-Site Scripting) là lỗ hổng bảo mật cho phép attacker chèn và thực thi JavaScript độc hại trên trình duyệt của người dùng.
+
+Ba loại phổ biến:
+
+### Stored XSS
+
+Script được lưu trên server (database, comment, bài viết...) và được trả về cho nhiều người dùng.
+
+### Reflected XSS
+
+Script được gửi trong request (query string, form...) và phản hồi ngay trong response.
+
+### DOM-based XSS
+
+Lỗ hổng xảy ra hoàn toàn phía client do JavaScript thao tác với DOM không an toàn.
+
+Ví dụ nguy hiểm:
+
+```tsx
+element.innerHTML = userInput;
+```
+
+> **Điểm cộng khi phỏng vấn:** React tự động escape JSX nên giảm đáng kể nguy cơ XSS, nhưng không bảo vệ khi sử dụng `dangerouslySetInnerHTML`.
+
+---
+
+## 322. React có chống được XSS không?
+
+**Trả lời (phỏng vấn):**
+
+React **không chống hoàn toàn XSS**, nhưng mặc định sẽ escape dữ liệu khi render JSX.
+
+Ví dụ:
+
+```tsx
+const name = "<script>alert(1)</script>";
+
+return <div>{name}</div>;
+```
+
+Kết quả:
+
+```html
+<div>&lt;script&gt;alert(1)&lt;/script&gt;</div>
+```
+
+Script sẽ không được thực thi.
+
+Tuy nhiên, nếu sử dụng:
+
+```tsx
+dangerouslySetInnerHTML
+```
+
+thì React sẽ render trực tiếp HTML và có thể tạo ra lỗ hổng nếu dữ liệu chưa được sanitize.
+
+---
+
+## 323. CSRF là gì? Khác gì với XSS?
+
+**Trả lời (phỏng vấn):**
+
+CSRF (Cross-Site Request Forgery) là tấn công khiến trình duyệt của người dùng gửi request hợp lệ đến server mà người dùng không chủ động thực hiện.
+
+Khác biệt:
+
+| XSS | CSRF |
+|------|------|
+| Chèn JavaScript độc hại | Giả mạo request |
+| Khai thác phía client | Lợi dụng phiên đăng nhập |
+| Thường cần lỗ hổng XSS hoặc input không an toàn | Thường xảy ra khi dùng Cookie để xác thực |
+
+Biện pháp phòng chống:
+
+- CSRF Token.
+- SameSite Cookie.
+- Kiểm tra Origin/Referer.
+- Double Submit Cookie.
+
+---
+
+## 324. Content Security Policy (CSP) là gì?
+
+**Trả lời (phỏng vấn):**
+
+Content Security Policy (CSP) là cơ chế giúp trình duyệt giới hạn nguồn tài nguyên được phép tải và thực thi.
+
+Ví dụ:
+
+```http
+Content-Security-Policy:
+default-src 'self';
+script-src 'self';
+img-src https:;
+```
+
+Lợi ích:
+
+- Giảm nguy cơ XSS.
+- Chặn script từ nguồn không tin cậy.
+- Hạn chế Inline Script (nếu không cho phép).
+
+> **Điểm cộng khi phỏng vấn:** CSP là lớp phòng vệ bổ sung, không thay thế việc validate và sanitize dữ liệu.
+
+---
+
+## 325. Access Token và Refresh Token khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+### Access Token
+
+- Thời gian sống ngắn.
+- Được gửi kèm mỗi request để xác thực.
+
+### Refresh Token
+
+- Thời gian sống dài hơn.
+- Dùng để lấy Access Token mới khi Access Token hết hạn.
+
+Quy trình:
+
+```text
+Login
+   │
+   ▼
+Access Token + Refresh Token
+   │
+   ▼
+Access Token hết hạn
+   │
+   ▼
+Refresh Token xin Access Token mới
+```
+
+Việc tách hai loại token giúp giảm rủi ro khi Access Token bị lộ.
+
+---
+
+## 326. JWT hoạt động như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+JWT (JSON Web Token) gồm ba phần:
+
+```text
+Header.Payload.Signature
+```
+
+Ví dụ:
+
+```text
+xxxxx.yyyyy.zzzzz
+```
+
+- **Header**: Thuật toán ký.
+- **Payload**: Dữ liệu (claims).
+- **Signature**: Chữ ký xác minh tính toàn vẹn.
+
+Lưu ý:
+
+Payload của JWT được mã hóa Base64URL, **không phải mã hóa bảo mật**, nên không nên chứa dữ liệu nhạy cảm.
+
+---
+
+## 327. Tại sao không nên lưu Access Token trong LocalStorage?
+
+**Trả lời (phỏng vấn):**
+
+Nếu ứng dụng có lỗ hổng XSS, JavaScript độc hại có thể đọc dữ liệu trong LocalStorage.
+
+Ví dụ:
+
+```tsx
+localStorage.getItem("accessToken");
+```
+
+Một số hệ thống chọn lưu Access Token trong bộ nhớ (memory) và Refresh Token trong Cookie có thuộc tính `HttpOnly`.
+
+> **Điểm cộng khi phỏng vấn:** Không có một giải pháp phù hợp cho mọi hệ thống. Cách lưu token phụ thuộc vào kiến trúc, yêu cầu bảo mật và mô hình xác thực của ứng dụng.
+
+---
+
+## 328. Cookie `HttpOnly`, `Secure` và `SameSite` có ý nghĩa gì?
+
+**Trả lời (phỏng vấn):**
+
+### HttpOnly
+
+- Không cho phép JavaScript truy cập Cookie.
+- Giảm rủi ro từ XSS.
+
+### Secure
+
+- Chỉ gửi Cookie qua HTTPS.
+
+### SameSite
+
+Kiểm soát việc Cookie có được gửi trong các request cross-site hay không.
+
+Các giá trị:
+
+- `Strict`
+- `Lax`
+- `None`
+
+Việc cấu hình đúng các thuộc tính này giúp tăng cường bảo mật cho phiên đăng nhập.
+
+---
+
+## 329. OWASP Top 10 là gì? Frontend cần quan tâm những mục nào?
+
+**Trả lời (phỏng vấn):**
+
+OWASP Top 10 là danh sách các nhóm rủi ro bảo mật phổ biến đối với ứng dụng web.
+
+Một số nội dung Frontend cần đặc biệt quan tâm:
+
+- Broken Access Control.
+- Cryptographic Failures.
+- Injection.
+- Insecure Design.
+- Security Misconfiguration.
+- Vulnerable Components.
+- Identification & Authentication Failures.
+
+Frontend không thể xử lý toàn bộ các rủi ro này, nhưng cần phối hợp với Backend để xây dựng hệ thống an toàn.
+
+---
+
+## 330. Nếu thiết kế cơ chế Authentication cho một ứng dụng React, bạn sẽ thiết kế như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Một kiến trúc phổ biến:
+
+```text
+Login
+   │
+   ▼
+Server xác thực
+   │
+   ▼
+Access Token (Memory)
+Refresh Token (HttpOnly Cookie)
+   │
+   ▼
+API Request
+   │
+   ▼
+401 Unauthorized
+   │
+   ▼
+Refresh Access Token
+   │
+   ▼
+Retry Request
+```
+
+Các nguyên tắc tôi ưu tiên:
+
+- Không gọi API trực tiếp trong component.
+- Có một HTTP Client dùng chung.
+- Tự động refresh token khi cần.
+- Chuẩn hóa xử lý lỗi `401`.
+- Hỗ trợ logout đồng bộ.
+- Hạn chế lưu dữ liệu nhạy cảm trên trình duyệt.
+- Thiết kế theo nguyên tắc "Defense in Depth", kết hợp nhiều lớp bảo vệ thay vì phụ thuộc vào một cơ chế duy nhất.
+
+> **Điểm cộng khi phỏng vấn:** Authentication không chỉ là vấn đề của Frontend hay Backend. Một thiết kế tốt cần xem xét đồng thời trải nghiệm người dùng, hiệu năng và các yêu cầu bảo mật của toàn hệ thống.
+</details>
+
+<details>
   <summary><strong>📅 2026-07-30 —  System Design & Frontend Architecture   </strong></summary>
 
 ## 311. Frontend Architecture là gì? Một kiến trúc Frontend tốt cần đáp ứng những tiêu chí nào?
