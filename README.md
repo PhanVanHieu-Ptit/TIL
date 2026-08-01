@@ -3,6 +3,278 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-08-01 —   Testing, Debugging & Code Quality  </strong></summary>
+
+## 331. Unit Test, Integration Test và End-to-End (E2E) Test khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Ba loại kiểm thử phục vụ các mục đích khác nhau.
+
+### Unit Test
+
+Kiểm tra một đơn vị nhỏ nhất của chương trình.
+
+Ví dụ:
+
+- Utility Function.
+- Custom Hook.
+- Reducer.
+
+Ưu điểm:
+
+- Chạy nhanh.
+- Dễ xác định lỗi.
+
+---
+
+### Integration Test
+
+Kiểm tra sự tương tác giữa nhiều module.
+
+Ví dụ:
+
+- Component + API Mock.
+- Component + Redux Store.
+- Form + Validation.
+
+Mục tiêu là đảm bảo các thành phần hoạt động đúng khi kết hợp với nhau.
+
+---
+
+### End-to-End Test (E2E)
+
+Mô phỏng hành vi của người dùng trên toàn bộ hệ thống.
+
+Ví dụ:
+
+```text
+Login
+    ↓
+Search
+    ↓
+Checkout
+    ↓
+Payment
+```
+
+Thường sử dụng:
+
+- Playwright
+- Cypress
+
+> **Điểm cộng khi phỏng vấn:** Theo Testing Pyramid, nên có nhiều Unit Test hơn Integration Test và nhiều Integration Test hơn E2E Test.
+
+---
+
+## 332. Testing Pyramid là gì?
+
+**Trả lời (phỏng vấn):**
+
+Testing Pyramid là mô hình giúp cân bằng giữa tốc độ, chi phí và độ tin cậy của việc kiểm thử.
+
+```text
+           E2E
+      Integration
+         Unit
+```
+
+Đặc điểm:
+
+- **Unit Test**: nhiều nhất, nhanh và rẻ.
+- **Integration Test**: số lượng vừa phải.
+- **E2E Test**: ít nhất vì chậm và khó bảo trì.
+
+Mục tiêu là phát hiện lỗi càng sớm càng tốt với chi phí thấp.
+
+---
+
+## 333. Mock và Stub khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+### Stub
+
+Trả về dữ liệu giả để phục vụ kiểm thử.
+
+Ví dụ:
+
+```ts
+getUser() → { id: 1, name: "Alice" }
+```
+
+Không quan tâm hàm được gọi bao nhiêu lần.
+
+---
+
+### Mock
+
+Ngoài việc trả dữ liệu giả, Mock còn cho phép kiểm tra:
+
+- Hàm có được gọi hay không.
+- Gọi bao nhiêu lần.
+- Tham số truyền vào.
+
+Ví dụ với Jest:
+
+```ts
+expect(fetchUser).toHaveBeenCalledTimes(1);
+```
+
+> **Điểm cộng khi phỏng vấn:** Stub dùng để cung cấp dữ liệu, Mock dùng để xác minh hành vi.
+
+---
+
+## 334. Snapshot Test là gì? Có nên lạm dụng không?
+
+**Trả lời (phỏng vấn):**
+
+Snapshot Test lưu lại kết quả render của component để so sánh ở các lần chạy sau.
+
+Ví dụ:
+
+```tsx
+expect(container).toMatchSnapshot();
+```
+
+Ưu điểm:
+
+- Phát hiện thay đổi giao diện ngoài ý muốn.
+- Dễ thiết lập.
+
+Nhược điểm:
+
+- Snapshot lớn khó đọc.
+- Dễ cập nhật mà không kiểm tra kỹ.
+- Không phản ánh đúng hành vi của người dùng.
+
+> **Điểm cộng khi phỏng vấn:** Chỉ nên dùng Snapshot cho component ổn định, không nên thay thế Unit Test hoặc Integration Test.
+
+---
+
+## 335. Bạn sẽ kiểm thử Custom Hook như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Custom Hook nên được kiểm thử độc lập với UI.
+
+Ví dụ cần kiểm tra:
+
+- Giá trị khởi tạo.
+- State thay đổi đúng.
+- Callback hoạt động đúng.
+- Cleanup Effect.
+- Xử lý bất đồng bộ.
+
+Thường sử dụng:
+
+- Vitest hoặc Jest.
+- Testing Library.
+
+Mục tiêu là xác minh logic thay vì kiểm tra giao diện.
+
+---
+
+## 336. Khi nào nên Mock API trong quá trình kiểm thử?
+
+**Trả lời (phỏng vấn):**
+
+Nên Mock API khi:
+
+- Muốn test ổn định.
+- Không phụ thuộc vào môi trường backend.
+- Mô phỏng các tình huống lỗi.
+- Kiểm tra timeout hoặc retry.
+
+Không nên phụ thuộc hoàn toàn vào API thật trong Unit Test hoặc Integration Test vì có thể làm bài test chậm và thiếu ổn định.
+
+---
+
+## 337. Bạn sẽ debug một lỗi chỉ xuất hiện trên Production như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Quy trình tôi thường áp dụng:
+
+1. Thu thập log và thông tin từ người dùng.
+2. Xác định phiên bản đang chạy.
+3. Kiểm tra Monitoring và Error Tracking.
+4. Tái hiện lỗi trên môi trường gần giống Production.
+5. Phân tích nguyên nhân gốc (Root Cause Analysis).
+6. Viết thêm test để tránh lỗi tái diễn.
+7. Triển khai bản vá và theo dõi sau khi phát hành.
+
+> **Điểm cộng khi phỏng vấn:** Không sửa lỗi dựa trên suy đoán, luôn cố gắng tái hiện và xác minh nguyên nhân trước.
+
+---
+
+## 338. Source Map là gì? Có nên bật trên Production không?
+
+**Trả lời (phỏng vấn):**
+
+Source Map giúp ánh xạ mã JavaScript sau khi build về mã nguồn gốc.
+
+Lợi ích:
+
+- Debug dễ hơn.
+- Stack Trace rõ ràng.
+- Hỗ trợ Error Tracking.
+
+Tuy nhiên:
+
+- Có thể làm lộ cấu trúc mã nguồn nếu công khai.
+- Tăng kích thước artifact build.
+
+Thông thường:
+
+- Vẫn tạo Source Map.
+- Chỉ upload lên hệ thống giám sát lỗi (ví dụ Sentry).
+- Không công khai cho người dùng tải xuống.
+
+---
+
+## 339. Static Code Analysis là gì?
+
+**Trả lời (phỏng vấn):**
+
+Static Code Analysis là quá trình phân tích mã nguồn mà **không cần chạy chương trình**.
+
+Các công cụ phổ biến:
+
+- ESLint.
+- TypeScript Compiler.
+- SonarQube.
+- Prettier (định dạng mã nguồn).
+
+Lợi ích:
+
+- Phát hiện bug sớm.
+- Đồng nhất coding style.
+- Giảm lỗi khi review code.
+- Cải thiện khả năng bảo trì.
+
+---
+
+## 340. Bạn sẽ nâng cao chất lượng mã nguồn trong một dự án Frontend như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Tôi thường kết hợp nhiều biện pháp:
+
+- Thiết lập ESLint và Prettier.
+- Áp dụng TypeScript Strict Mode.
+- Thực hiện Code Review.
+- Viết Unit Test và Integration Test.
+- Tự động kiểm tra bằng CI.
+- Đo độ bao phủ kiểm thử (Test Coverage).
+- Theo dõi Technical Debt.
+- Chuẩn hóa kiến trúc và Coding Convention.
+- Refactor định kỳ.
+- Bổ sung tài liệu cho các module quan trọng.
+
+> **Điểm cộng khi phỏng vấn:** Chất lượng mã nguồn không đến từ một công cụ duy nhất mà là kết quả của quy trình phát triển, review, kiểm thử và cải tiến liên tục.
+</details>
+<details>
   <summary><strong>📅 2026-07-31 —  Security & Authentication   </strong></summary>
 
 ## 321. XSS là gì? Có những loại XSS nào?
