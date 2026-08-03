@@ -3,6 +3,315 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-08-03 —  React Internals & Advanced Patterns   </strong></summary>
+
+## 341. React Portal là gì? Khi nào nên sử dụng?
+
+**Trả lời (phỏng vấn):**
+
+React Portal cho phép render một component ra ngoài cây DOM hiện tại nhưng vẫn giữ nguyên quan hệ trong React Tree.
+
+Ví dụ:
+
+```tsx
+createPortal(<Modal />, document.body);
+```
+
+Các trường hợp sử dụng:
+
+- Modal.
+- Dialog.
+- Tooltip.
+- Dropdown.
+- Context Menu.
+- Toast Notification.
+
+Lợi ích:
+
+- Tránh bị ảnh hưởng bởi `overflow: hidden`.
+- Tránh vấn đề về `z-index`.
+- Không làm thay đổi cấu trúc React Component Tree.
+
+> **Điểm cộng khi phỏng vấn:** Mặc dù Portal render ở vị trí khác trong DOM, sự kiện vẫn bubbling theo React Tree thay vì DOM Tree.
+
+---
+
+## 342. React Error Boundary là gì? Nó bắt được những lỗi nào?
+
+**Trả lời (phỏng vấn):**
+
+Error Boundary là component dùng để bắt lỗi JavaScript xảy ra trong quá trình render của component con và hiển thị giao diện dự phòng (Fallback UI).
+
+Ví dụ:
+
+```tsx
+<ErrorBoundary>
+    <Dashboard />
+</ErrorBoundary>
+```
+
+Error Boundary bắt được lỗi xảy ra trong:
+
+- Render.
+- Constructor.
+- Lifecycle Method của component con.
+
+Không bắt được:
+
+- Event Handler.
+- Promise rejection.
+- `setTimeout`.
+- Lỗi phía Server.
+- Lỗi bên trong chính Error Boundary.
+
+> **Điểm cộng khi phỏng vấn:** Trong React hiện nay, Error Boundary vẫn cần được triển khai bằng Class Component hoặc thư viện hỗ trợ.
+
+---
+
+## 343. HOC (Higher-Order Component), Render Props và Custom Hook khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Ba kỹ thuật đều nhằm tái sử dụng logic.
+
+### HOC
+
+Nhận vào một component và trả về component mới.
+
+```tsx
+withAuth(UserPage)
+```
+
+### Render Props
+
+Truyền một function thông qua props.
+
+```tsx
+<DataProvider>
+  {(data) => <User data={data} />}
+</DataProvider>
+```
+
+### Custom Hook
+
+Đóng gói logic thành Hook.
+
+```tsx
+const user = useUser();
+```
+
+Hiện nay, Custom Hook thường được ưu tiên vì:
+
+- Code ngắn gọn.
+- Không tạo nhiều tầng component.
+- Dễ kết hợp với Hook khác.
+
+---
+
+## 344. Compound Component Pattern là gì?
+
+**Trả lời (phỏng vấn):**
+
+Compound Component là pattern cho phép nhiều component phối hợp với nhau để tạo thành một component hoàn chỉnh.
+
+Ví dụ:
+
+```tsx
+<Tabs>
+    <Tabs.List />
+    <Tabs.Trigger />
+    <Tabs.Content />
+</Tabs>
+```
+
+Lợi ích:
+
+- API trực quan.
+- Linh hoạt.
+- Dễ mở rộng.
+- Giảm số lượng props.
+
+Các thư viện như Radix UI hoặc Headless UI sử dụng pattern này khá nhiều.
+
+---
+
+## 345. Controlled Component Pattern và Uncontrolled Component Pattern áp dụng cho component tự xây như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Một component nên hỗ trợ cả hai cách sử dụng.
+
+### Controlled
+
+State do component cha quản lý.
+
+```tsx
+<Dialog
+    open={open}
+    onOpenChange={setOpen}
+/>
+```
+
+### Uncontrolled
+
+Component tự quản lý state.
+
+```tsx
+<Dialog defaultOpen />
+```
+
+Lợi ích:
+
+- Linh hoạt.
+- Phù hợp nhiều tình huống.
+- API giống các component chuẩn của React.
+
+---
+
+## 346. Headless Component là gì?
+
+**Trả lời (phỏng vấn):**
+
+Headless Component chỉ cung cấp logic và hành vi, không áp đặt giao diện.
+
+Ví dụ:
+
+```tsx
+const {
+    open,
+    toggle
+} = useDropdown();
+```
+
+Người dùng tự quyết định cách render UI.
+
+Ưu điểm:
+
+- Tùy biến cao.
+- Dễ thay đổi giao diện.
+- Tái sử dụng logic.
+
+Ví dụ thư viện:
+
+- Radix UI.
+- Headless UI.
+- React Aria.
+
+---
+
+## 347. Controlled State Pattern là gì?
+
+**Trả lời (phỏng vấn):**
+
+Đây là pattern cho phép state được điều khiển từ bên ngoài nếu cần.
+
+Ví dụ:
+
+```tsx
+<Select
+    value={value}
+    onValueChange={setValue}
+/>
+```
+
+Nếu không truyền `value`, component sẽ tự quản lý state.
+
+Pattern này giúp component vừa dễ sử dụng vừa dễ tích hợp vào các form hoặc thư viện quản lý state.
+
+---
+
+## 348. Tại sao nên tách Business Logic khỏi UI?
+
+**Trả lời (phỏng vấn):**
+
+Nếu business logic nằm trực tiếp trong component:
+
+- Component dài.
+- Khó test.
+- Khó tái sử dụng.
+- Khó bảo trì.
+
+Giải pháp:
+
+```text
+Component
+      │
+      ▼
+Custom Hook
+      │
+      ▼
+Service
+      │
+      ▼
+API
+```
+
+Mỗi tầng có một trách nhiệm riêng.
+
+Điều này giúp:
+
+- UI chỉ tập trung render.
+- Logic dễ kiểm thử.
+- Có thể tái sử dụng ở nhiều nơi.
+
+---
+
+## 349. Feature-based Architecture là gì? Vì sao được khuyến nghị cho dự án lớn?
+
+**Trả lời (phỏng vấn):**
+
+Feature-based Architecture tổ chức mã nguồn theo từng tính năng thay vì theo loại file.
+
+Ví dụ:
+
+```text
+features/
+├── auth/
+├── user/
+├── order/
+└── product/
+```
+
+Mỗi feature có thể chứa:
+
+- Component.
+- Hook.
+- API.
+- Type.
+- Test.
+- Style.
+
+Ưu điểm:
+
+- Tăng tính độc lập giữa các module.
+- Dễ mở rộng.
+- Dễ phân chia công việc cho nhiều nhóm.
+- Hạn chế phụ thuộc chéo.
+
+---
+
+## 350. Theo bạn, một Senior Frontend Engineer khác Mid-level ở những điểm nào?
+
+**Trả lời (phỏng vấn):**
+
+Sự khác biệt không nằm ở việc biết nhiều API hơn, mà ở khả năng thiết kế và dẫn dắt kỹ thuật.
+
+Một Senior thường:
+
+- Thiết kế kiến trúc phù hợp với quy mô hệ thống.
+- Đưa ra quyết định dựa trên trade-off thay vì sở thích cá nhân.
+- Chủ động phát hiện và giải quyết vấn đề trước khi chúng trở thành rủi ro.
+- Tối ưu hiệu năng dựa trên số liệu đo lường.
+- Viết mã nguồn dễ mở rộng và dễ bảo trì.
+- Thực hiện code review và hướng dẫn thành viên khác.
+- Quan tâm đến bảo mật, khả năng kiểm thử và vận hành.
+- Hiểu cách Frontend phối hợp với Backend, DevOps và Product.
+- Có khả năng truyền đạt và giải thích các quyết định kỹ thuật rõ ràng.
+
+> **Điểm cộng khi phỏng vấn:** Senior không chỉ chịu trách nhiệm viết code mà còn chịu trách nhiệm về chất lượng kỹ thuật, khả năng mở rộng và sự phát triển lâu dài của sản phẩm.
+</details>
+
+<details>
   <summary><strong>📅 2026-08-01 —   Testing, Debugging & Code Quality  </strong></summary>
 
 ## 331. Unit Test, Integration Test và End-to-End (E2E) Test khác nhau như thế nào?
