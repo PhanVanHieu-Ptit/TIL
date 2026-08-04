@@ -3,7 +3,237 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-08-04 —  React Concurrent Rendering & Modern React  </strong></summary>
+
+## 351. Concurrent Rendering là gì? Nó giải quyết vấn đề gì?
+
+**Trả lời (phỏng vấn):**
+
+Concurrent Rendering là cơ chế render của React cho phép chia nhỏ công việc render thành nhiều phần và có thể tạm dừng, tiếp tục hoặc hủy một lần render trước khi commit.
+
+Điều này giúp React:
+
+- Giữ UI phản hồi tốt hơn khi render tác vụ nặng.
+- Ưu tiên các cập nhật quan trọng (ví dụ: nhập liệu).
+- Giảm hiện tượng giao diện bị "đóng băng".
+
+> **Điểm cộng khi phỏng vấn:** Concurrent Rendering không có nghĩa là JavaScript chạy đa luồng. React vẫn chạy trên main thread, nhưng có khả năng lập lịch (scheduling) công việc hiệu quả hơn.
+
+---
+
+## 352. `startTransition()` dùng để làm gì?
+
+**Trả lời (phỏng vấn):**
+
+`startTransition()` đánh dấu một state update là **không khẩn cấp (non-urgent)**.
+
+Ví dụ:
+
+```tsx
+const [keyword, setKeyword] = useState("");
+
+const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  setKeyword(e.target.value);
+
+  startTransition(() => {
+    setFilteredList(filterBigData(e.target.value));
+  });
+};
+```
+
+Trong ví dụ trên:
+
+- Cập nhật ô input được ưu tiên.
+- Việc lọc danh sách lớn có thể bị trì hoãn nếu cần.
+
+Điều này giúp trải nghiệm nhập liệu mượt hơn.
+
+---
+
+## 353. `useTransition()` khác gì `startTransition()`?
+
+**Trả lời (phỏng vấn):**
+
+`useTransition()` là Hook cung cấp:
+
+- Hàm `startTransition`.
+- Biến `isPending`.
+
+Ví dụ:
+
+```tsx
+const [isPending, startTransition] = useTransition();
+```
+
+`isPending` cho phép hiển thị trạng thái đang xử lý:
+
+```tsx
+{isPending && <Spinner />}
+```
+
+Trong khi đó, `startTransition()` chỉ đánh dấu update mà không cung cấp trạng thái.
+
+---
+
+## 354. `useDeferredValue()` dùng trong trường hợp nào?
+
+**Trả lời (phỏng vấn):**
+
+`useDeferredValue()` tạo một phiên bản "trì hoãn" của giá trị.
+
+Ví dụ:
+
+```tsx
+const deferredKeyword = useDeferredValue(keyword);
+```
+
+Thường dùng khi:
+
+- Search.
+- Filter danh sách lớn.
+- Dashboard nhiều biểu đồ.
+- Autocomplete.
+
+Điều này giúp UI phản hồi ngay với thao tác của người dùng trong khi dữ liệu nặng được cập nhật sau.
+
+> **Điểm cộng khi phỏng vấn:** `useDeferredValue()` không thay thế Debounce. Debounce trì hoãn việc thực thi, còn `useDeferredValue()` giúp React ưu tiên việc render.
+
+---
+
+## 355. Suspense là gì?
+
+**Trả lời (phỏng vấn):**
+
+Suspense cho phép React hiển thị giao diện dự phòng (fallback) trong khi chờ một tác vụ bất đồng bộ hoàn thành.
+
+Ví dụ:
+
+```tsx
+<Suspense fallback={<Loading />}>
+  <UserProfile />
+</Suspense>
+```
+
+Các trường hợp sử dụng:
+
+- Lazy Loading Component.
+- Data Fetching (với thư viện hỗ trợ).
+- Streaming UI.
+
+Lợi ích:
+
+- Quản lý trạng thái loading tập trung.
+- Cải thiện trải nghiệm người dùng.
+
+---
+
+## 356. React.lazy() hoạt động như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+`React.lazy()` hỗ trợ tải component theo nhu cầu (Lazy Loading).
+
+Ví dụ:
+
+```tsx
+const Dashboard = React.lazy(() => import("./Dashboard"));
+```
+
+Kết hợp với Suspense:
+
+```tsx
+<Suspense fallback={<Loading />}>
+  <Dashboard />
+</Suspense>
+```
+
+Lợi ích:
+
+- Giảm kích thước bundle ban đầu.
+- Tăng tốc thời gian tải trang đầu tiên.
+- Chỉ tải component khi cần.
+
+---
+
+## 357. Code Splitting là gì? Có những cách nào để thực hiện?
+
+**Trả lời (phỏng vấn):**
+
+Code Splitting là kỹ thuật chia JavaScript thành nhiều bundle nhỏ thay vì tải toàn bộ ứng dụng ngay từ đầu.
+
+Các cách phổ biến:
+
+- Route-based Splitting.
+- Component-based Splitting.
+- Dynamic Import.
+- React.lazy().
+- Cấu hình bundler như Vite hoặc Webpack.
+
+Mục tiêu:
+
+- Giảm Initial Bundle Size.
+- Cải thiện First Load Performance.
+
+---
+
+## 358. Tearing là gì trong React?
+
+**Trả lời (phỏng vấn):**
+
+Tearing xảy ra khi các component đọc cùng một nguồn dữ liệu nhưng hiển thị các phiên bản khác nhau của state trong cùng một chu kỳ render.
+
+Điều này có thể xảy ra khi:
+
+- External Store không hỗ trợ Concurrent Rendering.
+- Nguồn dữ liệu bị thay đổi trong lúc React đang render.
+
+React giới thiệu `useSyncExternalStore()` để giúp đồng bộ dữ liệu từ external store một cách an toàn trong bối cảnh Concurrent Rendering.
+
+> **Điểm cộng khi phỏng vấn:** Đây là một vấn đề chủ yếu liên quan đến thư viện quản lý state hoặc external store, không phải state nội bộ của React.
+
+---
+
+## 359. `useSyncExternalStore()` giải quyết vấn đề gì?
+
+**Trả lời (phỏng vấn):**
+
+`useSyncExternalStore()` là Hook dùng để đọc dữ liệu từ một nguồn bên ngoài React (external store) theo cách tương thích với Concurrent Rendering.
+
+Nó giúp:
+
+- Tránh Tearing.
+- Đồng bộ snapshot của store.
+- Đảm bảo component đọc cùng một trạng thái trong một lần render.
+
+Các thư viện quản lý state hiện đại thường xây dựng hoặc tích hợp cơ chế tương tự để tương thích với React mới.
+
+---
+
+## 360. React Scheduler là gì? Tại sao nó quan trọng?
+
+**Trả lời (phỏng vấn):**
+
+React Scheduler là cơ chế lập lịch nội bộ giúp React quyết định:
+
+- Tác vụ nào cần ưu tiên.
+- Khi nào nên tạm dừng render.
+- Khi nào tiếp tục render.
+- Khi nào hủy một lần render đang diễn ra.
+
+Ví dụ về mức độ ưu tiên:
+
+- Nhập liệu từ bàn phím.
+- Click của người dùng.
+- Animation.
+- Render danh sách lớn.
+- Cập nhật nền (background update).
+
+> **Điểm cộng khi phỏng vấn:** Scheduler là nền tảng cho Concurrent Rendering, `startTransition()`, `useTransition()` và nhiều tối ưu hiện đại của React. Hiểu Scheduler giúp giải thích vì sao React có thể duy trì trải nghiệm mượt mà ngay cả khi ứng dụng phải xử lý nhiều công việc cùng lúc.
+</details>
+
+<details>
   <summary><strong>📅 2026-08-03 —  React Internals & Advanced Patterns   </strong></summary>
+  
 
 ## 341. React Portal là gì? Khi nào nên sử dụng?
 
