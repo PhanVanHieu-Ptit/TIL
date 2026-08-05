@@ -3,6 +3,312 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-08-05 —  State Management Deep Dive  </strong></summary>
+
+## 361. Làm thế nào để lựa chọn giải pháp State Management phù hợp cho một dự án?
+
+**Trả lời (phỏng vấn):**
+
+Không có một thư viện phù hợp cho mọi dự án. Tôi thường đánh giá theo các tiêu chí:
+
+- Quy mô ứng dụng.
+- Mức độ chia sẻ state.
+- Tần suất cập nhật dữ liệu.
+- Yêu cầu cache server state.
+- Kinh nghiệm của team.
+- Khả năng mở rộng trong tương lai.
+
+Ví dụ:
+
+| Trường hợp | Giải pháp phù hợp |
+|------------|-------------------|
+| State cục bộ | `useState` |
+| Truyền qua vài cấp | Props / Composition |
+| Theme, Locale | Context |
+| Client State phức tạp | Zustand / Redux Toolkit |
+| Server State | React Query / SWR |
+
+> **Điểm cộng khi phỏng vấn:** Trước khi thêm thư viện mới, cần xác định rõ bài toán cần giải quyết.
+
+---
+
+## 362. Client State và Server State khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+### Client State
+
+Là dữ liệu do ứng dụng quản lý.
+
+Ví dụ:
+
+- Theme.
+- Sidebar mở/đóng.
+- Form Input.
+- Modal.
+
+### Server State
+
+Là dữ liệu đến từ Backend.
+
+Ví dụ:
+
+- Danh sách sản phẩm.
+- Thông tin người dùng.
+- Đơn hàng.
+- Thông báo.
+
+Server State có các đặc điểm:
+
+- Có thể lỗi khi tải.
+- Có thể thay đổi từ nhiều nguồn.
+- Cần cache và đồng bộ.
+
+> **Điểm cộng khi phỏng vấn:** Không nên lưu Server State trong Redux chỉ để thay thế React Query.
+
+---
+
+## 363. Tại sao React Query không thay thế Redux?
+
+**Trả lời (phỏng vấn):**
+
+React Query được thiết kế để quản lý **Server State**, không phải toàn bộ trạng thái của ứng dụng.
+
+React Query hỗ trợ:
+
+- Fetch dữ liệu.
+- Cache.
+- Retry.
+- Background Refetch.
+- Invalidation.
+- Đồng bộ dữ liệu.
+
+Redux hoặc Zustand phù hợp hơn với:
+
+- Theme.
+- Authentication State.
+- Wizard State.
+- UI State.
+- Business State.
+
+> **Điểm cộng khi phỏng vấn:** Trong nhiều dự án, React Query và Redux có thể được sử dụng đồng thời vì giải quyết các bài toán khác nhau.
+
+---
+
+## 364. Normalized State là gì? Khi nào nên sử dụng?
+
+**Trả lời (phỏng vấn):**
+
+Normalized State là cách lưu dữ liệu theo dạng bảng thay vì lồng nhau.
+
+Ví dụ:
+
+Không chuẩn hóa:
+
+```ts
+posts = [
+  {
+    id: 1,
+    author: {
+      id: 10,
+      name: "Alice",
+    },
+  },
+];
+```
+
+Chuẩn hóa:
+
+```ts
+posts = {
+  1: {
+    id: 1,
+    authorId: 10,
+  },
+};
+
+users = {
+  10: {
+    id: 10,
+    name: "Alice",
+  },
+};
+```
+
+Ưu điểm:
+
+- Tránh dữ liệu trùng lặp.
+- Cập nhật nhanh hơn.
+- Dễ đồng bộ dữ liệu.
+
+---
+
+## 365. Selector là gì? Tại sao Selector quan trọng?
+
+**Trả lời (phỏng vấn):**
+
+Selector là hàm lấy dữ liệu từ Store.
+
+Ví dụ:
+
+```ts
+const selectUser = (state) => state.user;
+```
+
+Lợi ích:
+
+- Ẩn cấu trúc Store.
+- Dễ refactor.
+- Có thể Memoize.
+- Giảm Re-render.
+
+Trong Redux Toolkit thường kết hợp với:
+
+```ts
+createSelector()
+```
+
+để tính toán dữ liệu hiệu quả.
+
+---
+
+## 366. Memoized Selector là gì?
+
+**Trả lời (phỏng vấn):**
+
+Memoized Selector lưu lại kết quả tính toán trước đó và chỉ tính lại khi dữ liệu đầu vào thay đổi.
+
+Ví dụ:
+
+```ts
+const selectCompletedTodos =
+  createSelector(
+    [selectTodos],
+    (todos) =>
+      todos.filter((t) => t.done)
+  );
+```
+
+Nếu `todos` không thay đổi:
+
+- Không tính toán lại.
+- Không tạo object mới.
+- Giảm Re-render.
+
+> **Điểm cộng khi phỏng vấn:** Memoized Selector đặc biệt hữu ích khi xử lý danh sách lớn hoặc phép tính phức tạp.
+
+---
+
+## 367. Khi nào Context API trở thành "nút thắt" về hiệu năng?
+
+**Trả lời (phỏng vấn):**
+
+Một Context có thể gây Re-render diện rộng khi:
+
+- Chứa nhiều dữ liệu.
+- Giá trị (`value`) thay đổi thường xuyên.
+- Có nhiều component cùng subscribe.
+
+Ví dụ:
+
+```tsx
+<AppContext.Provider
+  value={{
+    user,
+    theme,
+    language,
+    notifications,
+  }}
+>
+```
+
+Nếu `notifications` thay đổi, các component chỉ dùng `theme` cũng có thể re-render.
+
+Giải pháp:
+
+- Chia nhỏ Context.
+- Memoize `value`.
+- Sử dụng Context Selector hoặc thư viện quản lý state phù hợp.
+
+---
+
+## 368. Flux Architecture là gì?
+
+**Trả lời (phỏng vấn):**
+
+Flux là kiến trúc quản lý dữ liệu theo luồng một chiều.
+
+Luồng dữ liệu:
+
+```text
+Action
+   │
+   ▼
+Dispatcher
+   │
+   ▼
+Store
+   │
+   ▼
+View
+```
+
+Redux được xây dựng dựa trên ý tưởng của Flux nhưng đơn giản hóa một số thành phần.
+
+Ưu điểm:
+
+- Dữ liệu dễ theo dõi.
+- Dễ debug.
+- Trạng thái thay đổi có quy luật.
+
+---
+
+## 369. Redux Toolkit đã cải thiện Redux truyền thống ở những điểm nào?
+
+**Trả lời (phỏng vấn):**
+
+Redux Toolkit giúp giảm đáng kể lượng mã lặp.
+
+Các cải tiến:
+
+- `configureStore()`
+- `createSlice()`
+- `createAsyncThunk()`
+- Tích hợp Redux DevTools.
+- Cấu hình middleware mặc định.
+- Sử dụng Immer để cập nhật state theo cú pháp "mutable" nhưng vẫn đảm bảo tính bất biến.
+
+Ví dụ:
+
+```ts
+state.count++;
+```
+
+Immer sẽ tạo ra state mới phía sau mà không thay đổi state cũ.
+
+---
+
+## 370. Nếu dự án React có hàng triệu người dùng, bạn sẽ thiết kế State Management theo nguyên tắc nào?
+
+**Trả lời (phỏng vấn):**
+
+Tôi sẽ áp dụng các nguyên tắc sau:
+
+- Chỉ lưu Global State khi thực sự cần.
+- Đặt state gần nơi sử dụng (State Colocation).
+- Tách biệt Client State và Server State.
+- Không lưu dữ liệu trùng lặp.
+- Chuẩn hóa dữ liệu khi cần (Normalization).
+- Sử dụng Selector và Memoization để giảm tính toán.
+- Chia nhỏ Context thay vì tạo một Context "khổng lồ".
+- Tối ưu theo số liệu đo lường thay vì tối ưu sớm.
+- Thiết kế Store theo từng domain hoặc feature.
+- Giữ kiến trúc đơn giản nhất có thể nhưng vẫn đáp ứng yêu cầu mở rộng.
+
+> **Điểm cộng khi phỏng vấn:** Một hệ thống State Management tốt không phụ thuộc vào việc sử dụng nhiều thư viện, mà phụ thuộc vào cách phân chia trách nhiệm, luồng dữ liệu rõ ràng và khả năng mở rộng theo thời gian.
+</details>
+
+<details>
   <summary><strong>📅 2026-08-04 —  React Concurrent Rendering & Modern React  </strong></summary>
 
 ## 351. Concurrent Rendering là gì? Nó giải quyết vấn đề gì?
