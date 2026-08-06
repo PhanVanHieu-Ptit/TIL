@@ -3,6 +3,302 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-08-06 —  Build System, Bundler & Module Federation  </strong></summary>
+
+## 371. Bundler là gì? Tại sao ứng dụng Frontend hiện đại cần Bundler?
+
+**Trả lời (phỏng vấn):**
+
+Bundler là công cụ phân tích dependency graph của ứng dụng và tạo ra các file tối ưu để trình duyệt tải.
+
+Ngoài việc gộp file, Bundler còn thực hiện:
+
+- Resolve module.
+- Code Splitting.
+- Tree Shaking.
+- Minification.
+- Asset Processing.
+- Source Map Generation.
+- Hot Module Replacement (HMR).
+
+Một số Bundler phổ biến:
+
+- Vite (sử dụng Rollup khi build).
+- Webpack.
+- Rspack.
+- Parcel.
+- esbuild (thường được dùng như bundler hoặc compiler trong một số công cụ).
+
+> **Điểm cộng khi phỏng vấn:** Bundler hiện đại không chỉ "bundle JavaScript" mà còn tối ưu toàn bộ pipeline build.
+
+---
+
+## 372. Tree Shaking là gì? Điều kiện để Tree Shaking hoạt động?
+
+**Trả lời (phỏng vấn):**
+
+Tree Shaking là kỹ thuật loại bỏ những đoạn mã không được sử dụng (Dead Code) khỏi bundle.
+
+Ví dụ:
+
+```ts
+// math.ts
+export const add = () => {};
+export const sub = () => {};
+```
+
+```ts
+import { add } from "./math";
+```
+
+Sau khi build:
+
+```text
+✔ add
+✘ sub
+```
+
+Điều kiện để Tree Shaking hoạt động hiệu quả:
+
+- Sử dụng ES Modules (`import`/`export`).
+- Module không có side effects không mong muốn.
+- Bundler hỗ trợ Tree Shaking.
+
+---
+
+## 373. Code Splitting và Lazy Loading khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Hai khái niệm liên quan nhưng không giống nhau.
+
+### Code Splitting
+
+Là quá trình chia bundle thành nhiều phần nhỏ khi build.
+
+### Lazy Loading
+
+Là chiến lược chỉ tải bundle khi thực sự cần.
+
+Ví dụ:
+
+```tsx
+const Admin = React.lazy(() => import("./Admin"));
+```
+
+Ở đây:
+
+- Bundler tạo chunk mới (Code Splitting).
+- Trình duyệt chỉ tải chunk khi truy cập (Lazy Loading).
+
+---
+
+## 374. HMR (Hot Module Replacement) hoạt động như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+HMR cho phép cập nhật module trong quá trình phát triển mà không cần tải lại toàn bộ trang.
+
+Quy trình:
+
+```text
+Save File
+    │
+    ▼
+Bundler Detect Change
+    │
+    ▼
+Compile Module
+    │
+    ▼
+Push Update
+    │
+    ▼
+React Refresh
+```
+
+Lợi ích:
+
+- Giữ nguyên state của component (trong nhiều trường hợp).
+- Tăng tốc vòng lặp phát triển.
+- Không cần reload toàn bộ ứng dụng.
+
+---
+
+## 375. Tree Shaking không hoạt động trong những trường hợp nào?
+
+**Trả lời (phỏng vấn):**
+
+Một số nguyên nhân phổ biến:
+
+- Dùng CommonJS (`require`/`module.exports`).
+- Import toàn bộ thư viện khi chỉ cần một phần.
+- Module có side effects.
+- Cấu hình bundler không phù hợp.
+
+Ví dụ:
+
+```ts
+import * as lodash from "lodash";
+```
+
+Thường khó tối ưu hơn:
+
+```ts
+import debounce from "lodash/debounce";
+```
+
+Hoặc sử dụng phiên bản hỗ trợ ES Modules nếu thư viện cung cấp.
+
+---
+
+## 376. Dynamic Import (`import()`) khác gì Static Import?
+
+**Trả lời (phỏng vấn):**
+
+### Static Import
+
+```ts
+import User from "./User";
+```
+
+- Được phân tích khi build.
+- Thường nằm trong bundle ban đầu hoặc chunk đã xác định.
+
+### Dynamic Import
+
+```ts
+const User = await import("./User");
+```
+
+- Được tải tại runtime.
+- Thường tạo ra chunk riêng.
+- Phù hợp cho Lazy Loading hoặc các tính năng ít dùng.
+
+---
+
+## 377. Module Federation là gì?
+
+**Trả lời (phỏng vấn):**
+
+Module Federation là cơ chế cho phép nhiều ứng dụng chia sẻ module với nhau tại runtime mà không cần build chung.
+
+Ví dụ:
+
+```text
+Host App
+    │
+    ├── User App
+    ├── Admin App
+    └── Report App
+```
+
+Một ứng dụng có thể "expose" component để ứng dụng khác sử dụng.
+
+Ưu điểm:
+
+- Deploy độc lập.
+- Tái sử dụng module.
+- Phù hợp với Micro Frontend.
+
+> **Điểm cộng khi phỏng vấn:** Module Federation là một kỹ thuật triển khai Micro Frontend, không phải là Micro Frontend.
+
+---
+
+## 378. Shared Dependency trong Module Federation là gì?
+
+**Trả lời (phỏng vấn):**
+
+Khi nhiều ứng dụng cùng sử dụng một thư viện (ví dụ React), Shared Dependency giúp tránh việc tải nhiều bản sao.
+
+Ví dụ:
+
+```text
+Host
+ ├── React
+ ├── App A
+ └── App B
+```
+
+Nếu không chia sẻ:
+
+```text
+React x2
+```
+
+Nếu chia sẻ:
+
+```text
+React x1
+```
+
+Điều này giúp:
+
+- Giảm kích thước tải xuống.
+- Tránh xung đột giữa nhiều phiên bản của cùng một thư viện.
+
+---
+
+## 379. Vite khác Webpack ở những điểm nào?
+
+**Trả lời (phỏng vấn):**
+
+| Tiêu chí | Vite | Webpack |
+|----------|------|----------|
+| Dev Server | Nhanh, tận dụng ES Modules | Bundle trước khi chạy |
+| Build | Rollup | Webpack |
+| HMR | Rất nhanh | Tốt nhưng có thể chậm hơn với dự án lớn |
+| Cấu hình | Đơn giản | Linh hoạt nhưng phức tạp hơn |
+| Plugin | Hệ sinh thái đang phát triển | Hệ sinh thái rất lớn |
+
+> **Điểm cộng khi phỏng vấn:** Vite tối ưu trải nghiệm phát triển, trong khi Webpack vẫn rất mạnh ở khả năng tùy biến cho các dự án có yêu cầu đặc thù.
+
+---
+
+## 380. Nếu bundle JavaScript của ứng dụng lên tới 8 MB, bạn sẽ tối ưu như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Quy trình tôi thường áp dụng:
+
+### 1. Phân tích bundle
+
+Sử dụng các công cụ như:
+
+- Bundle Analyzer.
+- Rollup Visualizer.
+- Source Map Explorer.
+
+### 2. Xác định nguyên nhân
+
+- Thư viện lớn.
+- Import không tối ưu.
+- Không có Code Splitting.
+- Polyfill dư thừa.
+- Tài nguyên được nhúng vào bundle.
+
+### 3. Tối ưu
+
+- Áp dụng Code Splitting theo route hoặc feature.
+- Lazy Loading các module ít sử dụng.
+- Tree Shaking.
+- Thay thế thư viện nặng bằng lựa chọn nhẹ hơn nếu phù hợp.
+- Tách Vendor Chunk.
+- Tối ưu asset (ảnh, font...).
+
+### 4. Đo lường lại
+
+Kiểm tra:
+
+- Initial Bundle Size.
+- Largest Contentful Paint (LCP).
+- Time to Interactive (TTI).
+- Số lượng request và kích thước tài nguyên.
+
+> **Điểm cộng khi phỏng vấn:** Không nên tối ưu chỉ dựa trên kích thước bundle. Cần kết hợp phân tích bundle, số liệu hiệu năng và hành vi tải tài nguyên để xác định đúng điểm nghẽn và lựa chọn giải pháp phù hợp.
+</details>
+
+<details>
   <summary><strong>📅 2026-08-05 —  State Management Deep Dive  </strong></summary>
 
 ## 361. Làm thế nào để lựa chọn giải pháp State Management phù hợp cho một dự án?
