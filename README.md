@@ -3,6 +3,359 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-08-07 —  React Rendering & Performance Optimization </strong></summary>
+
+## 381. React Reconciliation là gì?
+
+**Trả lời (phỏng vấn):**
+
+Reconciliation là quá trình React so sánh Virtual DOM mới với Virtual DOM cũ để xác định những thay đổi cần áp dụng lên DOM thật.
+
+Quy trình:
+
+```text
+State/Props thay đổi
+        │
+        ▼
+Render Virtual DOM mới
+        │
+        ▼
+Diffing Algorithm
+        │
+        ▼
+Xác định thay đổi
+        │
+        ▼
+Commit lên DOM
+```
+
+Mục tiêu:
+
+- Giảm số thao tác trên DOM thật.
+- Tăng hiệu năng render.
+
+> **Điểm cộng khi phỏng vấn:** React không so sánh toàn bộ cây DOM theo từng node mà sử dụng các heuristic để giảm độ phức tạp từ O(n³) xuống gần O(n) trong các trường hợp phổ biến.
+
+---
+
+## 382. React Diffing Algorithm hoạt động dựa trên những giả định nào?
+
+**Trả lời (phỏng vấn):**
+
+React đưa ra hai giả định chính:
+
+### 1. Hai element có type khác nhau sẽ tạo ra hai cây khác nhau.
+
+Ví dụ:
+
+```tsx
+<div />
+
+<span />
+```
+
+React sẽ unmount component cũ và mount component mới.
+
+---
+
+### 2. Developer cung cấp `key` ổn định cho danh sách.
+
+Ví dụ:
+
+```tsx
+users.map(user => (
+    <User key={user.id} />
+))
+```
+
+`key` giúp React nhận diện phần tử giữa các lần render và hạn chế việc tạo lại không cần thiết.
+
+---
+
+## 383. Tại sao không nên dùng `index` làm `key`?
+
+**Trả lời (phỏng vấn):**
+
+Khi danh sách thay đổi thứ tự, thêm hoặc xóa phần tử, `index` có thể khiến React hiểu nhầm phần tử nào đã thay đổi.
+
+Ví dụ:
+
+```text
+A
+B
+C
+```
+
+Xóa A:
+
+```text
+B
+C
+```
+
+Nếu dùng `index`:
+
+```text
+0
+1
+```
+
+React có thể tái sử dụng sai component, dẫn đến:
+
+- Mất state.
+- Animation không đúng.
+- Input hiển thị sai dữ liệu.
+
+> **Điểm cộng khi phỏng vấn:** Chỉ nên dùng `index` khi danh sách là tĩnh và không thay đổi thứ tự.
+
+---
+
+## 384. `React.memo()` hoạt động như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+`React.memo()` ghi nhớ kết quả render của component.
+
+Ví dụ:
+
+```tsx
+const UserCard = React.memo(UserCardComponent);
+```
+
+React sẽ so sánh props giữa hai lần render bằng **shallow comparison**.
+
+Nếu props không thay đổi:
+
+```text
+Không render lại
+```
+
+Nếu props thay đổi:
+
+```text
+Render lại
+```
+
+> **Điểm cộng khi phỏng vấn:** `React.memo()` chỉ tối ưu khi component render tốn chi phí và props thường không thay đổi.
+
+---
+
+## 385. `useMemo()` và `React.memo()` khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+### React.memo()
+
+Ghi nhớ **component**.
+
+```tsx
+const Table = React.memo(TableComponent);
+```
+
+---
+
+### useMemo()
+
+Ghi nhớ **giá trị tính toán**.
+
+```tsx
+const result = useMemo(() => {
+    return expensiveCalculation(data);
+}, [data]);
+```
+
+Tóm tắt:
+
+| React.memo | useMemo |
+|------------|----------|
+| Memoize Component | Memoize Value |
+| Giảm Render | Giảm Tính Toán |
+
+---
+
+## 386. `useCallback()` dùng để làm gì?
+
+**Trả lời (phỏng vấn):**
+
+`useCallback()` ghi nhớ một function giữa các lần render.
+
+Ví dụ:
+
+```tsx
+const handleClick = useCallback(() => {
+    save();
+}, [save]);
+```
+
+Ứng dụng:
+
+- Truyền callback xuống component con.
+- Kết hợp với `React.memo()`.
+- Tránh tạo function mới không cần thiết.
+
+> **Điểm cộng khi phỏng vấn:** Nếu component con không được memoize hoặc callback không phải nguyên nhân gây re-render, `useCallback()` có thể không mang lại lợi ích đáng kể.
+
+---
+
+## 387. Re-render và Re-mount khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+### Re-render
+
+Component được render lại nhưng vẫn giữ state.
+
+```text
+State giữ nguyên
+```
+
+---
+
+### Re-mount
+
+Component bị unmount rồi mount lại.
+
+Hậu quả:
+
+- State bị reset.
+- Effect chạy lại.
+- Ref được tạo mới.
+
+Ví dụ:
+
+```tsx
+<Component key={id} />
+```
+
+Nếu `key` thay đổi:
+
+```text
+Unmount
+↓
+
+Mount mới
+```
+
+---
+
+## 388. Tại sao Inline Object và Inline Function có thể ảnh hưởng đến hiệu năng?
+
+**Trả lời (phỏng vấn):**
+
+Mỗi lần render sẽ tạo reference mới.
+
+Ví dụ:
+
+```tsx
+<User
+    style={{ color: "red" }}
+/>
+```
+
+Hoặc:
+
+```tsx
+<Button
+    onClick={() => save()}
+/>
+```
+
+Ngay cả khi nội dung giống nhau, reference vẫn khác.
+
+Điều này có thể khiến:
+
+- `React.memo()` mất tác dụng.
+- Component con render lại không cần thiết.
+
+Giải pháp:
+
+- `useMemo()`
+- `useCallback()`
+- Đưa object hoặc function ra ngoài nếu phù hợp.
+
+---
+
+## 389. Virtualization là gì? Khi nào nên áp dụng?
+
+**Trả lời (phỏng vấn):**
+
+Virtualization là kỹ thuật chỉ render các phần tử đang hiển thị trong vùng nhìn thấy (viewport).
+
+Ví dụ:
+
+```text
+100.000 dòng
+
+↓
+
+Chỉ render khoảng 30–50 dòng
+```
+
+Thư viện phổ biến:
+
+- react-window.
+- react-virtualized.
+- TanStack Virtual.
+
+Phù hợp với:
+
+- Bảng dữ liệu lớn.
+- Danh sách dài.
+- Log Viewer.
+- Chat History.
+
+---
+
+## 390. Nếu một trang React render rất chậm, bạn sẽ điều tra theo quy trình nào?
+
+**Trả lời (phỏng vấn):**
+
+Tôi thường thực hiện theo các bước sau:
+
+### 1. Xác định hiện tượng
+
+- Chậm khi load?
+- Chậm khi click?
+- Chậm khi scroll?
+- Chậm khi nhập liệu?
+
+### 2. Đo lường
+
+Sử dụng:
+
+- React DevTools Profiler.
+- Chrome Performance Panel.
+- Lighthouse.
+
+### 3. Xác định nguyên nhân
+
+- Re-render quá nhiều.
+- Component quá lớn.
+- API chậm.
+- Bundle lớn.
+- Memory Leak.
+- Layout/Repaint nhiều.
+- Tính toán nặng trong render.
+
+### 4. Đưa ra giải pháp
+
+- React.memo().
+- useMemo().
+- useCallback().
+- Virtualization.
+- Code Splitting.
+- Lazy Loading.
+- Debounce/Throttle.
+- Tối ưu API và cache.
+
+### 5. Xác minh
+
+Đo lại các chỉ số sau khi tối ưu để đảm bảo thay đổi mang lại hiệu quả và không ảnh hưởng đến chức năng của ứng dụng.
+
+> **Điểm cộng khi phỏng vấn:** Một Senior Frontend Engineer không tối ưu theo cảm tính. Mọi quyết định tối ưu đều cần dựa trên số liệu từ công cụ đo lường, xác định đúng điểm nghẽn và cân nhắc trade-off trước khi áp dụng giải pháp.
+</details>
+
+<details>
   <summary><strong>📅 2026-08-06 —  Build System, Bundler & Module Federation  </strong></summary>
 
 ## 371. Bundler là gì? Tại sao ứng dụng Frontend hiện đại cần Bundler?
