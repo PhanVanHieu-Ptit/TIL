@@ -3,6 +3,407 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-08-08 —  Browser Networking, Caching & Data Fetching </strong></summary>
+  
+## 391. HTTP Cache hoạt động như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+HTTP Cache cho phép trình duyệt lưu lại response để tránh tải lại tài nguyên từ server khi không cần thiết.
+
+Hai cơ chế phổ biến:
+
+* **Freshness**: kiểm tra response còn hiệu lực hay không.
+* **Validation**: nếu response đã stale, browser có thể hỏi server xem resource có thay đổi không.
+
+Một số HTTP Header quan trọng:
+
+```http
+Cache-Control
+ETag
+Last-Modified
+Expires
+```
+
+Ví dụ:
+
+```http
+Cache-Control: max-age=3600
+```
+
+Browser có thể sử dụng cached response trong khoảng thời gian phù hợp với directive này.
+
+> **Điểm cộng khi phỏng vấn:** HTTP caching không đơn giản chỉ là "browser lưu response"; server có thể kiểm soát cách cache thông qua HTTP caching directives.
+
+---
+
+## 392. `ETag` và `Last-Modified` khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Cả hai đều được sử dụng để **revalidate** cached resource.
+
+### ETag
+
+Server cung cấp một identifier đại diện cho phiên bản resource:
+
+```http
+ETag: "abc123"
+```
+
+Browser gửi lại:
+
+```http
+If-None-Match: "abc123"
+```
+
+Nếu resource không thay đổi:
+
+```http
+304 Not Modified
+```
+
+### Last-Modified
+
+Server cung cấp thời điểm resource được thay đổi:
+
+```http
+Last-Modified: Wed, 08 Aug 2026 10:00:00 GMT
+```
+
+Browser gửi:
+
+```http
+If-Modified-Since: ...
+```
+
+> **Điểm cộng khi phỏng vấn:** `ETag` thường cho phép server xác định phiên bản resource chính xác hơn so với timestamp.
+
+---
+
+## 393. `Cache-Control: no-cache` và `no-store` khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Đây là hai directive rất dễ bị nhầm.
+
+### `no-cache`
+
+Không có nghĩa là "không được cache".
+
+Nó yêu cầu cached response phải được **revalidate với server** trước khi sử dụng trong những trường hợp áp dụng.
+
+```http
+Cache-Control: no-cache
+```
+
+### `no-store`
+
+Yêu cầu cache không lưu response.
+
+```http
+Cache-Control: no-store
+```
+
+Tóm lại:
+
+```text
+no-cache
+→ Có thể lưu
+→ Cần validation trước khi sử dụng
+
+no-store
+→ Không lưu response
+```
+
+---
+
+## 394. Cache Busting là gì? Tại sao Frontend cần Cache Busting?
+
+**Trả lời (phỏng vấn):**
+
+Cache Busting là kỹ thuật tạo URL mới cho asset khi nội dung asset thay đổi.
+
+Ví dụ:
+
+```text
+app.js
+```
+
+Sau build:
+
+```text
+app.a81f92.js
+```
+
+Khi code thay đổi:
+
+```text
+app.c31a77.js
+```
+
+Browser nhận diện đây là resource mới và tải lại.
+
+Bundler thường thực hiện việc này bằng **content hash**.
+
+Ví dụ:
+
+```text
+main.[hash].js
+```
+
+Lợi ích:
+
+* Có thể cache asset lâu hơn.
+* Tránh sử dụng JavaScript/CSS cũ sau deployment.
+* Giảm request không cần thiết.
+
+---
+
+## 395. Stale-While-Revalidate là gì?
+
+**Trả lời (phỏng vấn):**
+
+Stale-While-Revalidate là chiến lược cho phép ứng dụng sử dụng dữ liệu cache cũ ngay lập tức trong khi đồng thời cập nhật dữ liệu mới ở background.
+
+Luồng:
+
+```text
+Request
+   │
+   ▼
+Có Cache
+   │
+   ├── Trả dữ liệu cũ ngay
+   │
+   └── Fetch dữ liệu mới
+           │
+           ▼
+        Update Cache
+```
+
+Ưu điểm:
+
+* UI phản hồi nhanh.
+* Dữ liệu được cập nhật nền.
+* Giảm cảm giác loading.
+
+Pattern này phổ biến trong các thư viện quản lý Server State như SWR và React Query.
+
+---
+
+## 396. Request Deduplication là gì? Tại sao quan trọng trong Frontend?
+
+**Trả lời (phỏng vấn):**
+
+Request Deduplication là cơ chế tránh gửi nhiều request giống nhau khi nhiều component cùng yêu cầu một dữ liệu.
+
+Ví dụ:
+
+```text
+Component A ──┐
+              ├── GET /users/1
+Component B ──┤
+              │
+Component C ──┘
+```
+
+Thay vì:
+
+```text
+3 HTTP Requests
+```
+
+Có thể hợp nhất thành:
+
+```text
+1 HTTP Request
+       ↓
+Shared Result
+```
+
+Lợi ích:
+
+* Giảm network traffic.
+* Giảm tải Backend.
+* Giảm latency.
+* Đồng bộ dữ liệu giữa các component.
+
+> **Điểm cộng khi phỏng vấn:** Request Deduplication đặc biệt hữu ích trong ứng dụng component-based khi nhiều component có cùng data dependency.
+
+---
+
+## 397. Race Condition trong Data Fetching là gì?
+
+**Trả lời (phỏng vấn):**
+
+Race Condition xảy ra khi nhiều request chạy đồng thời nhưng response về không theo thứ tự request.
+
+Ví dụ:
+
+```text
+User nhập: "rea"
+    ↓
+Request A
+
+User nhập: "react"
+    ↓
+Request B
+```
+
+Nếu:
+
+```text
+B response → trước
+A response → sau
+```
+
+Response A có thể ghi đè kết quả mới của B.
+
+Giải pháp:
+
+* `AbortController`.
+* Request ID.
+* Ignore stale response.
+* Query library quản lý request lifecycle.
+
+Ví dụ:
+
+```ts
+const controller = new AbortController();
+
+fetch(url, {
+  signal: controller.signal,
+});
+```
+
+---
+
+## 398. `AbortController` có tác dụng gì trong Frontend?
+
+**Trả lời (phỏng vấn):**
+
+`AbortController` cho phép hủy các API request hoặc các asynchronous operation hỗ trợ `AbortSignal`.
+
+Ví dụ:
+
+```ts
+const controller = new AbortController();
+
+fetch("/api/users", {
+  signal: controller.signal,
+});
+
+controller.abort();
+```
+
+Các trường hợp phù hợp:
+
+* User đổi search keyword.
+* Component unmount.
+* User chuyển route.
+* Request không còn cần thiết.
+
+Trong React:
+
+```tsx
+useEffect(() => {
+  const controller = new AbortController();
+
+  fetch("/api/users", {
+    signal: controller.signal,
+  });
+
+  return () => controller.abort();
+}, []);
+```
+
+> **Điểm cộng khi phỏng vấn:** Hủy request không đồng nghĩa với việc mọi tác vụ phía server chắc chắn đã dừng; nó chủ yếu giúp client ngừng chờ/xử lý response của operation đã bị abort.
+
+---
+
+## 399. Optimistic Update là gì? Khi nào nên sử dụng?
+
+**Trả lời (phỏng vấn):**
+
+Optimistic Update cập nhật UI **trước khi server xác nhận request thành công**, với giả định request có khả năng thành công.
+
+Ví dụ:
+
+```text
+User click Like
+      ↓
+UI tăng Like ngay
+      ↓
+POST /likes
+      ↓
+Success → giữ trạng thái
+Error   → Rollback
+```
+
+Ưu điểm:
+
+* UI phản hồi nhanh.
+* UX tốt hơn.
+
+Nhược điểm:
+
+* Phải xử lý rollback.
+* Có thể xảy ra conflict với server state.
+* Phức tạp hơn khi mutation có nhiều side effects.
+
+Phù hợp với các thao tác như:
+
+* Like.
+* Toggle.
+* Update UI đơn giản.
+
+---
+
+## 400. Nếu API response chậm và người dùng liên tục thao tác, bạn sẽ thiết kế Data Fetching Layer như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Tôi sẽ thiết kế Data Fetching Layer theo các nguyên tắc:
+
+```text
+UI
+ │
+ ▼
+Query / Mutation Layer
+ │
+ ├── Cache
+ ├── Deduplication
+ ├── Retry
+ ├── Cancellation
+ ├── Error Handling
+ └── Background Refetch
+ │
+ ▼
+API Client
+ │
+ ▼
+Backend
+```
+
+Tôi đặc biệt quan tâm:
+
+1. **Caching** để tránh request lặp lại.
+2. **Request Deduplication** khi nhiều component cùng cần dữ liệu.
+3. **AbortController** để hủy request không còn cần thiết.
+4. **Race Condition Handling** để response cũ không ghi đè dữ liệu mới.
+5. **Optimistic Update** cho các mutation phù hợp.
+6. **Retry với Backoff** đối với lỗi tạm thời.
+7. **Pagination/Infinite Query** cho dữ liệu lớn.
+8. **Error Boundary hoặc Error State** cho lỗi render/data.
+9. **Loading và Pending State** rõ ràng.
+10. **Monitoring** để đo latency, error rate và cache performance.
+
+> **Điểm cộng khi phỏng vấn:** Với một ứng dụng lớn, tôi không xem việc gọi API chỉ là `fetch()`. Data Fetching Layer cần quản lý cả vòng đời dữ liệu từ request, cache, đồng bộ, cancellation cho đến error recovery.
+
+</details>
+
+<details>
   <summary><strong>📅 2026-08-07 —  React Rendering & Performance Optimization </strong></summary>
 
 ## 381. React Reconciliation là gì?
