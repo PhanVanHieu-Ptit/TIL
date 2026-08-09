@@ -3,6 +3,396 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-08-09 —   Web Security, Browser & Advanced Networking </strong></summary>
+  
+## 401. CORS là gì? Browser thực hiện CORS như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+CORS (Cross-Origin Resource Sharing) là cơ chế của trình duyệt cho phép một web application truy cập resource từ origin khác khi server cho phép.
+
+Ví dụ:
+
+```text
+Frontend
+https://app.example.com
+
+        ↓ API Request
+
+Backend
+https://api.example.com
+```
+
+Server có thể trả về:
+
+```http
+Access-Control-Allow-Origin: https://app.example.com
+```
+
+Browser sẽ kiểm tra các CORS headers trước khi cho JavaScript đọc response.
+
+> **Điểm cộng khi phỏng vấn:** CORS là cơ chế được thực thi bởi browser. Server-to-server request không bị browser áp dụng CORS theo cách tương tự.
+
+---
+
+## 402. Simple Request và Preflight Request khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+CORS request có thể cần hoặc không cần preflight.
+
+### Simple Request
+
+Nếu request đáp ứng các điều kiện của CORS simple request thì browser có thể gửi request trực tiếp.
+
+Ví dụ:
+
+```http
+GET /users
+```
+
+### Preflight Request
+
+Với một số request không thuộc nhóm simple request, browser gửi trước:
+
+```http
+OPTIONS /users
+```
+
+để hỏi server request thật có được phép hay không.
+
+Ví dụ:
+
+```text
+Browser
+   │
+   ├── OPTIONS ──→ Server
+   │
+   │   ← CORS headers
+   │
+   └── POST ─────→ Server
+```
+
+> **Điểm cộng khi phỏng vấn:** `OPTIONS` không phải lúc nào cũng là preflight; nó chỉ là preflight khi browser sử dụng nó để kiểm tra quyền CORS trước request chính.
+
+---
+
+## 403. CORS Error có phải luôn là lỗi Backend không?
+
+**Trả lời (phỏng vấn):**
+
+Không nên kết luận ngay như vậy.
+
+CORS là cơ chế browser kiểm tra quyền truy cập cross-origin, nên lỗi có thể liên quan đến:
+
+* Backend không trả CORS header phù hợp.
+* Origin không nằm trong allowlist.
+* Preflight `OPTIONS` không được xử lý đúng.
+* Request dùng method/header không được phép.
+* Cấu hình proxy hoặc gateway.
+* Credential configuration không phù hợp.
+
+Ví dụ:
+
+```http
+Access-Control-Allow-Origin: https://app.example.com
+```
+
+nhưng frontend chạy tại:
+
+```text
+https://admin.example.com
+```
+
+thì browser có thể chặn việc JavaScript đọc response.
+
+> **Điểm cộng khi phỏng vấn:** Không nên chỉ nhìn thông báo CORS trong Console rồi sửa frontend. Cần kiểm tra Network tab, request `OPTIONS`, response headers và server configuration.
+
+---
+
+## 404. WebSocket khác HTTP như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+HTTP thường sử dụng mô hình:
+
+```text
+Client → Request → Server
+Client ← Response ← Server
+```
+
+WebSocket tạo một connection hai chiều lâu dài:
+
+```text
+Client ←────────→ Server
+       Full Duplex
+```
+
+Sau khi connection được thiết lập, cả client và server đều có thể chủ động gửi message.
+
+WebSocket phù hợp với:
+
+* Chat realtime.
+* Multiplayer game.
+* Live collaboration.
+* Realtime dashboard.
+
+> **Điểm cộng khi phỏng vấn:** WebSocket phù hợp khi cần communication hai chiều realtime; không nên sử dụng nó chỉ vì "realtime" nếu bài toán thực tế chỉ cần server push một chiều.
+
+---
+
+## 405. SSE khác WebSocket như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+SSE (Server-Sent Events) cho phép server gửi dữ liệu liên tục xuống client thông qua HTTP connection.
+
+```text
+SSE:
+
+Client ─────────→ Server
+       Request
+
+Client ←───────── Server
+       Events
+       Events
+       Events
+```
+
+Trong khi WebSocket:
+
+```text
+Client ←────────→ Server
+       Two-way
+```
+
+### SSE phù hợp với:
+
+* Notification.
+* Live feed.
+* Streaming response.
+* Progress update.
+
+### WebSocket phù hợp với:
+
+* Chat hai chiều.
+* Multiplayer.
+* Collaborative editing.
+
+> **Điểm cộng khi phỏng vấn:** SSE đơn giản hơn khi bài toán chủ yếu là server → client streaming.
+
+---
+
+## 406. HTTP/1.1, HTTP/2 và HTTP/3 khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+### HTTP/1.1
+
+* Text-based protocol.
+* Có nhiều request/connection.
+* Có thể gặp vấn đề Head-of-Line Blocking ở tầng HTTP.
+
+### HTTP/2
+
+* Binary framing.
+* Multiplexing nhiều stream trên một connection.
+* Header Compression với HPACK.
+* Cho phép nhiều request/response đồng thời trên cùng connection.
+
+### HTTP/3
+
+* Chạy trên QUIC.
+* QUIC sử dụng UDP.
+* Header Compression sử dụng QPACK.
+* Giảm ảnh hưởng của Head-of-Line Blocking ở tầng transport so với TCP.
+
+Tóm tắt:
+
+```text
+HTTP/1.1 → TCP
+HTTP/2   → TCP
+HTTP/3   → QUIC / UDP
+```
+
+---
+
+## 407. HTTP/2 Multiplexing giải quyết vấn đề gì?
+
+**Trả lời (phỏng vấn):**
+
+HTTP/2 cho phép nhiều stream cùng tồn tại trên một TCP connection.
+
+HTTP/1.1:
+
+```text
+Connection
+ ├── Request A
+ ├── Request B
+ └── Request C
+```
+
+HTTP/2:
+
+```text
+One TCP Connection
+ ├── Stream A
+ ├── Stream B
+ ├── Stream C
+ └── Stream D
+```
+
+Điều này giúp giảm nhu cầu mở nhiều connection và cho phép các stream HTTP được multiplex.
+
+Tuy nhiên, vì HTTP/2 vẫn chạy trên TCP nên mất gói ở tầng TCP có thể ảnh hưởng đến việc truyền dữ liệu trên connection.
+
+---
+
+## 408. CDN hoạt động như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+CDN (Content Delivery Network) phân phối resource thông qua nhiều edge location.
+
+Ví dụ:
+
+```text
+User
+  │
+  ▼
+Nearest Edge
+  │
+  ├── Cache HIT → Response
+  │
+  └── Cache MISS
+          │
+          ▼
+       Origin
+```
+
+Các tài nguyên thường được CDN cache:
+
+* JavaScript.
+* CSS.
+* Images.
+* Fonts.
+* Videos.
+* Static files.
+
+Lợi ích:
+
+* Giảm latency.
+* Giảm tải Origin Server.
+* Tăng khả năng phục vụ traffic lớn.
+
+---
+
+## 409. Cache HIT và Cache MISS là gì?
+
+**Trả lời (phỏng vấn):**
+
+### Cache HIT
+
+Resource đã có trong cache:
+
+```text
+User
+ ↓
+CDN
+ ↓
+Cache HIT
+ ↓
+Response
+```
+
+Không cần request đến Origin.
+
+### Cache MISS
+
+Resource chưa có hoặc không thể sử dụng cached response:
+
+```text
+User
+ ↓
+CDN
+ ↓
+Cache MISS
+ ↓
+Origin
+ ↓
+CDN Cache
+ ↓
+User
+```
+
+Khi thiết kế caching strategy, tôi sẽ theo dõi:
+
+* Cache Hit Ratio.
+* Cache TTL.
+* Cache Invalidation.
+* Cache Key.
+
+---
+
+## 410. Nếu Frontend cần realtime data, bạn sẽ chọn Polling, Long Polling, SSE hay WebSocket như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Tôi sẽ chọn dựa trên hướng truyền dữ liệu và yêu cầu realtime.
+
+| Giải pháp    | Communication   | Phù hợp                                 |
+| ------------ | --------------- | --------------------------------------- |
+| Polling      | Client → Server | Dữ liệu thay đổi không thường xuyên     |
+| Long Polling | Client → Server | Cần gần realtime nhưng hạ tầng đơn giản |
+| SSE          | Server → Client | Server push một chiều                   |
+| WebSocket    | Hai chiều       | Realtime communication hai chiều        |
+
+Ví dụ:
+
+```text
+Polling
+Client ── Request ──→ Server
+Client ←─ Response ── Server
+        ↓
+      Wait
+        ↓
+      Repeat
+```
+
+```text
+SSE
+Client ── Connection ──→ Server
+Client ←──── Event ───── Server
+Client ←──── Event ───── Server
+Client ←──── Event ───── Server
+```
+
+```text
+WebSocket
+Client ←──────────────→ Server
+       Bidirectional
+```
+
+**Cách trả lời ở level Senior:**
+
+Tôi không chọn công nghệ chỉ dựa trên việc "cần realtime". Tôi sẽ đánh giá:
+
+* Direction của dữ liệu.
+* Latency requirement.
+* Connection concurrency.
+* Reconnection strategy.
+* Network reliability.
+* Browser support.
+* Infrastructure và load balancer.
+* Khả năng scale connection.
+* Chi phí vận hành.
+* Cơ chế fallback khi connection bị mất.
+
+> **Điểm cộng khi phỏng vấn:** Nếu chỉ cần server push một chiều, SSE có thể đơn giản hơn WebSocket. Nếu client và server đều cần gửi message realtime, WebSocket thường phù hợp hơn. Nếu độ realtime không cao, Polling có thể là lựa chọn đơn giản và dễ vận hành hơn.
+
+</details>
+
+<details>
   <summary><strong>📅 2026-08-08 —  Browser Networking, Caching & Data Fetching </strong></summary>
   
 ## 391. HTTP Cache hoạt động như thế nào?
