@@ -3,6 +3,443 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-08-10 —   Browser Rendering, Performance & Web Vitals </strong></summary>
+
+## 411. Critical Rendering Path là gì?
+
+**Trả lời (phỏng vấn):**
+
+Critical Rendering Path là chuỗi các bước browser thực hiện để chuyển HTML, CSS và JavaScript thành giao diện hiển thị trên màn hình.
+
+Luồng cơ bản:
+
+```text
+HTML
+  ↓
+DOM
+  ↓
+CSS
+  ↓
+CSSOM
+  ↓
+Render Tree
+  ↓
+Layout
+  ↓
+Paint
+  ↓
+Composite
+  ↓
+Screen
+```
+
+JavaScript có thể ảnh hưởng đến quá trình này thông qua việc:
+
+* Chặn HTML parsing.
+* Thay đổi DOM.
+* Thay đổi CSS.
+* Trigger layout hoặc paint.
+
+Khi tối ưu, tôi tập trung giảm tài nguyên blocking và giảm công việc cần thực hiện trên Critical Rendering Path.
+
+---
+
+## 412. Layout, Paint và Composite khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+### Layout
+
+Browser tính toán:
+
+* Kích thước.
+* Vị trí.
+* Quan hệ giữa các element.
+
+Ví dụ:
+
+```css
+width
+height
+margin
+padding
+font-size
+```
+
+### Paint
+
+Browser vẽ các pixel:
+
+* Text.
+* Background.
+* Border.
+* Shadow.
+
+### Composite
+
+Browser kết hợp các layer đã được rasterize để tạo frame cuối cùng.
+
+Có thể hình dung:
+
+```text
+DOM/CSS
+   ↓
+Layout
+   ↓
+Paint
+   ↓
+Composite
+   ↓
+Frame
+```
+
+> **Điểm cộng khi phỏng vấn:** Không phải mọi thay đổi CSS đều trigger cả Layout → Paint → Composite. Chi phí phụ thuộc vào property và cách browser xử lý property đó.
+
+---
+
+## 413. Reflow và Repaint là gì?
+
+**Trả lời (phỏng vấn):**
+
+### Reflow
+
+Xảy ra khi browser phải tính toán lại layout.
+
+Ví dụ thay đổi:
+
+```css
+width
+height
+margin
+padding
+font-size
+```
+
+### Repaint
+
+Xảy ra khi browser cần vẽ lại pixel nhưng layout không nhất thiết thay đổi.
+
+Ví dụ:
+
+```css
+color
+background-color
+box-shadow
+```
+
+Reflow thường có chi phí cao hơn repaint vì có thể ảnh hưởng đến nhiều node trong layout tree.
+
+---
+
+## 414. Forced Synchronous Layout là gì?
+
+**Trả lời (phỏng vấn):**
+
+Forced Synchronous Layout xảy ra khi JavaScript thay đổi style/layout rồi ngay lập tức đọc một property yêu cầu browser phải biết layout mới.
+
+Ví dụ:
+
+```js
+element.style.width = "500px";
+
+console.log(element.offsetWidth);
+```
+
+Browser có thể phải:
+
+```text
+Style Mutation
+     ↓
+JS đọc Layout
+     ↓
+Browser phải tính Layout ngay
+```
+
+Nếu thực hiện liên tục trong loop, có thể gây **layout thrashing**.
+
+Cách hạn chế:
+
+* Gom các thao tác DOM write.
+* Gom các thao tác DOM read.
+* Tránh xen kẽ read/write không cần thiết.
+* Sử dụng `requestAnimationFrame()` khi phù hợp.
+
+---
+
+## 415. Layout Thrashing là gì?
+
+**Trả lời (phỏng vấn):**
+
+Layout Thrashing xảy ra khi code liên tục xen kẽ giữa việc thay đổi DOM/style và đọc layout.
+
+Ví dụ:
+
+```js
+for (const element of elements) {
+  element.style.width = "100px";
+
+  console.log(element.offsetHeight);
+}
+```
+
+Pattern:
+
+```text
+Write
+ ↓
+Read → Layout
+ ↓
+Write
+ ↓
+Read → Layout
+ ↓
+...
+```
+
+Điều này có thể khiến browser phải thực hiện layout nhiều lần.
+
+Tốt hơn là tách:
+
+```text
+Read
+Read
+Read
+ ↓
+Write
+Write
+Write
+```
+
+> **Điểm cộng khi phỏng vấn:** Khi nghi ngờ layout performance, tôi sẽ kiểm tra Chrome Performance Panel thay vì kết luận chỉ dựa trên code.
+
+---
+
+## 416. `requestAnimationFrame()` dùng để làm gì?
+
+**Trả lời (phỏng vấn):**
+
+`requestAnimationFrame()` cho phép thực thi callback trước khi browser render frame tiếp theo.
+
+Ví dụ:
+
+```js
+requestAnimationFrame(() => {
+  element.style.transform = "translateX(100px)";
+});
+```
+
+Thường được sử dụng cho:
+
+* Animation.
+* Visual updates.
+* Scroll-related rendering.
+* Đồng bộ thay đổi UI với rendering cycle.
+
+Ví dụ animation:
+
+```js
+function animate() {
+  element.style.transform = `translateX(${x}px)`;
+
+  requestAnimationFrame(animate);
+}
+```
+
+> **Điểm cộng khi phỏng vấn:** `requestAnimationFrame()` không tự biến JavaScript thành non-blocking. Nếu callback thực hiện quá nhiều công việc trên main thread, frame vẫn có thể bị dropped.
+
+---
+
+## 417. Long Task là gì? Tại sao ảnh hưởng đến UX?
+
+**Trả lời (phỏng vấn):**
+
+Long Task là một task chạy trên main thread trong thời gian đủ dài để có thể ảnh hưởng đến khả năng phản hồi của trang. Theo Web Performance APIs, ngưỡng thường được sử dụng để nhận diện Long Task là **trên 50ms**.
+
+Ví dụ:
+
+```text
+Main Thread
+──────────────────────────────
+Task
+██████████████████████████████
+              > 50ms
+```
+
+Nguyên nhân có thể là:
+
+* JavaScript computation nặng.
+* Parse/compile JavaScript lớn.
+* Xử lý dữ liệu lớn.
+* Render quá nhiều component.
+
+Giải pháp:
+
+* Code Splitting.
+* Web Worker.
+* Chunking công việc.
+* Virtualization.
+* Tránh computation nặng trên main thread.
+
+---
+
+## 418. Web Worker là gì? Khi nào nên sử dụng?
+
+**Trả lời (phỏng vấn):**
+
+Web Worker cho phép chạy JavaScript trong một worker context riêng thay vì thực hiện trực tiếp trên main thread.
+
+Ví dụ:
+
+```text
+Main Thread
+    │
+    │ postMessage()
+    ▼
+Web Worker
+    │
+    │ Heavy Computation
+    ▼
+postMessage()
+    │
+    ▼
+Main Thread
+```
+
+Phù hợp với:
+
+* Parse dữ liệu lớn.
+* Tính toán phức tạp.
+* Image processing.
+* Encryption.
+* Các thuật toán CPU-intensive.
+
+Không phù hợp để thao tác trực tiếp với DOM.
+
+> **Điểm cộng khi phỏng vấn:** Web Worker giúp tách computation khỏi main thread, nhưng communication giữa thread có chi phí nên không phải mọi tác vụ đều cần đưa vào Worker.
+
+---
+
+## 419. Core Web Vitals là gì? Những metric nào cần biết?
+
+**Trả lời (phỏng vấn):**
+
+Core Web Vitals là nhóm metric của Chrome/Web Platform dùng để đánh giá các khía cạnh quan trọng của trải nghiệm người dùng.
+
+Các metric Core Web Vitals hiện tại gồm:
+
+### LCP — Largest Contentful Paint
+
+Đo thời gian để phần tử nội dung lớn nhất trong viewport được render.
+
+Phản ánh:
+
+```text
+Loading Performance
+```
+
+### INP — Interaction to Next Paint
+
+Đo khả năng phản hồi của trang đối với tương tác người dùng.
+
+Phản ánh:
+
+```text
+Responsiveness
+```
+
+### CLS — Cumulative Layout Shift
+
+Đo mức độ dịch chuyển layout ngoài ý muốn.
+
+Phản ánh:
+
+```text
+Visual Stability
+```
+
+Tóm tắt:
+
+```text
+LCP → Loading
+INP → Responsiveness
+CLS → Visual Stability
+```
+
+> **Điểm cộng khi phỏng vấn:** Từ tháng 3/2024, INP đã thay thế FID (First Input Delay) trong Core Web Vitals.
+
+---
+
+## 420. Nếu một website có LCP tốt nhưng INP rất kém, bạn sẽ điều tra như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Tôi sẽ không tiếp tục tối ưu loading nếu vấn đề chính nằm ở interaction.
+
+Tôi sẽ tập trung kiểm tra **main thread** và interaction lifecycle.
+
+### Bước 1 — Reproduce
+
+Xác định interaction nào có INP cao:
+
+```text
+Click
+Input
+Tap
+     ↓
+Slow Response
+```
+
+### Bước 2 — Performance Profiling
+
+Sử dụng:
+
+* Chrome DevTools Performance.
+* React DevTools Profiler.
+* Long Task detection.
+
+### Bước 3 — Tìm nguyên nhân
+
+Tôi sẽ kiểm tra:
+
+* Event Handler quá nặng.
+* JavaScript computation lớn.
+* React re-render diện rộng.
+* Component tree quá lớn.
+* Synchronous API xử lý dữ liệu lớn.
+* Layout/Paint xảy ra trong interaction.
+* Third-party scripts.
+
+### Bước 4 — Tối ưu
+
+Tùy nguyên nhân:
+
+```text
+Heavy JS
+   ↓
+Split / Defer / Worker
+
+Large Render
+   ↓
+Memoization / Virtualization
+
+Heavy Event
+   ↓
+Chunk Work / Debounce / Throttle
+
+Layout Cost
+   ↓
+Reduce DOM / Optimize Rendering
+```
+
+### Bước 5 — Đo lại
+
+Sau khi thay đổi, tôi sẽ đo lại interaction để xác minh INP thực sự được cải thiện.
+
+> **Điểm cộng khi phỏng vấn:** Performance optimization nên bắt đầu từ profiling và số liệu thực tế. Không nên áp dụng `useMemo`, `useCallback` hoặc các kỹ thuật tối ưu một cách máy móc khi chưa xác định bottleneck.
+
+</details>
+
+<details>
   <summary><strong>📅 2026-08-09 —   Web Security, Browser & Advanced Networking </strong></summary>
   
 ## 401. CORS là gì? Browser thực hiện CORS như thế nào?
