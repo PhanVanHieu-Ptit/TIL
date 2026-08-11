@@ -3,6 +3,434 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-08-11 — Architecture, Scalability & Design Patterns </strong></summary>
+
+## 421. Feature-Sliced Design (FSD) giải quyết vấn đề gì trong Frontend?
+
+**Trả lời (phỏng vấn):**
+
+Feature-Sliced Design tổ chức source code theo **business domain và feature** thay vì chỉ chia theo loại file như `components`, `hooks`, `utils`.
+
+Ví dụ:
+
+```text
+src/
+├── app/
+├── pages/
+├── widgets/
+├── features/
+├── entities/
+└── shared/
+```
+
+Mục tiêu:
+
+* Giảm coupling giữa các feature.
+* Tăng khả năng maintain.
+* Xác định rõ boundary giữa các module.
+* Hỗ trợ scale team và codebase.
+
+Tôi sẽ không áp dụng FSD máy móc. Với project nhỏ, cấu trúc đơn giản có thể phù hợp hơn.
+
+---
+
+## 422. Module Boundary là gì? Tại sao quan trọng trong ứng dụng lớn?
+
+**Trả lời (phỏng vấn):**
+
+Module Boundary là ranh giới xác định module nào được phép phụ thuộc hoặc truy cập vào module nào.
+
+Ví dụ:
+
+```text
+Feature A ──→ Shared
+Feature B ──→ Shared
+
+Feature A ──X──→ Internal của Feature B
+```
+
+Một boundary tốt giúp:
+
+* Giảm coupling.
+* Hạn chế dependency ngược.
+* Dễ refactor.
+* Dễ test.
+* Team có thể phát triển độc lập.
+
+Tôi thường enforce boundary bằng:
+
+* Folder convention.
+* ESLint rules.
+* TypeScript path aliases.
+* Architecture tests.
+
+---
+
+## 423. Circular Dependency trong Frontend là gì? Làm thế nào để phát hiện?
+
+**Trả lời (phỏng vấn):**
+
+Circular Dependency xảy ra khi module A phụ thuộc B và B lại phụ thuộc A, trực tiếp hoặc gián tiếp.
+
+Ví dụ:
+
+```text
+A → B
+↑   ↓
+└── C
+```
+
+Các dependency cycle có thể gây:
+
+* Module initialization khó dự đoán.
+* Giá trị `undefined` trong một số trường hợp.
+* Khó refactor.
+* Dependency graph phức tạp.
+
+Tôi thường phát hiện bằng:
+
+* Bundler warning.
+* Dependency analyzer.
+* ESLint dependency rules.
+* Static analysis.
+
+Giải pháp thường là đưa phần dùng chung xuống một module có abstraction rõ ràng hơn.
+
+---
+
+## 424. Dependency Inversion Principle áp dụng thế nào trong Frontend?
+
+**Trả lời (phỏng vấn):**
+
+Dependency Inversion Principle khuyến khích module cấp cao không phụ thuộc trực tiếp vào implementation cụ thể.
+
+Ví dụ không tốt:
+
+```ts
+class UserService {
+  private api = new AxiosUserApi();
+}
+```
+
+Có thể thiết kế:
+
+```ts
+interface UserRepository {
+  getUser(id: string): Promise<User>;
+}
+```
+
+Sau đó:
+
+```ts
+class UserService {
+  constructor(
+    private repository: UserRepository
+  ) {}
+}
+```
+
+Lợi ích:
+
+* Dễ test.
+* Dễ thay implementation.
+* Giảm coupling.
+* Dễ mock dependency.
+
+Trong Frontend, pattern này đặc biệt hữu ích ở các application có nhiều integration hoặc business logic phức tạp.
+
+---
+
+## 425. Composition và Inheritance nên ưu tiên cách nào trong React?
+
+**Trả lời (phỏng vấn):**
+
+Trong React, tôi thường ưu tiên **Composition** thay vì component inheritance.
+
+Ví dụ:
+
+```tsx
+<Card>
+  <UserInfo />
+</Card>
+```
+
+Thay vì xây dựng một hierarchy inheritance phức tạp.
+
+Composition giúp:
+
+* Component linh hoạt.
+* Giảm coupling.
+* Dễ tái sử dụng.
+* Dễ kiểm soát dependency.
+
+Các cơ chế thường dùng:
+
+* `children`.
+* Props.
+* Render props.
+* Custom hooks.
+* Compound Components.
+
+> **Điểm cộng khi phỏng vấn:** Composition không có nghĩa là không bao giờ sử dụng abstraction. Quan trọng là abstraction phải phản ánh đúng trách nhiệm của component.
+
+---
+
+## 426. Container/Presentational Pattern còn phù hợp với React hiện đại không?
+
+**Trả lời (phỏng vấn):**
+
+Pattern này chia component thành hai nhóm:
+
+### Container
+
+Phụ trách:
+
+* Data fetching.
+* State.
+* Business logic.
+* Event handling.
+
+### Presentational
+
+Phụ trách:
+
+* UI.
+* Rendering.
+* Props.
+
+Ví dụ:
+
+```text
+UserPage
+   │
+   ├── Fetch User
+   ├── Manage State
+   │
+   ▼
+UserView
+   │
+   └── Render UI
+```
+
+Pattern này vẫn có giá trị về mặt separation of concerns, nhưng tôi không áp dụng cứng nhắc.
+
+Với React hiện đại, logic có thể được tách bằng:
+
+* Custom Hooks.
+* Server Components trong môi trường hỗ trợ.
+* Feature modules.
+* Domain services.
+
+---
+
+## 427. Custom Hook nên chứa những loại logic nào?
+
+**Trả lời (phỏng vấn):**
+
+Custom Hook phù hợp để đóng gói **logic có thể tái sử dụng liên quan đến React lifecycle/state**.
+
+Ví dụ:
+
+```ts
+function useDebouncedValue<T>(
+  value: T,
+  delay: number
+) {
+  // ...
+}
+```
+
+Hoặc:
+
+```ts
+const {
+  data,
+  isLoading,
+  error,
+} = useUser(userId);
+```
+
+Tôi tránh đưa mọi business logic vào hook.
+
+Nếu logic không phụ thuộc React, nên cân nhắc tách thành:
+
+```text
+Pure Function
+Service
+Domain Module
+Utility
+```
+
+Điều này giúp logic dễ test và giảm coupling với React.
+
+---
+
+## 428. Khi nào nên sử dụng State Machine thay vì `useState`?
+
+**Trả lời (phỏng vấn):**
+
+`useState` phù hợp với state đơn giản.
+
+Ví dụ:
+
+```text
+isOpen
+```
+
+Nhưng với UI có nhiều trạng thái và transition phức tạp, State Machine có thể phù hợp hơn.
+
+Ví dụ authentication:
+
+```text
+idle
+ ↓
+loading
+ ├── success
+ └── error
+```
+
+Hoặc:
+
+```text
+idle
+ ↓
+submitting
+ ↓
+success
+```
+
+State Machine giúp định nghĩa rõ:
+
+* State hợp lệ.
+* Event.
+* Transition.
+* Side effects.
+
+Một số thư viện hỗ trợ mô hình này như XState.
+
+---
+
+## 429. Monorepo là gì? Khi nào nên sử dụng?
+
+**Trả lời (phỏng vấn):**
+
+Monorepo là mô hình quản lý nhiều application/package trong cùng một repository.
+
+Ví dụ:
+
+```text
+repo/
+├── apps/
+│   ├── web/
+│   ├── admin/
+│   └── mobile/
+│
+└── packages/
+    ├── ui/
+    ├── utils/
+    └── config/
+```
+
+Ưu điểm:
+
+* Chia sẻ code.
+* Đồng bộ dependency.
+* Atomic changes giữa nhiều package.
+* Dễ chia sẻ tooling.
+
+Nhược điểm:
+
+* Build có thể phức tạp.
+* CI/CD cần tối ưu.
+* Dependency graph lớn.
+* Cần quản lý ownership và boundaries tốt.
+
+Các tooling phổ biến:
+
+* Turborepo.
+* Nx.
+* pnpm Workspaces.
+
+> **Điểm cộng khi phỏng vấn:** Monorepo không tự động tốt hơn polyrepo. Quyết định nên dựa trên team structure, mức độ chia sẻ code và yêu cầu release/deployment.
+
+---
+
+## 430. Nếu Frontend application phát triển từ 10 lên 100 developer, bạn sẽ thay đổi architecture như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Tôi sẽ không bắt đầu bằng việc thêm framework hoặc thư viện. Tôi sẽ tập trung vào **architecture boundaries và developer scalability**.
+
+Tôi sẽ ưu tiên:
+
+### 1. Domain/Feature Boundaries
+
+```text
+Feature A
+Feature B
+Feature C
+```
+
+Mỗi feature có ownership và dependency rõ ràng.
+
+### 2. Shared Layer có kiểm soát
+
+Không biến `shared/` thành nơi chứa mọi thứ.
+
+### 3. Enforce Architecture
+
+Sử dụng:
+
+* ESLint.
+* TypeScript.
+* Dependency rules.
+* Architecture tests.
+
+### 4. Chuẩn hóa Engineering Practices
+
+* Testing strategy.
+* Code review.
+* CI/CD.
+* Error monitoring.
+* Performance monitoring.
+* Documentation.
+
+### 5. Tối ưu Build System
+
+* Incremental build.
+* Remote/local caching.
+* Code ownership.
+* Affected-project testing.
+
+### 6. Tách Business Logic khỏi UI
+
+```text
+UI
+ ↓
+Feature
+ ↓
+Domain / Application Logic
+ ↓
+Infrastructure
+```
+
+### 7. Đo lường trước khi thay đổi
+
+Tôi sẽ sử dụng các metrics như:
+
+* Build time.
+* Test time.
+* Deployment frequency.
+* Change failure rate.
+* Bundle size.
+* Runtime performance.
+
+> **Điểm cộng khi phỏng vấn:** Khi codebase và team scale, vấn đề lớn nhất thường không còn là "component nào nhanh hơn", mà là dependency management, ownership, architecture boundaries và tốc độ thay đổi của toàn hệ thống.
+
+</details>
+
+<details>
   <summary><strong>📅 2026-08-10 —   Browser Rendering, Performance & Web Vitals </strong></summary>
 
 ## 411. Critical Rendering Path là gì?
