@@ -3,6 +3,528 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-08-12 — TypeScript Advanced & Type-Safe Architecture </strong></summary>
+
+## 431. `any`, `unknown` và `never` khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Đây là ba type có mục đích hoàn toàn khác nhau.
+
+### `any`
+
+Tắt phần lớn type checking:
+
+```ts
+let value: any = "hello";
+
+value.foo.bar();
+```
+
+TypeScript không kiểm tra chuỗi thao tác trên `value`.
+
+### `unknown`
+
+Đại diện cho một giá trị chưa biết type nhưng vẫn giữ type safety:
+
+```ts
+let value: unknown = "hello";
+
+if (typeof value === "string") {
+  console.log(value.toUpperCase());
+}
+```
+
+Tôi ưu tiên `unknown` thay vì `any` khi xử lý dữ liệu từ bên ngoài hệ thống.
+
+### `never`
+
+Đại diện cho giá trị không bao giờ xảy ra.
+
+Ví dụ:
+
+```ts
+function throwError(message: string): never {
+  throw new Error(message);
+}
+```
+
+Hoặc dùng để kiểm tra exhaustive:
+
+```ts
+function assertNever(value: never): never {
+  throw new Error(`Unexpected value: ${value}`);
+}
+```
+
+---
+
+## 432. Discriminated Union là gì? Tại sao hữu ích trong Frontend?
+
+**Trả lời (phỏng vấn):**
+
+Discriminated Union là cách mô hình hóa nhiều trạng thái khác nhau bằng một property dùng làm discriminator.
+
+Ví dụ:
+
+```ts
+type RequestState =
+  | {
+      status: "loading";
+    }
+  | {
+      status: "success";
+      data: User[];
+    }
+  | {
+      status: "error";
+      error: Error;
+    };
+```
+
+Khi kiểm tra:
+
+```ts
+if (state.status === "success") {
+  state.data;
+}
+```
+
+TypeScript tự narrowing sang đúng variant.
+
+Điều này đặc biệt hữu ích khi modeling:
+
+* API State.
+* UI State.
+* Form State.
+* Async workflow.
+* State Machine.
+
+Thay vì:
+
+```ts
+isLoading: boolean;
+isError: boolean;
+data?: User[];
+error?: Error;
+```
+
+có thể dùng một state rõ ràng hơn:
+
+```text
+loading
+success
+error
+```
+
+---
+
+## 433. Type Narrowing trong TypeScript hoạt động như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Type Narrowing là quá trình TypeScript thu hẹp một union type dựa trên các điều kiện runtime mà TypeScript có thể phân tích.
+
+Ví dụ:
+
+```ts
+function print(value: string | number) {
+  if (typeof value === "string") {
+    value.toUpperCase();
+  } else {
+    value.toFixed(2);
+  }
+}
+```
+
+TypeScript hiểu:
+
+```text
+typeof === "string"
+        ↓
+string
+
+else
+        ↓
+number
+```
+
+Một số cơ chế narrowing:
+
+* `typeof`
+* `instanceof`
+* `in`
+* Equality checks.
+* User-defined type guards.
+* Discriminated unions.
+
+---
+
+## 434. User-defined Type Guard là gì?
+
+**Trả lời (phỏng vấn):**
+
+User-defined Type Guard là function giúp TypeScript hiểu rằng một giá trị thuộc một type cụ thể thông qua return type dạng:
+
+```ts
+value is SomeType
+```
+
+Ví dụ:
+
+```ts
+interface User {
+  id: string;
+  name: string;
+}
+
+function isUser(value: unknown): value is User {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "id" in value &&
+    "name" in value
+  );
+}
+```
+
+Sau đó:
+
+```ts
+if (isUser(value)) {
+  console.log(value.name);
+}
+```
+
+TypeScript sẽ narrow `value` thành `User`.
+
+Pattern này hữu ích khi xử lý:
+
+* API response.
+* `unknown`.
+* External data.
+* Runtime validation.
+
+> **Điểm cộng khi phỏng vấn:** TypeScript type checking chủ yếu diễn ra compile-time, nên với dữ liệu từ API tôi vẫn cần runtime validation nếu application yêu cầu đảm bảo cấu trúc dữ liệu.
+
+---
+
+## 435. `interface` và `type` khác nhau như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Cả hai đều có thể dùng để mô tả shape của object, nhưng có một số khác biệt.
+
+### `interface`
+
+Có declaration merging:
+
+```ts
+interface User {
+  id: string;
+}
+
+interface User {
+  name: string;
+}
+```
+
+Kết quả:
+
+```ts
+interface User {
+  id: string;
+  name: string;
+}
+```
+
+### `type`
+
+Có thể biểu diễn union, intersection và nhiều type expression khác:
+
+```ts
+type Status = "loading" | "success" | "error";
+```
+
+Hoặc:
+
+```ts
+type UserWithRole = User & {
+  role: string;
+};
+```
+
+Trong project, điều quan trọng hơn là **consistency** và convention của codebase.
+
+---
+
+## 436. Generic trong TypeScript giải quyết vấn đề gì?
+
+**Trả lời (phỏng vấn):**
+
+Generic cho phép viết code có thể hoạt động với nhiều type nhưng vẫn giữ được type information.
+
+Ví dụ:
+
+```ts
+function identity<T>(value: T): T {
+  return value;
+}
+```
+
+Khi gọi:
+
+```ts
+const user = identity<User>(data);
+```
+
+TypeScript vẫn biết:
+
+```ts
+user: User
+```
+
+Generic đặc biệt hữu ích cho:
+
+* API Client.
+* Reusable Components.
+* Hooks.
+* Utility Functions.
+* Data Structures.
+
+Ví dụ:
+
+```ts
+interface ApiResponse<T> {
+  data: T;
+  message: string;
+}
+```
+
+Có thể sử dụng:
+
+```ts
+ApiResponse<User>
+ApiResponse<Product[]>
+```
+
+---
+
+## 437. Covariance và Contravariance là gì?
+
+**Trả lời (phỏng vấn):**
+
+Variance mô tả mối quan hệ giữa type tổng quát và subtype của nó.
+
+Ba khái niệm chính:
+
+* Covariance.
+* Contravariance.
+* Invariance.
+
+Trong Frontend, vấn đề này thường xuất hiện khi làm việc với:
+
+* Function types.
+* Generic.
+* Callback.
+* Event handlers.
+
+Ví dụ:
+
+```ts
+type Handler<T> = (value: T) => void;
+```
+
+Với callback, TypeScript phải xem xét type của parameter theo quy tắc variance để tránh truyền một function không an toàn.
+
+Ở level Senior, tôi đặc biệt chú ý đến variance khi thiết kế **generic API hoặc reusable component library**, vì một generic abstraction tưởng như hợp lệ có thể tạo ra type relationship không an toàn.
+
+---
+
+## 438. `satisfies` khác type annotation và type assertion như thế nào?
+
+**Trả lời (phỏng vấn):**
+
+Ba cách này có mục đích khác nhau.
+
+### Type Annotation
+
+```ts
+const config: Config = {
+  timeout: 5000,
+};
+```
+
+Variable được kiểm tra theo `Config`.
+
+### Type Assertion
+
+```ts
+const config = value as Config;
+```
+
+Developer nói với TypeScript rằng giá trị này nên được xem là `Config`.
+
+Type assertion không tự thực hiện runtime validation.
+
+### `satisfies`
+
+```ts
+const config = {
+  timeout: 5000,
+} satisfies Config;
+```
+
+TypeScript kiểm tra object có thỏa `Config` hay không nhưng vẫn giữ type cụ thể của expression.
+
+Ví dụ:
+
+```ts
+const config = {
+  mode: "production",
+} satisfies Config;
+```
+
+Điều này có thể giúp vừa kiểm tra contract vừa giữ được thông tin type inference chi tiết hơn.
+
+---
+
+## 439. Exhaustive Checking là gì? Tại sao nên sử dụng với Union Type?
+
+**Trả lời (phỏng vấn):**
+
+Exhaustive Checking đảm bảo tất cả trường hợp của một union đều được xử lý.
+
+Ví dụ:
+
+```ts
+type Status =
+  | "loading"
+  | "success"
+  | "error";
+
+function renderStatus(status: Status) {
+  switch (status) {
+    case "loading":
+      return "Loading";
+
+    case "success":
+      return "Success";
+
+    case "error":
+      return "Error";
+
+    default:
+      return assertNever(status);
+  }
+}
+```
+
+Nếu sau này thêm:
+
+```ts
+type Status =
+  | "loading"
+  | "success"
+  | "error"
+  | "cancelled";
+```
+
+TypeScript có thể phát hiện `cancelled` chưa được xử lý.
+
+Lợi ích:
+
+* Phát hiện missing case khi compile.
+* An toàn hơn khi refactor.
+* Đặc biệt hữu ích với state machine và discriminated union.
+
+---
+
+## 440. Làm thế nào để thiết kế TypeScript Architecture cho một Frontend lớn?
+
+**Trả lời (phỏng vấn):**
+
+Tôi sẽ không chỉ tập trung vào việc viết type chính xác mà còn thiết kế **type boundaries** giữa các layer.
+
+Ví dụ:
+
+```text
+UI
+ ↓
+Feature
+ ↓
+Application
+ ↓
+Domain
+ ↓
+Infrastructure
+```
+
+Tôi ưu tiên:
+
+### 1. Type API rõ ràng
+
+```ts
+interface User {
+  id: string;
+  name: string;
+}
+```
+
+### 2. Không để `any` lan truyền
+
+Ưu tiên:
+
+```ts
+unknown
+```
+
+khi dữ liệu chưa được xác định.
+
+### 3. Model trạng thái bằng Union
+
+```ts
+type State =
+  | LoadingState
+  | SuccessState
+  | ErrorState;
+```
+
+### 4. Tách Domain Type khỏi API DTO
+
+Không nhất thiết sử dụng trực tiếp response từ Backend trong toàn bộ application.
+
+```text
+API DTO
+   ↓
+Mapper
+   ↓
+Domain Model
+   ↓
+UI
+```
+
+### 5. Dùng Generic cho abstraction thực sự có tính tổng quát
+
+Không tạo generic chỉ để làm type phức tạp hơn.
+
+### 6. Runtime Validation cho dữ liệu không đáng tin cậy
+
+TypeScript không thay thế runtime validation.
+
+### 7. Enforce Type Safety
+
+* `strict: true`.
+* Hạn chế `any`.
+* Exhaustive checking.
+* Type-safe API layer.
+* Lint rules.
+
+> **Điểm cộng khi phỏng vấn:** Ở level Senior, mục tiêu không phải là "càng nhiều type càng tốt", mà là tạo ra type boundary rõ ràng, giảm invalid state và giúp compiler hỗ trợ quá trình refactor của toàn hệ thống.
+
+</details>
+
+<details>
   <summary><strong>📅 2026-08-11 — Architecture, Scalability & Design Patterns </strong></summary>
 
 ## 421. Feature-Sliced Design (FSD) giải quyết vấn đề gì trong Frontend?
