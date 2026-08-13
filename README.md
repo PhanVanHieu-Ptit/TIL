@@ -3,6 +3,1314 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-08-13 — Top 30+ câu hỏi phỏng vấn Front End Developer </strong></summary>
+  
+  # Top 30+ câu hỏi phỏng vấn Front End Developer
+
+> Tổng hợp và diễn đạt lại từ bài viết **“Top 30+ câu hỏi phỏng vấn Front End Developer phổ biến”** của ITviec Blog, xuất bản ngày 25/11/2024.
+>
+> Nguồn: ITviec Blog
+
+---
+
+## Mục lục
+
+* [1. HTML & CSS](#1-html--css)
+* [2. JavaScript](#2-javascript)
+* [3. Framework & Library](#3-framework--library)
+* [4. Quy trình phát triển & Công cụ](#4-quy-trình-phát-triển--công-cụ)
+
+---
+
+# 1. HTML & CSS
+
+## 1.1. Thẻ `meta` trong HTML là gì?
+
+Thẻ `<meta>` được đặt trong `<head>` để cung cấp metadata cho document HTML.
+
+Một số thông tin thường được khai báo:
+
+* Character encoding.
+* Viewport.
+* Description.
+* Thông tin phục vụ SEO/social sharing.
+
+Ví dụ:
+
+```html
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Frontend interview questions" />
+```
+
+`meta` không trực tiếp hiển thị nội dung lên giao diện nhưng cung cấp thông tin cho browser, search engine và các hệ thống khác.
+
+---
+
+## 1.2. Các thành phần semantic trong HTML là gì?
+
+Semantic HTML là cách sử dụng các HTML element dựa trên **ý nghĩa của nội dung**, thay vì chỉ dùng element để tạo layout.
+
+Ví dụ:
+
+```html
+<header>
+  <nav>...</nav>
+</header>
+
+<main>
+  <section>
+    <article>...</article>
+  </section>
+
+  <aside>...</aside>
+</main>
+
+<footer>...</footer>
+```
+
+Một số semantic element phổ biến:
+
+* `<header>`
+* `<nav>`
+* `<main>`
+* `<section>`
+* `<article>`
+* `<aside>`
+* `<footer>`
+* `<figure>`
+* `<time>`
+* `<details>`
+* `<summary>`
+
+Semantic HTML giúp cấu trúc document rõ ràng hơn và hỗ trợ accessibility cũng như khả năng hiểu nội dung của các công cụ khác.
+
+---
+
+## 1.3. `id` và `class` khác nhau như thế nào?
+
+| `id`                                   | `class`                       |
+| -------------------------------------- | ----------------------------- |
+| Dùng để định danh một element cụ thể   | Có thể dùng cho nhiều element |
+| Thông thường nên unique trong document | Có thể được tái sử dụng       |
+| CSS selector sử dụng `#`               | CSS selector sử dụng `.`      |
+| Ví dụ: `#header`                       | Ví dụ: `.button`              |
+
+Ví dụ:
+
+```html
+<h1 id="title">Hello</h1>
+
+<p class="text">First</p>
+<p class="text">Second</p>
+```
+
+Trong thực tế, `class` thường phù hợp hơn khi mục tiêu là áp dụng style hoặc behavior cho một nhóm element.
+
+---
+
+## 1.4. `div` và `span` khác nhau như thế nào?
+
+`div` và `span` đều là generic container nhưng khác nhau về cách sử dụng mặc định:
+
+### `div`
+
+* Là block-level element.
+* Thường dùng để nhóm một vùng nội dung.
+* Mặc định bắt đầu trên dòng mới.
+
+```html
+<div class="card">
+  ...
+</div>
+```
+
+### `span`
+
+* Là inline element.
+* Thường dùng để nhóm hoặc style một phần nhỏ của nội dung.
+
+```html
+<p>
+  Hello <span class="highlight">World</span>
+</p>
+```
+
+---
+
+## 1.5. `DOCTYPE` có chức năng gì?
+
+`DOCTYPE` là declaration cho biết document đang sử dụng chuẩn HTML nào.
+
+Với HTML5:
+
+```html
+<!DOCTYPE html>
+```
+
+Nó cần được đặt ở đầu document và giúp browser xác định cách parse/render document theo chuẩn phù hợp.
+
+---
+
+## 1.6. Tag và attribute khác nhau như thế nào?
+
+### Tag
+
+Tag xác định HTML element.
+
+```html
+<p>Hello</p>
+```
+
+Ở đây:
+
+```text
+<p>...</p>
+```
+
+là HTML element/tag structure.
+
+### Attribute
+
+Attribute cung cấp thêm thông tin hoặc cấu hình cho element.
+
+```html
+<p class="text" id="message">
+  Hello
+</p>
+```
+
+Ở đây:
+
+* `class` là attribute.
+* `id` là attribute.
+
+Một số attribute phổ biến:
+
+* `id`
+* `class`
+* `style`
+* `href`
+* `src`
+* `alt`
+* `disabled`
+* `type`
+
+---
+
+## 1.7. CSS Box Model là gì?
+
+CSS Box Model mô tả cấu trúc không gian của một element.
+
+Có 4 phần chính:
+
+```text
+┌──────────────────────────────┐
+│           Margin             │
+│  ┌────────────────────────┐  │
+│  │        Border          │  │
+│  │  ┌──────────────────┐  │  │
+│  │  │     Padding      │  │  │
+│  │  │  ┌────────────┐  │  │  │
+│  │  │  │  Content   │  │  │  │
+│  │  │  └────────────┘  │  │  │
+│  │  └──────────────────┘  │  │
+│  └────────────────────────┘  │
+└──────────────────────────────┘
+```
+
+### Content
+
+Nội dung thực tế của element.
+
+### Padding
+
+Khoảng cách giữa content và border.
+
+### Border
+
+Đường viền của element.
+
+### Margin
+
+Khoảng cách bên ngoài border, dùng để tạo khoảng cách với các element khác.
+
+---
+
+## 1.8. CSS Selector là gì?
+
+Selector xác định element mà CSS rule sẽ áp dụng.
+
+Một số selector phổ biến:
+
+### Element selector
+
+```css
+p {
+  color: red;
+}
+```
+
+### Class selector
+
+```css
+.button {
+  color: red;
+}
+```
+
+### ID selector
+
+```css
+#header {
+  color: red;
+}
+```
+
+### Universal selector
+
+```css
+* {
+  box-sizing: border-box;
+}
+```
+
+### Attribute selector
+
+```css
+input[type="text"] {
+  ...
+}
+```
+
+### Child selector
+
+```css
+.parent > .child {
+  ...
+}
+```
+
+### Pseudo-class
+
+```css
+button:hover {
+  ...
+}
+```
+
+### Pseudo-element
+
+```css
+.element::before {
+  ...
+}
+```
+
+---
+
+## 1.9. `margin` và `padding` khác nhau như thế nào?
+
+Điểm khác biệt quan trọng:
+
+```text
+margin
+↓
+Khoảng cách bên ngoài element
+
+border
+
+padding
+↓
+Khoảng cách giữa border và content
+
+content
+```
+
+| Margin                           | Padding                                |
+| -------------------------------- | -------------------------------------- |
+| Khoảng cách bên ngoài            | Khoảng cách bên trong                  |
+| Tạo khoảng cách giữa các element | Tạo khoảng cách giữa content và border |
+| Có thể có giá trị âm             | Không sử dụng giá trị âm               |
+| Không làm tăng vùng content      | Là một phần của box model              |
+
+Ví dụ:
+
+```css
+.card {
+  margin: 16px;
+  padding: 24px;
+}
+```
+
+---
+
+## 1.10. CSS Preprocessor là gì?
+
+CSS Preprocessor cho phép viết CSS với các tính năng bổ sung rồi compile thành CSS mà browser có thể sử dụng.
+
+Một số preprocessor phổ biến:
+
+* Sass/SCSS
+* Less
+* Stylus
+
+Ví dụ SCSS:
+
+```scss
+$primary-color: blue;
+
+.button {
+  color: $primary-color;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+```
+
+Các tính năng thường gặp:
+
+* Variables.
+* Nesting.
+* Functions.
+* Mixins.
+* Operators.
+* Một số cơ chế abstraction/reuse.
+
+---
+
+## 1.11. `inline`, `inline-block` và `block` khác nhau như thế nào?
+
+### `inline`
+
+* Không bắt đầu dòng mới.
+* Width/height không hoạt động theo cách như block-level element.
+* Chỉ chiếm không gian cần thiết.
+
+Ví dụ:
+
+```html
+<span>Hello</span>
+<a href="#">Link</a>
+```
+
+### `inline-block`
+
+* Không bắt đầu dòng mới.
+* Có thể thiết lập `width` và `height`.
+
+```css
+.item {
+  display: inline-block;
+  width: 100px;
+  height: 50px;
+}
+```
+
+### `block`
+
+* Bắt đầu trên dòng mới.
+* Theo mặc định chiếm toàn bộ available width.
+* Có thể thiết lập width/height.
+
+Ví dụ:
+
+```html
+<div>Content</div>
+<p>Paragraph</p>
+```
+
+---
+
+# 2. JavaScript
+
+## 2.1. JavaScript là gì?
+
+JavaScript là một programming language được sử dụng để xây dựng behavior và tính tương tác cho web.
+
+JavaScript có thể chạy ở nhiều môi trường khác nhau:
+
+* Browser.
+* Server.
+* Runtime khác.
+
+Trong frontend, JavaScript thường tương tác với:
+
+* DOM.
+* Browser APIs.
+* Events.
+* Network APIs.
+* Storage.
+* Web APIs.
+
+Các ecosystem phổ biến gồm:
+
+* React.
+* Vue.
+* Angular.
+* Next.js.
+
+> Lưu ý: Node.js là JavaScript runtime, không phải JavaScript framework.
+
+---
+
+## 2.2. JavaScript có bao nhiêu kiểu dữ liệu?
+
+JavaScript có 8 loại dữ liệu cơ bản:
+
+### Primitive
+
+* `string`
+* `number`
+* `boolean`
+* `undefined`
+* `null`
+* `symbol`
+* `bigint`
+
+### Non-primitive
+
+* `object`
+
+Ví dụ:
+
+```js
+const name = "Alice";       // string
+const age = 20;             // number
+const active = true;        // boolean
+const value = undefined;    // undefined
+const data = null;          // null
+const id = Symbol("id");    // symbol
+const big = 123n;           // bigint
+
+const user = {
+  name: "Alice",
+};                          // object
+```
+
+Array, Function, Date, RegExp... về mặt JavaScript đều thuộc nhóm `object`.
+
+---
+
+## 2.3. Có những cách nào để tạo object trong JavaScript?
+
+Một số cách phổ biến:
+
+### Object literal
+
+```js
+const user = {};
+```
+
+### Constructor function
+
+```js
+function Student(name) {
+  this.name = name;
+}
+
+const student = new Student("Alice");
+```
+
+### `Object.create()`
+
+```js
+const user = Object.create(proto);
+```
+
+### Class
+
+```js
+class Student {
+  constructor(name) {
+    this.name = name;
+  }
+}
+
+const student = new Student("Alice");
+```
+
+### `new Object()`
+
+```js
+const user = new Object();
+
+user.name = "Alice";
+```
+
+Trong code hiện đại, object literal và `class` thường dễ đọc hơn tùy use case.
+
+---
+
+## 2.4. `==` và `===` khác nhau như thế nào?
+
+### `==`
+
+So sánh sau khi JavaScript có thể thực hiện type coercion.
+
+```js
+1 == "1"; // true
+```
+
+### `===`
+
+So sánh strict equality, không thực hiện implicit type coercion theo cách của `==`.
+
+```js
+1 === "1"; // false
+```
+
+Ví dụ:
+
+```js
+1 == "1";   // true
+1 === "1";  // false
+```
+
+Trong codebase TypeScript/JavaScript hiện đại, `===` thường được ưu tiên để tránh các kết quả do implicit coercion.
+
+---
+
+## 2.5. `var`, `let` và `const` khác nhau như thế nào?
+
+|                            | `var`          | `let`                                        | `const`                                      |
+| -------------------------- | -------------- | -------------------------------------------- | -------------------------------------------- |
+| Scope                      | Function scope | Block scope                                  | Block scope                                  |
+| Reassign                   | Có             | Có                                           | Không                                        |
+| Redeclare trong cùng scope | Có thể         | Không                                        | Không                                        |
+| Hoisting                   | Có             | Có, nhưng nằm trong TDZ trước initialization | Có, nhưng nằm trong TDZ trước initialization |
+
+Ví dụ:
+
+```js
+let count = 1;
+count = 2;
+
+const name = "Alice";
+// name = "Bob"; // Error
+```
+
+`const` không có nghĩa object bất biến:
+
+```js
+const user = {
+  name: "Alice",
+};
+
+user.name = "Bob"; // hợp lệ
+```
+
+Reference không thể được reassign, nhưng object mà reference trỏ tới vẫn có thể mutable nếu object đó không được freeze.
+
+---
+
+## 2.6. Virtual DOM hoạt động như thế nào?
+
+Virtual DOM là một abstraction được một số UI library/framework sử dụng để biểu diễn UI state trong memory.
+
+Mô hình tổng quát:
+
+```text
+State thay đổi
+      ↓
+Tạo representation UI mới
+      ↓
+So sánh với representation trước
+      ↓
+Tính toán thay đổi cần thiết
+      ↓
+Apply thay đổi lên host environment
+```
+
+Mục tiêu là giúp developer làm việc với declarative UI thay vì phải tự quản lý từng DOM mutation.
+
+Trong React, reconciliation là quá trình React xác định những thay đổi cần thực hiện dựa trên cây element mới và cây trước đó.
+
+> Virtual DOM không đồng nghĩa với việc mọi update đều nhanh hơn DOM trực tiếp. Chi phí thực tế phụ thuộc vào framework, component tree, workload và cách ứng dụng được thiết kế.
+
+---
+
+## 2.7. Function trong JavaScript là gì?
+
+Function là một reusable block of behavior.
+
+Một function có thể:
+
+* Nhận input thông qua parameters.
+* Thực thi logic.
+* Trả về result.
+
+Ví dụ:
+
+```js
+function add(a, b) {
+  return a + b;
+}
+```
+
+Các thành phần:
+
+```text
+function
+   ↓
+name
+   ↓
+parameters
+   ↓
+body
+   ↓
+return value
+```
+
+JavaScript cũng hỗ trợ:
+
+```js
+const add = (a, b) => a + b;
+```
+
+Function trong JavaScript là first-class value, nghĩa là có thể:
+
+* Gán cho biến.
+* Truyền làm argument.
+* Return từ function khác.
+* Lưu trong object/array.
+
+---
+
+## 2.8. Server-Side Rendering (SSR) là gì?
+
+SSR là mô hình trong đó server tạo HTML ban đầu rồi gửi HTML đó về client.
+
+Luồng cơ bản:
+
+```text
+Browser
+   ↓
+Request
+   ↓
+Server
+   ↓
+Render HTML
+   ↓
+Browser nhận HTML
+   ↓
+Hydration / client-side interaction
+```
+
+SSR thường hữu ích trong những trường hợp như:
+
+* Content-heavy websites.
+* SEO-sensitive pages.
+* Cần có HTML ban đầu nhanh.
+* Framework hỗ trợ server rendering.
+
+SSR không phải giải pháp tối ưu cho mọi ứng dụng. Việc lựa chọn CSR, SSR, SSG, ISR... phụ thuộc vào yêu cầu sản phẩm.
+
+---
+
+## 2.9. Event Loop trong JavaScript hoạt động như thế nào?
+
+JavaScript execution model sử dụng call stack để thực thi synchronous code.
+
+Với browser, có thể hình dung đơn giản:
+
+```text
+JavaScript
+    ↓
+Call Stack
+    ↓
+Web APIs
+    ↓
+Queues
+    ↓
+Event Loop
+    ↓
+Call Stack
+```
+
+Ví dụ:
+
+```js
+console.log("A");
+
+setTimeout(() => {
+  console.log("B");
+}, 0);
+
+console.log("C");
+```
+
+Kết quả:
+
+```text
+A
+C
+B
+```
+
+Lý do:
+
+1. `console.log("A")` chạy synchronous.
+2. `setTimeout` đăng ký callback.
+3. `console.log("C")` chạy tiếp.
+4. Sau khi call stack phù hợp, callback được event loop đưa vào execution.
+
+Trong thực tế, event loop còn liên quan đến nhiều loại queue và scheduling mechanism, chẳng hạn microtask queue và task queue.
+
+---
+
+# 3. Framework & Library
+
+## 3.1. Những Frontend Framework nào thường được sử dụng?
+
+Bài viết đề cập đến:
+
+* React.js
+* Angular
+* Vue.js
+* Preact
+* Svelte
+
+Một số đặc điểm được bài viết nhấn mạnh:
+
+### React
+
+* Component-based.
+* JSX.
+* Virtual DOM/reconciliation ecosystem.
+* Ecosystem lớn.
+
+### Angular
+
+* TypeScript.
+* Framework tương đối toàn diện.
+* Có nhiều cơ chế tích hợp sẵn.
+
+### Vue
+
+* Component-based.
+* Reactive system.
+* Tương đối dễ tiếp cận.
+
+### Preact
+
+* API tương tự React ở nhiều khía cạnh.
+* Kích thước runtime nhỏ.
+
+### Svelte
+
+* Compiler-based approach.
+* Chuyển đổi component thành JavaScript phù hợp với runtime.
+
+---
+
+## 3.2. Những Frontend Library nào thường được sử dụng?
+
+Một số library/tool được bài viết đề cập:
+
+* jQuery
+* Bootstrap
+* Axios
+* Material UI
+* Sass
+
+Mục đích khác nhau:
+
+| Library/Tool | Mục đích                    |
+| ------------ | --------------------------- |
+| jQuery       | DOM/event/AJAX abstraction  |
+| Bootstrap    | UI/CSS components           |
+| Axios        | HTTP client                 |
+| Material UI  | React UI components         |
+| Sass         | CSS authoring/preprocessing |
+
+---
+
+## 3.3. React, Angular và Vue khác nhau như thế nào?
+
+| Tiêu chí          | React                 | Angular                | Vue                   |
+| ----------------- | --------------------- | ---------------------- | --------------------- |
+| Bản chất          | UI library/ecosystem  | Full framework         | Progressive framework |
+| Ngôn ngữ phổ biến | JavaScript/TypeScript | TypeScript             | JavaScript/TypeScript |
+| Architecture      | Component-based       | Framework architecture | Component-based       |
+| Learning curve    | Trung bình            | Cao hơn                | Thường dễ tiếp cận    |
+| Ecosystem         | Rất lớn               | Lớn                    | Lớn                   |
+| Flexibility       | Cao                   | Opinionated hơn        | Cao                   |
+
+Điểm quan trọng khi phỏng vấn không chỉ là thuộc bảng so sánh mà phải giải thích được:
+
+* Vì sao chọn framework?
+* Dự án có yêu cầu gì?
+* Team đang sử dụng stack nào?
+* Ecosystem có đáp ứng requirement không?
+* Performance và maintainability ra sao?
+* Migration cost như thế nào?
+
+---
+
+## 3.4. Làm thế nào để chọn Framework/Library phù hợp?
+
+Có thể đánh giá theo các tiêu chí:
+
+### 1. Requirements
+
+Framework có giải quyết được requirement không?
+
+### 2. Ecosystem
+
+Có đủ library/plugin/tooling cần thiết không?
+
+### 3. Compatibility
+
+Có tương thích với stack hiện tại không?
+
+### 4. Community
+
+Community có đủ lớn để dễ tìm tài liệu và giải pháp không?
+
+### 5. Documentation
+
+Documentation có đầy đủ và dễ sử dụng không?
+
+### 6. Responsive support
+
+Có đáp ứng yêu cầu responsive UI không?
+
+### 7. Team expertise
+
+Team đã có kinh nghiệm với công nghệ đó chưa?
+
+### 8. Long-term maintenance
+
+Khả năng maintain và upgrade trong tương lai như thế nào?
+
+---
+
+## 3.5. jQuery và JavaScript khác nhau như thế nào?
+
+JavaScript là programming language.
+
+jQuery là một library được xây dựng trên JavaScript nhằm đơn giản hóa nhiều thao tác phổ biến.
+
+Ví dụ DOM manipulation:
+
+```js
+// JavaScript
+document.querySelector("#button");
+```
+
+jQuery:
+
+```js
+$("#button");
+```
+
+jQuery từng rất phổ biến khi browser compatibility và DOM APIs còn hạn chế hơn hiện nay.
+
+Trong frontend hiện đại, native Web APIs và các framework/library khác thường được sử dụng thay cho jQuery tùy dự án.
+
+---
+
+# 4. Quy trình phát triển & Công cụ
+
+## 4.1. Có những cách nào để gọi Web Service?
+
+Một số cách phổ biến:
+
+### `XMLHttpRequest`
+
+API truyền thống:
+
+```js
+const xhr = new XMLHttpRequest();
+
+xhr.open("GET", "/api/users");
+xhr.send();
+```
+
+### `fetch`
+
+Web API hiện đại:
+
+```js
+const response = await fetch("/api/users");
+const data = await response.json();
+```
+
+### Axios
+
+HTTP client library:
+
+```js
+const response = await axios.get("/api/users");
+```
+
+### jQuery AJAX
+
+```js
+$.ajax({
+  url: "/api/users",
+});
+```
+
+### WebSocket
+
+Phù hợp với communication hai chiều và các use case realtime.
+
+Ví dụ:
+
+```text
+HTTP
+Client ───── Request ─────> Server
+Client <──── Response ───── Server
+
+WebSocket
+Client <════ persistent connection ════> Server
+```
+
+Việc chọn phương thức phụ thuộc vào requirement của hệ thống.
+
+---
+
+## 4.2. Git là gì? Tại sao Git quan trọng với Frontend?
+
+Git là distributed version control system.
+
+Git giúp:
+
+* Theo dõi lịch sử code.
+* Tạo branch.
+* Merge code.
+* Review thay đổi.
+* Revert commit.
+* Làm việc nhiều người.
+* Quản lý các phiên bản của project.
+
+Workflow cơ bản:
+
+```text
+Working Directory
+       ↓
+git add
+       ↓
+Staging Area
+       ↓
+git commit
+       ↓
+Repository
+```
+
+Một số command quan trọng:
+
+```bash
+git status
+git add .
+git commit -m "feat: add login"
+git pull
+git push
+git branch
+git switch
+git merge
+git rebase
+```
+
+Ở level senior, nên hiểu thêm:
+
+* Merge vs rebase.
+* Conflict resolution.
+* Commit strategy.
+* Branch strategy.
+* Git hooks.
+* CI/CD integration.
+
+---
+
+## 4.3. Webpack là gì? Vai trò của Webpack?
+
+Webpack là module bundler.
+
+Nó xây dựng dependency graph của application rồi xử lý các module/assets theo configuration.
+
+Ví dụ:
+
+```text
+entry
+  │
+  ├── React
+  ├── Components
+  ├── CSS
+  ├── Images
+  └── Utilities
+       ↓
+   Webpack
+       ↓
+   Build output
+```
+
+Webpack hỗ trợ nhiều cơ chế:
+
+* Module bundling.
+* Code splitting.
+* Dynamic import.
+* Tree shaking.
+* Minification.
+* Loaders.
+* Plugins.
+* Asset processing.
+* Development tooling.
+
+Ví dụ dynamic import:
+
+```js
+const module = await import("./heavy-module");
+```
+
+Có thể được dùng để tạo code-splitting boundary.
+
+---
+
+## 4.4. Những kỹ thuật tối ưu Frontend Performance nào thường được sử dụng?
+
+Một số kỹ thuật trong bài viết:
+
+### Image optimization
+
+Giảm kích thước và tối ưu format hình ảnh.
+
+### Minification
+
+Giảm kích thước JS/CSS bằng cách loại bỏ phần không cần thiết.
+
+### Caching
+
+Cache static resources để giảm số lần tải lại.
+
+### Lazy loading
+
+Chỉ tải resource khi thực sự cần.
+
+### Code splitting
+
+Chia JavaScript thành nhiều chunk.
+
+```text
+app.js
+  ↓
+-----------------------
+| home.js             |
+| dashboard.js        |
+| settings.js         |
+-----------------------
+```
+
+### SSR
+
+Render HTML ban đầu phía server.
+
+### CDN
+
+Phân phối static assets thông qua các edge location gần user hơn.
+
+### Combine files
+
+Bài viết cũng đề cập việc kết hợp nhiều file để giảm số request; tuy nhiên, với HTTP/2/HTTP/3 và bundling hiện đại, chiến lược này cần được đánh giá dựa trên build pipeline và network characteristics thay vì áp dụng máy móc.
+
+---
+
+## 4.5. Lazy Loading là gì? Thực hiện như thế nào?
+
+Lazy loading là chiến lược trì hoãn việc tải resource cho đến khi resource đó cần thiết.
+
+Ví dụ:
+
+```text
+Initial Load
+     ↓
+Chỉ tải resources cần thiết
+     ↓
+User scroll
+     ↓
+Element gần viewport
+     ↓
+Load resource
+```
+
+### JavaScript
+
+Có thể sử dụng `IntersectionObserver`:
+
+```js
+const observer = new IntersectionObserver((entries) => {
+  for (const entry of entries) {
+    if (entry.isIntersecting) {
+      // Load resource
+    }
+  }
+});
+```
+
+### React
+
+Có thể lazy load component:
+
+```jsx
+const Dashboard = lazy(() => import("./Dashboard"));
+```
+
+Kết hợp với:
+
+```jsx
+<Suspense fallback={<Loading />}>
+  <Dashboard />
+</Suspense>
+```
+
+### Vue
+
+Có thể sử dụng dynamic import:
+
+```js
+const Dashboard = () => import("./Dashboard.vue");
+```
+
+---
+
+# Tóm tắt nhanh
+
+## HTML/CSS
+
+1. Meta tag là gì?
+2. Semantic HTML là gì?
+3. `id` và `class` khác nhau thế nào?
+4. `div` và `span` khác nhau thế nào?
+5. DOCTYPE có tác dụng gì?
+6. Tag và attribute khác nhau thế nào?
+7. CSS Box Model là gì?
+8. CSS Selector hoạt động thế nào?
+9. Margin và padding khác nhau thế nào?
+10. CSS Preprocessor là gì?
+11. Inline, inline-block và block khác nhau thế nào?
+
+## JavaScript
+
+12. JavaScript là gì?
+13. JavaScript có những kiểu dữ liệu nào?
+14. Có những cách nào để tạo object?
+15. `==` và `===` khác nhau thế nào?
+16. `var`, `let`, `const` khác nhau thế nào?
+17. Virtual DOM hoạt động thế nào?
+18. Function là gì?
+19. SSR là gì?
+20. Event Loop hoạt động thế nào?
+
+## Framework & Library
+
+21. Những frontend framework nào phổ biến?
+22. Những frontend library nào phổ biến?
+23. React, Angular và Vue khác nhau thế nào?
+24. Làm thế nào chọn framework/library?
+25. jQuery và JavaScript khác nhau thế nào?
+
+## Development & Tooling
+
+26. Có những cách nào gọi Web Service?
+27. Git là gì và tại sao quan trọng?
+28. Webpack là gì?
+29. Những kỹ thuật tối ưu frontend performance nào?
+30. Lazy loading là gì và triển khai thế nào?
+
+---
+
+# Các chủ đề nên đào sâu nếu ôn Senior Frontend
+
+Bộ câu hỏi trên phù hợp để ôn nền tảng, nhưng nếu mục tiêu là **Senior Frontend**, nên đào sâu thêm các chủ đề sau:
+
+### JavaScript
+
+* Execution Context.
+* Scope & Scope Chain.
+* Closure.
+* Prototype & Prototype Chain.
+* `this`.
+* Event Loop.
+* Microtask vs Macrotask.
+* Promise.
+* Async/Await.
+* Garbage Collection.
+* Memory Leak.
+* Debounce/Throttle.
+
+### Browser
+
+* Critical Rendering Path.
+* DOM/CSSOM.
+* Style calculation.
+* Layout.
+* Paint.
+* Composite.
+* Browser rendering pipeline.
+* Storage.
+* CORS.
+* CSP.
+* HTTP caching.
+
+### React
+
+* Reconciliation.
+* Fiber.
+* Render phase vs Commit phase.
+* Key.
+* State preservation.
+* Context re-render.
+* Memoization.
+* `useMemo`.
+* `useCallback`.
+* `React.memo`.
+* Concurrent rendering.
+* Suspense.
+* Server Components.
+* Hydration.
+* SSR/SSG/ISR.
+
+### Performance
+
+* Core Web Vitals.
+* LCP.
+* INP.
+* CLS.
+* Bundle analysis.
+* Code splitting.
+* Tree shaking.
+* Prefetching.
+* Preloading.
+* Image optimization.
+* Runtime performance.
+* Memory profiling.
+
+### Architecture
+
+* Component architecture.
+* State management.
+* Data fetching.
+* Caching strategy.
+* Error handling.
+* Authentication/authorization.
+* Design system.
+* Monorepo.
+* Micro Frontend.
+* Testing strategy.
+* CI/CD.
+
+---
+
+## Nguồn
+
+[Bài viết gốc trên ITviec – Top 30+ câu hỏi phỏng vấn Front End Developer phổ biến](https://itviec.com/blog/cau-hoi-phong-van-front-end/?utm_source=chatgpt.com)
+
+</details>
+
+<details>
   <summary><strong>📅 2026-08-12 — TypeScript Advanced & Type-Safe Architecture </strong></summary>
 
 ## 431. `any`, `unknown` và `never` khác nhau như thế nào?
