@@ -3,6 +3,918 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-08-14 — Top 30+ câu hỏi phỏng vấn Front End Developer </strong></summary>
+  
+  # 30 câu hỏi phỏng vấn Frontend
+
+> Nguồn tham khảo: [Viblo – 30 câu hỏi phỏng vấn Frontend giúp Developer "cân" hết mọi level](https://viblo.asia/p/30-cau-hoi-phong-van-frontend-giup-developer-can-het-moi-level-GyZJZybZ4jm)
+>
+> Bài viết được chia thành 3 cấp độ: Basic, Intermediate và Advanced.
+
+---
+
+## Mục lục
+
+* [Basic](#basic)
+
+  * [1. `id` và `class`](#1-id-và-class)
+  * [2. CSS Box Model](#2-css-box-model)
+  * [3. Inline, Inline-block và Block](#3-inline-inline-block-và-block)
+  * [4. HTML và SEO](#4-html-và-seo)
+  * [5. DOM](#5-dom)
+  * [6. Event Listener](#6-event-listener)
+  * [7. `null` và `undefined`](#7-null-và-undefined)
+  * [8. Cookie, sessionStorage và localStorage](#8-cookie-sessionstorage-và-localstorage)
+  * [9. Browser Rendering](#9-browser-rendering)
+  * [10. Media Query](#10-media-query)
+* [Intermediate](#intermediate)
+
+  * [11. `em` và `rem`](#11-em-và-rem)
+  * [12. Flexbox](#12-flexbox)
+  * [13. CSS Specificity](#13-css-specificity)
+  * [14. CSS Grid](#14-css-grid)
+  * [15. Closure](#15-closure)
+  * [16. Event Delegation](#16-event-delegation)
+  * [17. Promise](#17-promise)
+  * [18. Web Performance](#18-web-performance)
+  * [19. Service Worker](#19-service-worker)
+  * [20. Same-Origin Policy](#20-same-origin-policy)
+* [Advanced](#advanced)
+
+  * [21. CSS Variables](#21-css-variables)
+  * [22. Critical CSS](#22-critical-css)
+  * [23. Event Loop](#23-event-loop)
+  * [24. Async JavaScript](#24-async-javascript)
+  * [25. State Management](#25-state-management)
+  * [26. Virtual DOM](#26-virtual-dom)
+  * [27. SSR](#27-ssr)
+  * [28. Web Performance Metrics](#28-web-performance-metrics)
+  * [29. CSP](#29-csp)
+  * [30. Tree Shaking](#30-tree-shaking)
+
+---
+
+# Basic
+
+## 1. `id` và `class`
+
+### Câu hỏi
+
+Sự khác biệt giữa `id` và `class` trong HTML/CSS là gì?
+
+### Ý chính
+
+* `id` dùng để định danh một phần tử cụ thể.
+* `class` có thể được dùng lại trên nhiều phần tử.
+* CSS sử dụng:
+
+  * `#id` để chọn theo ID.
+  * `.class` để chọn theo class.
+* Trong thực tế, `class` thường phù hợp hơn cho styling có tính tái sử dụng.
+
+---
+
+## 2. CSS Box Model
+
+### Câu hỏi
+
+CSS Box Model là gì?
+
+### Ý chính
+
+Một element được mô hình hóa thành các lớp:
+
+```text
+┌───────────────────────────────┐
+│            Margin             │
+│  ┌─────────────────────────┐  │
+│  │         Border          │  │
+│  │  ┌───────────────────┐  │  │
+│  │  │      Padding      │  │  │
+│  │  │  ┌─────────────┐  │  │  │
+│  │  │  │   Content   │  │  │  │
+│  │  │  └─────────────┘  │  │  │
+│  │  └───────────────────┘  │  │
+│  └─────────────────────────┘  │
+└───────────────────────────────┘
+```
+
+Gồm:
+
+* `content`
+* `padding`
+* `border`
+* `margin`
+
+---
+
+## 3. Inline, Inline-block và Block
+
+### Câu hỏi
+
+Sự khác nhau giữa `inline`, `inline-block` và `block`?
+
+### Ý chính
+
+| Display        | Xuống dòng | Width/Height |
+| -------------- | ---------- | ------------ |
+| `inline`       | Không      | Hạn chế      |
+| `inline-block` | Không      | Có           |
+| `block`        | Có         | Có           |
+
+---
+
+## 4. HTML và SEO
+
+### Câu hỏi
+
+Các best practices về SEO khi xây dựng cấu trúc HTML?
+
+### Ý chính
+
+* Sử dụng semantic HTML:
+
+  * `<header>`
+  * `<nav>`
+  * `<main>`
+  * `<article>`
+  * `<section>`
+  * `<footer>`
+* Sử dụng heading theo hierarchy.
+* Cung cấp metadata phù hợp.
+* Sử dụng `alt` cho hình ảnh.
+* Xây dựng internal links.
+* Responsive/mobile-friendly.
+* Tối ưu tốc độ tải trang.
+
+---
+
+## 5. DOM
+
+### Câu hỏi
+
+DOM (Document Object Model) là gì?
+
+### Ý chính
+
+DOM là API biểu diễn tài liệu HTML dưới dạng cấu trúc cây.
+
+Ví dụ:
+
+```text
+Document
+└── html
+    ├── head
+    └── body
+        ├── header
+        └── main
+            └── div
+```
+
+Mỗi node có thể đại diện cho element, attribute hoặc text.
+
+---
+
+## 6. Event Listener
+
+### Câu hỏi
+
+Làm thế nào để thêm event listener vào một element?
+
+### Ý chính
+
+Có thể lấy element rồi sử dụng `addEventListener()`:
+
+```js
+const button = document.getElementById('button');
+
+button.addEventListener('click', () => {
+  // handle event
+});
+```
+
+`addEventListener()` nhận event type và callback handler, đồng thời có thể nhận thêm options.
+
+---
+
+## 7. `null` và `undefined`
+
+### Câu hỏi
+
+Sự khác nhau giữa `null` và `undefined`?
+
+### Ý chính
+
+* `undefined`: biểu thị trạng thái chưa có giá trị được gán.
+* `null`: thường được sử dụng để biểu thị rõ ràng rằng hiện tại không có giá trị/object.
+
+---
+
+## 8. Cookie, sessionStorage và localStorage
+
+### Câu hỏi
+
+Cookie, `sessionStorage` và `localStorage` khác nhau như thế nào?
+
+### Ý chính
+
+| Storage          | Đặc điểm                                                                  |
+| ---------------- | ------------------------------------------------------------------------- |
+| Cookie           | Có thể được gửi cùng HTTP request; thường dùng cho session/authentication |
+| `sessionStorage` | Tồn tại trong phiên của tab/window                                        |
+| `localStorage`   | Có thể tồn tại qua các lần đóng/mở browser                                |
+
+Các cơ chế này có mục đích và đặc tính bảo mật khác nhau, vì vậy không nên xem chúng là các lựa chọn hoàn toàn tương đương.
+
+---
+
+## 9. Browser Rendering
+
+### Câu hỏi
+
+Browser render một webpage như thế nào?
+
+### Các bước chính
+
+1. Parse HTML.
+2. Parse CSS.
+3. Tính toán layout.
+4. Paint các pixel.
+5. Composite các layer.
+6. JavaScript và các tài nguyên bất đồng bộ có thể tham gia vào quá trình tải/render.
+
+---
+
+## 10. Media Query
+
+### Câu hỏi
+
+Media Query là gì?
+
+### Ý chính
+
+Media Query cho phép áp dụng CSS dựa trên đặc điểm của viewport/device.
+
+Ví dụ:
+
+```css
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+}
+```
+
+Thường được sử dụng để xây dựng responsive UI.
+
+---
+
+# Intermediate
+
+## 11. `em` và `rem`
+
+### Câu hỏi
+
+`em` và `rem` khác nhau như thế nào?
+
+### Ý chính
+
+* `em`: phụ thuộc vào `font-size` của context/element liên quan.
+* `rem`: phụ thuộc vào `font-size` của root element (`html`).
+
+Ví dụ:
+
+```css
+html {
+  font-size: 16px;
+}
+
+.title {
+  font-size: 2rem;
+}
+```
+
+`2rem` tương ứng với `32px` trong trường hợp trên.
+
+---
+
+## 12. Flexbox
+
+### Câu hỏi
+
+Làm thế nào để tạo layout bằng Flexbox?
+
+### Ý chính
+
+Đặt container:
+
+```css
+.container {
+  display: flex;
+}
+```
+
+Sau đó sử dụng các thuộc tính như:
+
+```css
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.item {
+  flex: 1;
+}
+```
+
+---
+
+## 13. CSS Specificity
+
+### Câu hỏi
+
+CSS Specificity là gì?
+
+### Ý chính
+
+Specificity xác định rule CSS nào được ưu tiên khi nhiều selector cùng áp dụng lên một element.
+
+Các yếu tố quan trọng gồm:
+
+* Inline styles.
+* ID selectors.
+* Class/attribute/pseudo-class selectors.
+* Element/pseudo-element selectors.
+
+Ngoài specificity còn phải xét:
+
+* Cascade order.
+* `!important`.
+* Source order.
+
+---
+
+## 14. CSS Grid
+
+### Câu hỏi
+
+Làm thế nào để tạo CSS Grid layout?
+
+### Ý chính
+
+Container:
+
+```css
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto;
+}
+```
+
+Các element con có thể sử dụng:
+
+```css
+.item {
+  grid-column: span 2;
+}
+```
+
+Grid phù hợp với layout hai chiều gồm rows và columns.
+
+---
+
+## 15. Closure
+
+### Câu hỏi
+
+Closure là gì và được sử dụng khi nào?
+
+### Ý chính
+
+Một function có thể giữ quyền truy cập vào lexical scope nơi nó được tạo, ngay cả khi function bên ngoài đã kết thúc.
+
+Ví dụ:
+
+```js
+function createCounter() {
+  let count = 0;
+
+  return () => {
+    count += 1;
+    return count;
+  };
+}
+
+const counter = createCounter();
+
+counter(); // 1
+counter(); // 2
+```
+
+Closure thường được sử dụng để:
+
+* Encapsulation.
+* Private state.
+* Factory functions.
+* Callback.
+* Functional programming.
+
+---
+
+## 16. Event Delegation
+
+### Câu hỏi
+
+Event Delegation trong JavaScript là gì?
+
+### Ý chính
+
+Thay vì đăng ký listener cho từng child element, có thể đăng ký listener ở parent và tận dụng event bubbling.
+
+Ví dụ:
+
+```js
+list.addEventListener('click', (event) => {
+  const target = event.target;
+
+  if (target.matches('.item')) {
+    // handle item click
+  }
+});
+```
+
+Điều này đặc biệt hữu ích khi danh sách có nhiều phần tử hoặc phần tử được tạo động.
+
+---
+
+## 17. Promise
+
+### Câu hỏi
+
+Promise là gì?
+
+### Ý chính
+
+Promise biểu diễn kết quả hoàn thành hoặc thất bại của một operation bất đồng bộ.
+
+Các trạng thái cơ bản:
+
+```text
+pending
+   │
+   ├── fulfilled
+   │
+   └── rejected
+```
+
+Ví dụ:
+
+```js
+fetch('/api/users')
+  .then((response) => response.json())
+  .then((users) => {
+    console.log(users);
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+```
+
+---
+
+## 18. Web Performance
+
+### Câu hỏi
+
+Làm thế nào tối ưu tài nguyên để cải thiện thời gian tải website?
+
+### Ý chính
+
+Một số hướng tiếp cận:
+
+* Minify CSS/JavaScript.
+* Compress assets.
+* Tối ưu hình ảnh.
+* Giảm kích thước bundle.
+* Sử dụng caching phù hợp.
+* Lazy-load tài nguyên không cần thiết ngay lập tức.
+
+---
+
+## 19. Service Worker
+
+### Câu hỏi
+
+Service Worker là gì?
+
+### Ý chính
+
+Service Worker chạy tách biệt với main thread và có thể hỗ trợ:
+
+* Offline caching.
+* Background processing.
+* Push notifications.
+* Background synchronization.
+
+Service Worker là một thành phần quan trọng trong nhiều kiến trúc Progressive Web App.
+
+---
+
+## 20. Same-Origin Policy
+
+### Câu hỏi
+
+Same-Origin Policy là gì?
+
+### Ý chính
+
+Đây là cơ chế bảo mật của browser nhằm giới hạn việc một origin truy cập dữ liệu của origin khác.
+
+Các origin được xác định dựa trên:
+
+```text
+scheme + host + port
+```
+
+Khi cần giao tiếp cross-origin, CORS có thể được sử dụng với sự cho phép phù hợp từ server.
+
+---
+
+# Advanced
+
+## 21. CSS Variables
+
+### Câu hỏi
+
+CSS Variables là gì và khi nào nên sử dụng?
+
+### Ý chính
+
+CSS Custom Properties cho phép định nghĩa giá trị dùng lại:
+
+```css
+:root {
+  --primary-color: #1677ff;
+  --spacing-md: 16px;
+}
+
+.button {
+  color: var(--primary-color);
+  padding: var(--spacing-md);
+}
+```
+
+Phù hợp cho:
+
+* Design tokens.
+* Theme.
+* Màu sắc dùng chung.
+* Spacing.
+* Typography.
+* Runtime customization.
+
+---
+
+## 22. Critical CSS
+
+### Câu hỏi
+
+Critical CSS là gì và dùng như thế nào để cải thiện perceived loading performance?
+
+### Ý chính
+
+Critical CSS là phần CSS cần thiết để render nội dung quan trọng ban đầu.
+
+Ý tưởng:
+
+```text
+HTML
+ │
+ ├── Critical CSS → tải/áp dụng sớm
+ │
+ └── Non-critical CSS → tải sau
+```
+
+Mục tiêu là giảm thời gian chờ để nội dung quan trọng đầu tiên có thể hiển thị.
+
+---
+
+## 23. Event Loop
+
+### Câu hỏi
+
+Event Loop trong JavaScript hoạt động như thế nào?
+
+### Các thành phần chính
+
+```text
+Call Stack
+    ↓
+Web APIs / Runtime APIs
+    ↓
+Task Queues
+    ↓
+Event Loop
+    ↓
+Call Stack
+```
+
+Các khái niệm cần hiểu:
+
+* Call Stack.
+* Web APIs/runtime APIs.
+* Task queue.
+* Microtask queue.
+* Event Loop.
+
+Đây là nền tảng để hiểu cách JavaScript xử lý asynchronous operations.
+
+---
+
+## 24. Async JavaScript
+
+### Câu hỏi
+
+Có những cách nào để xử lý asynchronous operations?
+
+### Các cách phổ biến
+
+#### Callback
+
+```js
+doSomething((result) => {
+  console.log(result);
+});
+```
+
+#### Promise
+
+```js
+doSomething()
+  .then((result) => {
+    console.log(result);
+  });
+```
+
+#### Async/Await
+
+```js
+const result = await doSomething();
+console.log(result);
+```
+
+#### Event Listener
+
+```js
+element.addEventListener('click', handler);
+```
+
+---
+
+## 25. State Management
+
+### Câu hỏi
+
+Làm thế nào quản lý state trong Single Page Application?
+
+### Các cách tiếp cận
+
+* Local state.
+* Global state.
+* Module pattern.
+* Pub/Sub.
+* State management libraries.
+
+Trong hệ sinh thái frontend hiện đại có thể gặp các giải pháp như:
+
+* Redux.
+* Zustand.
+* Context.
+* Các state libraries khác.
+
+Lựa chọn phụ thuộc vào phạm vi state và kiến trúc ứng dụng.
+
+---
+
+## 26. Virtual DOM
+
+### Câu hỏi
+
+Virtual DOM hoạt động như thế nào và có lợi ích gì?
+
+### Mô hình khái quát
+
+```text
+State change
+     ↓
+New Virtual DOM
+     ↓
+Diff / Reconciliation
+     ↓
+Determine changes
+     ↓
+Update Real DOM
+```
+
+Mục tiêu là tạo abstraction giữa application state và DOM operations.
+
+Trong React, khái niệm này liên quan trực tiếp đến reconciliation và rendering architecture.
+
+---
+
+## 27. Server-Side Rendering
+
+### Câu hỏi
+
+SSR là gì và khi nào nên sử dụng?
+
+### Ý chính
+
+SSR là kỹ thuật server tạo HTML ban đầu rồi gửi về client.
+
+So sánh khái quát:
+
+```text
+CSR:
+Browser → HTML shell → JavaScript → Render UI
+
+SSR:
+Server → HTML → Browser → Hydration / Client JS
+```
+
+SSR thường phù hợp với:
+
+* Content-heavy websites.
+* Các trang cần SEO.
+* Các ứng dụng cần HTML ban đầu nhanh.
+* Một số kiến trúc Progressive Web App.
+
+---
+
+## 28. Web Performance Metrics
+
+### Câu hỏi
+
+Làm thế nào phân tích và cải thiện performance của web application?
+
+### Các metrics được bài viết đề cập
+
+* **FCP — First Contentful Paint**
+
+  * Thời gian tới khi content đầu tiên xuất hiện.
+
+* **LCP — Largest Contentful Paint**
+
+  * Thời gian tới khi content lớn nhất trong viewport được render.
+
+* **TTI — Time to Interactive**
+
+  * Thời điểm trang có thể tương tác đầy đủ.
+
+* **TBT — Total Blocking Time**
+
+  * Tổng thời gian main thread bị block.
+
+* **CLS — Cumulative Layout Shift**
+
+  * Đo mức độ ổn định về mặt layout.
+
+---
+
+## 29. Content Security Policy
+
+### Câu hỏi
+
+CSP là gì và giúp cải thiện security như thế nào?
+
+### Ý chính
+
+Content Security Policy là một cơ chế bảo mật cho phép website xác định các nguồn tài nguyên được phép sử dụng.
+
+Có thể kiểm soát các nguồn như:
+
+* Script.
+* Stylesheet.
+* Image.
+* Font.
+* Frame.
+* Các resource khác.
+
+CSP thường được sử dụng như một lớp phòng vệ bổ sung trước các dạng tấn công như XSS.
+
+---
+
+## 30. Tree Shaking
+
+### Câu hỏi
+
+Tree Shaking là gì và giúp ích gì cho performance?
+
+### Ý chính
+
+Tree shaking là kỹ thuật loại bỏ code không được sử dụng khỏi production bundle.
+
+Ví dụ:
+
+```js
+// utils.js
+export const used = () => {};
+export const unused = () => {};
+```
+
+Nếu chỉ import:
+
+```js
+import { used } from './utils';
+```
+
+Bundler có thể loại bỏ phần code không được sử dụng khi điều kiện build/module semantics cho phép.
+
+### Lợi ích
+
+* Giảm bundle size.
+* Giảm lượng JavaScript phải tải.
+* Có thể giảm parse/compile/execute cost.
+* Giảm bandwidth cần thiết.
+
+Các bundler hiện đại như Vite sử dụng hệ sinh thái module/bundling để hỗ trợ các optimization dạng này.
+
+---
+
+# Tổng hợp kiến thức cần ôn
+
+## Basic
+
+```text
+HTML
+├── id / class
+├── Semantic HTML
+├── DOM
+└── SEO
+
+CSS
+├── Box Model
+├── Display
+└── Media Query
+
+JavaScript / Browser
+├── Event Listener
+├── null / undefined
+├── Storage
+└── Browser Rendering
+```
+
+## Intermediate
+
+```text
+CSS
+├── em / rem
+├── Flexbox
+├── Specificity
+└── Grid
+
+JavaScript
+├── Closure
+├── Event Delegation
+└── Promise
+
+Browser
+├── Performance
+├── Service Worker
+└── Same-Origin Policy
+```
+
+## Advanced
+
+```text
+CSS
+├── CSS Variables
+└── Critical CSS
+
+JavaScript
+├── Event Loop
+├── Async Programming
+├── State Management
+└── Virtual DOM
+
+Architecture / Performance / Security
+├── SSR
+├── Performance Metrics
+├── CSP
+└── Tree Shaking
+```
+
+## Lưu ý
+
+Đây là **bản Markdown tóm tắt/paraphrase**, không phải bản sao nguyên văn của bài viết. Nội dung và thứ tự 30 chủ đề được đối chiếu với trang Viblo được cung cấp.
+
+Nếu bạn **upload/cung cấp nội dung bài viết**, tôi có thể chuyển chính phần nội dung bạn cung cấp sang `.md` mà không cần rút gọn.
+
+</details>
+
+<details>
   <summary><strong>📅 2026-08-13 — Top 30+ câu hỏi phỏng vấn Front End Developer </strong></summary>
   
   # Top 30+ câu hỏi phỏng vấn Front End Developer
