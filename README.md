@@ -3,6 +3,513 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-08-15 — 32 câu hỏi phỏng vấn Frontend 2026 </strong></summary>
+  
+  # 32 câu hỏi phỏng vấn Frontend 2026
+
+> Tổng hợp và diễn đạt lại từ bài viết **“Những Câu Hỏi Phỏng Vấn Frontend 2026”** của Tấn Phát Digital.
+
+## I. JavaScript / Runtime
+
+### 1. Event Loop và mức độ ưu tiên của Task
+
+* Phân biệt **Microtask Queue** và **Macrotask Queue**.
+* `Promise`, `async/await`, `setTimeout`, I/O thuộc nhóm nào?
+* Event Loop xử lý các queue theo thứ tự như thế nào?
+* Vì sao việc tạo một chuỗi Microtask vô hạn có thể khiến UI bị treo?
+
+### 2. Memory Management và Garbage Collection
+
+* Cơ chế **Mark-and-Sweep** của JavaScript hoạt động như thế nào?
+* Memory leak trong một SPA phức tạp thường xuất hiện ở đâu?
+* Làm thế nào phát hiện memory leak bằng các công cụ Developer Tools?
+* `WeakMap` và `WeakSet` có vai trò gì trong quản lý reference?
+
+### 3. Shallow Copy và Deep Copy
+
+* Phân biệt shallow copy và deep copy.
+* So sánh:
+
+  * `structuredClone()`
+  * `JSON.parse(JSON.stringify())`
+  * `lodash.cloneDeep()`
+* Mỗi phương pháp có giới hạn và đặc điểm hiệu năng gì?
+
+### 4. Reference và Object Assignment
+
+* Nếu:
+
+```ts
+const b = a;
+```
+
+trong đó `a` là object, điều gì xảy ra khi thay đổi `b`?
+
+* Vì sao thay đổi `b` có thể ảnh hưởng đến `a`?
+* Các thư viện thường xử lý nested object cloning như thế nào?
+
+### 5. Promise.all và Promise.allSettled
+
+* Khi nào nên chạy các request song song bằng `Promise.all()`?
+* Khi nào `await` tuần tự lại phù hợp hơn?
+* `Promise.all()` và `Promise.allSettled()` khác nhau như thế nào?
+* Khi xử lý nhiều request độc lập, tại sao `Promise.allSettled()` có thể phù hợp hơn?
+
+### 6. `switch` và `if-else`
+
+* Cơ chế thực thi của `switch` khác gì `if-else`?
+* Trong trường hợp nhiều nhánh điều kiện, compiler có thể sử dụng **jump table** như thế nào?
+* Có nên mặc định cho rằng `switch` luôn nhanh hơn `if-else` không?
+
+---
+
+## II. TypeScript
+
+### 7. String Literal Union và Enum
+
+* Vì sao có xu hướng sử dụng:
+
+```ts
+const STATUS = {
+  ACTIVE: 'active',
+  INACTIVE: 'inactive',
+} as const;
+```
+
+kết hợp với String Literal Union thay cho `enum`?
+
+* So sánh về:
+
+  * Type safety
+  * Runtime behavior
+  * Bundle size
+  * Tree-shaking
+
+### 8. `infer` và `satisfies`
+
+* `infer` hoạt động như thế nào trong Conditional Types?
+* `infer` có thể được sử dụng để trích xuất type như thế nào?
+* `satisfies` khác gì so với type assertion bằng `as`?
+* Khi nào nên ưu tiên `satisfies`?
+
+---
+
+## III. React
+
+### 9. `useMemo` và Function
+
+* `useMemo()` thực sự memoize giá trị gì?
+* Có thể dùng `useMemo()` để ghi nhớ một function definition không?
+* Trường hợp này khác gì với `useCallback()`?
+
+### 10. `useCallback` và Referential Stability
+
+* `useCallback()` có tác dụng gì ngoài việc giảm re-render?
+* Referential equality/stability ảnh hưởng thế nào đến React?
+* Khi nào việc giữ stable function reference thực sự có ý nghĩa?
+
+### 11. Fiber và Hook Storage
+
+* Memoized values của Hook được React lưu trữ ở đâu trong cấu trúc Fiber?
+* React liên kết các Hook với component như thế nào?
+* Vì sao thứ tự gọi Hook phải được giữ nguyên giữa các lần render?
+
+### 12. `useMemo` và `useEffect`
+
+* Vì sao cùng một logic nhưng đặt trong `useMemo()` và `useEffect()` có thể tạo ra hành vi khác nhau?
+* Hai Hook chạy ở thời điểm nào?
+* Khi nào việc lựa chọn sai Hook có thể ảnh hưởng đến UX?
+
+### 13. `useEffect` và `useLayoutEffect`
+
+* Hai Hook khác nhau về thời điểm thực thi như thế nào?
+* Khi nào nên sử dụng `useLayoutEffect()`?
+* Vì sao sử dụng sai Hook có thể gây hiện tượng **UI flickering**?
+
+### 14. Function Component Lifecycle
+
+* Mô tả lifecycle của Function Component có sử dụng `useEffect()`.
+* Effect được chạy khi nào?
+* Cleanup function được gọi trong những trường hợp nào?
+* Cleanup khác nhau thế nào giữa:
+
+  * Re-render
+  * Dependency thay đổi
+  * Component unmount
+
+### 15. Rules of Hooks
+
+* Tại sao Hook không được gọi:
+
+  * Trong `if`
+  * Trong loop
+  * Trong nested function
+* React dựa vào cơ chế nào để xác định Hook tương ứng giữa các lần render?
+
+### 16. `useRef` và React 19
+
+* `useRef()` hoạt động như thế nào bên trong Fiber?
+* Vì sao ref cần có tính ổn định giữa các lần render?
+* React 19 thay đổi cách truyền `ref` như thế nào?
+* Vai trò của `forwardRef` trong các phiên bản React trước đây là gì?
+
+### 17. Context API và Re-render
+
+* Vì sao thay đổi Context Value có thể khiến nhiều component re-render?
+* Làm thế nào hạn chế re-render không cần thiết?
+* Phân tích các chiến lược:
+
+  * Tách Context
+  * Stable Provider Value
+  * Selector pattern
+  * External state management
+
+### 18. React 19 Hooks và `use()`
+
+Phân tích mục đích và cách sử dụng:
+
+* `useActionState`
+* `useOptimistic`
+* `use()`
+
+Các vấn đề mà những API này hướng tới trong ứng dụng React hiện đại là gì?
+
+### 19. React Compiler
+
+* React Compiler tự động tối ưu component như thế nào?
+* Compiler có thể giảm nhu cầu sử dụng thủ công `useMemo()` / `useCallback()` trong trường hợp nào?
+* Những **Rules of React** nào developer vẫn phải tuân thủ?
+* Vì sao code không tuân thủ các rule có thể ảnh hưởng đến khả năng tối ưu của Compiler?
+
+---
+
+## IV. Next.js / Rendering Architecture
+
+### 20. Hydration
+
+* Server trả về HTML tĩnh cho browser như thế nào?
+* Next.js/React làm thế nào để gắn event listener vào HTML đó?
+* Hydration có vai trò gì?
+* Dữ liệu khởi tạo từ server được sử dụng như thế nào trong quá trình hydration?
+
+### 21. SSG, SSR, ISR và PPR
+
+So sánh:
+
+* **SSG — Static Site Generation**
+* **SSR — Server-Side Rendering**
+* **ISR — Incremental Static Regeneration**
+* **PPR — Partial Prerendering**
+
+Phân tích:
+
+* Thời điểm render.
+* Cache.
+* Tính freshness của dữ liệu.
+* Tác động đến performance.
+* PPR giải quyết vấn đề **Network Waterfall** như thế nào?
+
+### 22. Server Component → Client Component
+
+* Làm thế nào truyền data từ Server Component sang Client Component?
+* Vì sao dữ liệu phải đáp ứng yêu cầu serialization?
+* Vì sao không thể tùy ý truyền:
+
+  * Function
+  * Class instance
+  * Các giá trị không serializable
+* Ranh giới Server/Client Component ảnh hưởng thế nào đến kiến trúc ứng dụng?
+
+### 23. Next.js Caching
+
+Tìm hiểu cơ chế và mục đích của các API/directive hiện đại:
+
+```ts
+revalidateTag()
+updateTag()
+```
+
+và:
+
+```ts
+'use cache'
+```
+
+Các câu hỏi cần giải thích:
+
+* Data được cache ở đâu?
+* Khi nào cache được invalidated?
+* Khác biệt giữa revalidation và cập nhật dữ liệu tức thời?
+* Làm thế nào thiết kế chiến lược caching rõ ràng?
+
+---
+
+## V. Tailwind CSS
+
+### 24. Tailwind CSS v4 và Source Detection
+
+* Tailwind CSS v4 sử dụng cơ chế build mới như thế nào?
+* Có phải toàn bộ utility CSS đều được đưa vào production bundle không?
+* **Source Detection** hoạt động như thế nào?
+* Tailwind xác định class nào thực sự được sử dụng ra sao?
+
+---
+
+## VI. Browser Rendering / Performance
+
+### 25. Critical Rendering Path
+
+Khi browser gặp:
+
+```html
+<script src="app.js"></script>
+```
+
+không có `async` hoặc `defer`:
+
+* HTML parser xử lý như thế nào?
+* Browser có tiếp tục parse HTML không?
+* JavaScript ảnh hưởng đến rendering pipeline ra sao?
+* So sánh với:
+
+```html
+<script async>
+```
+
+và:
+
+```html
+<script defer>
+```
+
+### 26. Reflow và Paint
+
+* Phân biệt:
+
+  * Layout/Reflow
+  * Paint
+  * Composite
+* Vì sao thay đổi:
+
+```css
+transform
+opacity
+```
+
+thường có lợi cho animation hơn việc thay đổi:
+
+```css
+top
+left
+```
+
+* Browser rendering pipeline liên quan như thế nào đến vấn đề này?
+
+### 27. Browser Default Behavior
+
+Ngoài:
+
+```ts
+event.preventDefault();
+```
+
+còn những cơ chế nào có thể ảnh hưởng đến default browser behavior?
+
+Phân tích các vấn đề liên quan đến:
+
+* Event listener
+* Passive listener
+* Default action
+* Event propagation
+
+---
+
+## VII. Web Storage và Security
+
+### 28. LocalStorage, SessionStorage và Cookies
+
+So sánh:
+
+| Đặc điểm                | LocalStorage | SessionStorage | Cookies |
+| ----------------------- | ------------ | -------------- | ------- |
+| Lifetime                | ?            | ?              | ?       |
+| Dung lượng              | ?            | ?              | ?       |
+| Tự động gửi lên server  | ?            | ?              | ?       |
+| JavaScript truy cập     | ?            | ?              | ?       |
+| Use case                | ?            | ?              | ?       |
+| Security considerations | ?            | ?              | ?       |
+
+Cần xác định loại storage phù hợp dựa trên:
+
+* Performance
+* Persistence
+* Server communication
+* Security
+
+### 29. XSS, CSRF và Cookie Security
+
+* LocalStorage liên quan thế nào đến nguy cơ XSS?
+* Cookies liên quan thế nào đến CSRF?
+* Giải thích:
+
+```http
+HttpOnly
+Secure
+SameSite
+```
+
+* Khi nào nên sử dụng từng cookie attribute?
+* Thiết kế authentication flow như thế nào để giảm rủi ro?
+
+### 30. Refresh Token Rotation và Race Condition
+
+Thiết kế cơ chế:
+
+```text
+Access Token
+      ↓
+Expired
+      ↓
+Refresh Token
+      ↓
+New Access Token
+```
+
+Các vấn đề cần giải quyết:
+
+* Refresh Token Rotation.
+* Multiple requests đồng thời.
+* Race condition khi nhiều request phát hiện access token hết hạn cùng lúc.
+* Đảm bảo chỉ một quá trình refresh token được xử lý tại một thời điểm phù hợp.
+
+---
+
+## VIII. Frontend Architecture
+
+### 31. Centralized Policy Engine
+
+Thiết kế một kiến trúc phân quyền tập trung cho ứng dụng React/Server Components.
+
+Cần phân tích:
+
+* Authentication vs Authorization.
+* Permission model.
+* Centralized Policy Engine.
+* Server-side authorization.
+* Client-side UI visibility.
+* Vì sao không nên chỉ dựa vào logic ẩn/hiện UI phía client để bảo vệ quyền truy cập?
+
+---
+
+## IX. Advanced Problem Solving
+
+### 32. Form 10.000 Fields không dùng Client Storage
+
+Thiết kế giải pháp cho bài toán:
+
+* Form có khoảng 10.000 trường.
+* Không sử dụng LocalStorage hoặc client database.
+* Không yêu cầu đăng nhập.
+* Người dùng có thể rời trang.
+* Người dùng có thể quay lại và tiếp tục nhập dữ liệu.
+
+Cần phân tích:
+
+* Dữ liệu được lưu ở đâu?
+* Làm thế nào xác định phiên người dùng?
+* Cách đồng bộ dữ liệu.
+* Session management.
+* Server-side persistence.
+* Expiration/cleanup.
+* Privacy và security.
+
+---
+
+# X. Các bài toán tình huống thực tế
+
+## 33. React App với nhiều Tab và hàng nghìn Components
+
+Giả sử ứng dụng có:
+
+```text
+Tab A
+ └── hàng nghìn components
+
+Tab B
+ └── hàng nghìn components
+
+Tab C
+ └── hàng nghìn components
+```
+
+Khi chuyển tab, UI mất khoảng 1–2 giây mới phản hồi.
+
+Phân tích các hướng tối ưu:
+
+* Component splitting.
+* Memoization.
+* State locality.
+* Context optimization.
+* Virtualization.
+* Lazy loading.
+* `startTransition`.
+* React Compiler.
+* Profiling bằng React DevTools.
+
+## 34. Race Condition khi chuyển trang liên tục
+
+Ví dụ:
+
+```text
+Page 1
+  ↓
+Page 2
+  ↓
+Page 3
+```
+
+Người dùng chuyển trang rất nhanh.
+
+Request có thể hoàn thành theo thứ tự:
+
+```text
+Request 1 → Page 1
+Request 3 → Page 3
+Request 2 → Page 2
+```
+
+Cần đảm bảo kết quả cuối cùng không bị request cũ ghi đè.
+
+Phân tích các giải pháp:
+
+* `AbortController`.
+* Request cancellation.
+* Request ID / sequence number.
+* Ignore stale responses.
+* Query library với cơ chế quản lý request.
+* Đồng bộ UI state với request hiện tại.
+
+---
+
+# Tổng quan các nhóm kiến thức
+
+| Nhóm                     | Câu hỏi |
+| ------------------------ | ------: |
+| JavaScript / Runtime     |     1–6 |
+| TypeScript               |     7–8 |
+| React                    |    9–19 |
+| Next.js / Rendering      |   20–23 |
+| Tailwind CSS             |      24 |
+| Browser / Performance    |   25–27 |
+| Storage / Security       |   28–30 |
+| Architecture             |      31 |
+| Advanced Problem Solving |   32–34 |
+
+> **Lưu ý:** Trang nguồn đánh số bị trùng ở một số mục và thực tế phần nội dung có **32 mục đánh số**, trong đó một số mục chứa nhiều ý hỏi/tình huống. Bản tổng hợp trên tách riêng một số tình huống con để thuận tiện học và ôn phỏng vấn.
+
+</details>
+
+<details>
   <summary><strong>📅 2026-08-14 — Top 30+ câu hỏi phỏng vấn Front End Developer </strong></summary>
   
   # 30 câu hỏi phỏng vấn Frontend
