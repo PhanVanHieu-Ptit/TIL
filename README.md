@@ -3,610 +3,345 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
-  <summary><strong>📅 2026-08-16 — 32 câu hỏi phỏng vấn Frontend 2026 </strong></summary>
+  <summary><strong>📅 2026-08-16 — Frontend Interview 2026 — 33 câu hỏi và đáp án </strong></summary>
   
- # Frontend Interview 2026 — Questions & Answers
+ # Frontend Interview 2026 — 33 câu hỏi và đáp án
 
-> Bộ câu hỏi tổng hợp từ bài viết về phỏng vấn Frontend 2026, được bổ sung câu trả lời theo hướng ôn tập Frontend từ Middle đến Senior.
+> Nguồn: Tấn Phát Digital — *Những Câu Hỏi Phỏng Vấn Frontend 2026 Và Đáp Án Chi Tiết*. Nội dung dưới đây được chuyển sang Markdown và diễn đạt lại sát với đáp án của nguồn.
 
 ---
 
-# I. JavaScript / Runtime
+# I. JavaScript & TypeScript Core
 
-## 1. Event Loop và mức độ ưu tiên của Task
+## 1. Event Loop & Task Prioritization
 
 ### Câu hỏi
 
-* Microtask Queue và Macrotask Queue khác nhau thế nào?
-* `Promise`, `async/await`, `setTimeout` thuộc queue nào?
-* Event Loop xử lý chúng theo thứ tự nào?
+Microtask và Macrotask khác nhau như thế nào? Event Loop ưu tiên loại task nào?
 
 ### Trả lời
 
-JavaScript chạy trên một execution thread chính và sử dụng **Event Loop** để xử lý các công việc bất đồng bộ.
+Theo bài viết, **Microtask Queue có mức ưu tiên cao hơn Macrotask Queue**.
 
-Một cách đơn giản hóa thứ tự:
+Các tác vụ như:
 
-```text
-Call Stack
-    ↓
-Synchronous code
-    ↓
-Microtask Queue
-    ↓
-Rendering opportunity
-    ↓
-Macrotask / Task
-    ↓
-Microtask Queue
-    ↓
-...
-```
+* `Promise`
+* `async/await`
+* `MutationObserver`
 
-Các callback của:
-
-```js
-Promise.then()
-queueMicrotask()
-await
-```
-
-được xử lý dưới dạng **microtask**.
+thuộc nhóm Microtask.
 
 Trong khi đó:
 
-```js
-setTimeout()
-setInterval()
+* `setTimeout`
+* I/O
+* Events
+
+thuộc Macrotask.
+
+Microtask được xử lý sau khi code synchronous hoàn tất và phải được xử lý hết trước khi browser thực hiện lần repaint tiếp theo.
+
+Một vấn đề có thể xảy ra là **Microtask Starvation**: một microtask liên tục tạo thêm microtask mới. Khi đó Macrotask và quá trình rendering không có cơ hội được xử lý, khiến ứng dụng có thể bị treo.
+
+---
+
+## 2. Memory Management — Mark-and-Sweep & WeakMap
+
+### Câu hỏi
+
+Garbage Collector hoạt động như thế nào? `WeakMap` và `WeakSet` có tác dụng gì?
+
+### Trả lời
+
+Cơ chế **Mark-and-Sweep** bắt đầu từ các object roots.
+
+Các object còn có thể truy cập được sẽ được đánh dấu là còn sống. Những object không còn reachable sẽ được Garbage Collector thu hồi bộ nhớ.
+
+`WeakMap` và `WeakSet` sử dụng **weak reference**. Reference yếu không ngăn Garbage Collector thu hồi object khi object đó không còn strong reference nào khác.
+
+Theo bài viết, chúng đặc biệt hữu ích khi lưu:
+
+* Metadata cho DOM nodes.
+* Cache.
+
+Mục tiêu là tránh giữ object sống ngoài thời gian cần thiết và hạn chế memory leak.
+
+---
+
+## 3. Object Copying Mechanics
+
+### Câu hỏi
+
+Shallow copy và deep copy khác nhau như thế nào? So sánh `structuredClone()`, JSON cloning và `lodash.cloneDeep()`.
+
+### Trả lời
+
+### Shallow copy
+
+Chỉ sao chép các property ở cấp đầu tiên.
+
+Các object lồng bên trong vẫn dùng chung reference.
+
+### Deep copy
+
+Sao chép toàn bộ cấu trúc object, bao gồm các object lồng nhau.
+
+### `structuredClone()`
+
+Theo bài viết, đây là Web API native, hỗ trợ các cấu trúc như:
+
+* `Map`
+* `Set`
+* Circular references
+
+Nhưng không clone được:
+
+* Function.
+* DOM nodes.
+
+### `JSON.parse(JSON.stringify())`
+
+Có thể dùng cho các object đơn giản nhưng có hạn chế với những kiểu dữ liệu đặc biệt như:
+
+* `Date`
+* `RegExp`
+
+Bài viết cũng đánh giá cách này có performance không tốt.
+
+### `lodash.cloneDeep()`
+
+Có khả năng xử lý nhiều cấu trúc object phức tạp hơn nhưng làm tăng bundle size. Bài viết đề cập mức tăng khoảng **17 KB**.
+
+---
+
+## 4. Reference Logic & Copy Algorithms
+
+### Câu hỏi
+
+Điều gì xảy ra khi:
+
+```ts
+const b = a;
 ```
 
-tạo task/macrotask.
+nếu `a` là object?
+
+### Trả lời
+
+`a` và `b` cùng trỏ tới một vùng nhớ.
+
+Vì vậy:
+
+```ts
+b.value = 100;
+```
+
+cũng làm thay đổi giá trị mà `a` nhìn thấy.
+
+Với nested object, các thư viện như Lodash có thể sử dụng quá trình đệ quy kết hợp với `Map` để theo dõi những object đã xử lý.
+
+Cách này giúp:
+
+* Tránh vòng lặp vô hạn với circular reference.
+* Bảo toàn các cấu trúc dữ liệu phức tạp.
+
+---
+
+## 5. `Promise.all()` vs Await tuần tự
+
+### Câu hỏi
+
+Khi nào nên sử dụng `Promise.all()`?
+
+### Trả lời
+
+Nếu các task **không phụ thuộc lẫn nhau**, có thể chạy chúng song song bằng `Promise.all()`.
 
 Ví dụ:
 
-```js
-console.log('A');
-
-setTimeout(() => {
-  console.log('B');
-}, 0);
-
-Promise.resolve().then(() => {
-  console.log('C');
-});
-
-console.log('D');
-```
-
-Kết quả:
-
-```text
-A
-D
-C
-B
-```
-
-Lý do:
-
-1. Code synchronous chạy trước.
-2. Microtask được xử lý sau khi synchronous stack hoàn tất.
-3. `setTimeout` callback được xử lý ở task sau đó.
-
-### Điểm Senior cần nhớ
-
-Microtask chạy trước task tiếp theo. Nếu liên tục tạo microtask:
-
-```js
-function loop() {
-  queueMicrotask(loop);
-}
-
-loop();
-```
-
-có thể khiến Event Loop không có cơ hội xử lý các task khác hoặc rendering.
-
----
-
-# 2. Memory Management và Garbage Collection
-
-### Câu hỏi
-
-* JavaScript Garbage Collector hoạt động thế nào?
-* Memory leak xuất hiện ở đâu?
-* Làm thế nào phát hiện memory leak?
-
-### Trả lời
-
-JavaScript sử dụng Garbage Collection để thu hồi object không còn reachable từ các GC roots.
-
-Một mô hình phổ biến là:
-
-```text
-GC Roots
-   ↓
-Reachable Objects
-   ↓
-Unreachable Objects
-   ↓
-Garbage Collector
-   ↓
-Memory reclaimed
-```
-
-Các nguyên nhân memory leak thường gặp:
-
-```js
-const listeners = [];
-
-function init() {
-  const largeObject = createLargeObject();
-
-  listeners.push(() => {
-    console.log(largeObject);
-  });
-}
-```
-
-Nếu `listeners` tồn tại lâu hơn dự kiến thì closure vẫn giữ reference đến `largeObject`.
-
-Các nguyên nhân khác:
-
-* Event listener không được remove.
-* Timer không được clear.
-* Subscription không unsubscribe.
-* Global cache phát triển không giới hạn.
-* DOM reference giữ lại object không cần thiết.
-* Closure giữ reference lớn.
-
-### Debug
-
-Chrome DevTools có thể sử dụng:
-
-* Memory → Heap Snapshot
-* Allocation instrumentation
-* Detached DOM tree
-* Comparison giữa nhiều heap snapshots
-
----
-
-# 3. Shallow Copy và Deep Copy
-
-### Câu hỏi
-
-Phân biệt:
-
-```js
-const b = { ...a };
-```
-
-với deep clone.
-
-### Trả lời
-
-Spread operator chỉ tạo **shallow copy**.
-
-```js
-const a = {
-  name: 'Hiểu',
-  address: {
-    city: 'HCM'
-  }
-};
-
-const b = { ...a };
-
-b.address.city = 'Hanoi';
-```
-
-Lúc này:
-
-```js
-a.address.city
-```
-
-cũng thay đổi vì:
-
-```text
-a.address ─────┐
-               ├──> same object
-b.address ─────┘
-```
-
-Deep clone tạo object graph độc lập.
-
-Hiện nay có thể sử dụng:
-
-```js
-const cloned = structuredClone(value);
-```
-
-`JSON.parse(JSON.stringify())` có nhiều hạn chế đối với:
-
-* `Date`
-* `Map`
-* `Set`
-* `undefined`
-* `BigInt`
-* Circular reference
-
-### Điểm phỏng vấn
-
-Không nên trả lời:
-
-> `structuredClone` luôn tốt hơn mọi phương pháp.
-
-Nên nói:
-
-> Lựa chọn phương pháp clone phụ thuộc vào data model, type cần hỗ trợ và chi phí clone.
-
----
-
-# 4. Reference và Object Assignment
-
-### Câu hỏi
-
-```js
-const a = {
-  count: 1
-};
-
-const b = a;
-
-b.count = 2;
-```
-
-`a.count` bằng bao nhiêu?
-
-### Trả lời
-
-Kết quả:
-
-```js
-a.count === 2
-```
-
-Vì `a` và `b` cùng reference đến một object.
-
-```text
-a ─────┐
-       ├──> Object { count: 2 }
-b ─────┘
-```
-
-Assignment không clone object.
-
-Nếu muốn tạo object mới:
-
-```js
-const b = { ...a };
-```
-
-Nhưng đây chỉ là shallow copy.
-
----
-
-# 5. Promise.all và Promise.allSettled
-
-### Câu hỏi
-
-Khi nào sử dụng `Promise.all()`?
-
-### Trả lời
-
-Nếu các request độc lập và phải có kết quả của tất cả:
-
-```js
+```ts
 const [users, posts, comments] = await Promise.all([
   getUsers(),
   getPosts(),
-  getComments()
+  getComments(),
 ]);
 ```
 
-Các Promise được khởi động gần như đồng thời thay vì:
+Thời gian chờ tổng thể có thể gần với task lâu nhất thay vì cộng thời gian của tất cả task.
 
-```js
-const users = await getUsers();
-const posts = await getPosts();
-const comments = await getComments();
-```
+`Promise.allSettled()` khác ở chỗ nó chờ toàn bộ Promise hoàn thành, bất kể thành công hay thất bại, sau đó trả về kết quả của từng Promise.
 
-`Promise.all()` reject khi một Promise reject.
-
-Trong khi:
-
-```js
-Promise.allSettled()
-```
-
-chờ tất cả Promise hoàn thành và trả về trạng thái từng Promise.
-
-Ví dụ:
-
-```js
-const results = await Promise.allSettled([
-  requestA(),
-  requestB(),
-  requestC()
-]);
-```
-
-Kết quả có thể chứa:
-
-```js
-[
-  { status: 'fulfilled', value: ... },
-  { status: 'rejected', reason: ... },
-  { status: 'fulfilled', value: ... }
-]
-```
-
-### Điểm Senior
-
-Không phải request nào cũng nên chạy song song.
-
-Nếu:
-
-```text
-Request B phụ thuộc Request A
-```
-
-thì phải tuần tự:
-
-```js
-const a = await requestA();
-const b = await requestB(a);
-```
+Điều này phù hợp khi một task thất bại nhưng application vẫn cần biết kết quả của các task còn lại.
 
 ---
 
-# 6. `switch` và `if-else`
+## 6. Conditional Performance — `switch` vs `if-else`
 
 ### Câu hỏi
 
-`switch` có luôn nhanh hơn `if-else` không?
+`switch` có nhanh hơn `if-else` không?
 
 ### Trả lời
 
-Không nên kết luận rằng:
+Theo bài viết, `switch` thường có lợi thế khi có nhiều điều kiện vì compiler như V8 có thể sử dụng **jump table**.
+
+Thay vì kiểm tra tuần tự từng nhánh:
 
 ```text
-switch > if/else
+if 1
+ ↓
+if 2
+ ↓
+if 3
+ ↓
+...
 ```
 
-về performance trong mọi trường hợp.
+jump table có thể cho phép truy cập trực tiếp đến nhánh tương ứng.
 
-Compiler/engine có thể tối ưu `switch` theo nhiều cách tùy cấu trúc dữ liệu và implementation.
+Bài viết mô tả trường hợp này theo hướng:
 
-Ví dụ:
-
-```js
-switch (status) {
-  case 'pending':
-    ...
-    break;
-
-  case 'success':
-    ...
-    break;
-
-  case 'error':
-    ...
-    break;
-}
+```text
+switch → O(1)
+if/else → O(n)
 ```
-
-Với frontend application, khả năng đọc hiểu và maintainability thường quan trọng hơn một khác biệt micro-benchmark không đáng kể.
 
 ---
 
 # II. TypeScript
 
-# 7. String Literal Union và Enum
+## 7. String Literal Unions vs Enum
 
 ### Câu hỏi
 
-So sánh:
+Tại sao String Literal Union kết hợp `as const` được ưu tiên?
+
+### Trả lời
+
+Bài viết đề xuất sử dụng:
 
 ```ts
-enum Status {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive'
-}
+type Status = 'A' | 'B';
 ```
 
-với:
+hoặc kết hợp:
 
 ```ts
 const STATUS = {
-  ACTIVE: 'active',
-  INACTIVE: 'inactive'
+  A: 'A',
+  B: 'B',
 } as const;
-
-type Status = typeof STATUS[keyof typeof STATUS];
 ```
 
-### Trả lời
+Lý do được đưa ra là String Literal Union không tạo thêm runtime code sau compilation, trong khi `Enum` có thể tạo JavaScript code.
 
-`enum` là TypeScript feature có runtime representation.
-
-Trong khi:
-
-```ts
-as const
-```
-
-giữ object runtime bình thường và tạo literal types.
-
-Ví dụ:
-
-```ts
-type Status = 'active' | 'inactive';
-```
-
-Ưu điểm của union:
-
-* Đơn giản.
-* Dễ tương tác với API.
-* Không tạo enum runtime.
-* Có thể kết hợp tốt với object constants.
-
-Tuy nhiên không nên nói `enum` luôn xấu hoặc luôn phải loại bỏ. Quyết định phụ thuộc coding convention và architecture của project.
+Bài viết cũng chỉ ra vấn đề của numeric enum về type safety vì có thể cho phép các giá trị số không mong muốn.
 
 ---
 
-# 8. `infer` và `satisfies`
-
-## `infer`
-
-`infer` cho phép TypeScript suy ra một type bên trong Conditional Type.
-
-Ví dụ:
-
-```ts
-type GetArrayElement<T> =
-  T extends Array<infer U>
-    ? U
-    : never;
-```
-
-Sau đó:
-
-```ts
-type Result = GetArrayElement<string[]>;
-```
-
-sẽ là:
-
-```ts
-string
-```
-
-## `satisfies`
-
-Ví dụ:
-
-```ts
-type Config = {
-  retry: number;
-};
-
-const config = {
-  retry: 3
-} satisfies Config;
-```
-
-`satisfies` kiểm tra object có phù hợp với type nhưng vẫn giữ được type cụ thể của expression.
-
-Điểm khác với:
-
-```ts
-const config = {...} as Config;
-```
-
-là `as` là type assertion, trong khi `satisfies` dùng để kiểm tra compatibility.
-
----
-
-# III. React
-
-# 9. `useMemo` và Function
+## 8. Advanced Typing — `infer` & `satisfies`
 
 ### Câu hỏi
 
-Có thể dùng `useMemo()` để memoize function không?
+`infer` và `satisfies` dùng để làm gì?
 
 ### Trả lời
 
-Có:
+`infer` cho phép TypeScript trích xuất một type nằm bên trong cấu trúc phức tạp trong Conditional Types.
+
+Ví dụ có thể dùng để lấy return type của một function.
+
+`सatisfies` được dùng để kiểm tra một object có đáp ứng một interface/type hay không nhưng vẫn giữ lại literal type cụ thể của object.
+
+Điều này giúp TypeScript giữ được thông tin type chi tiết hơn so với việc dùng type assertion `as`.
+
+---
+
+# III. React 19 Core & Hooks
+
+## 9. `useMemo` có thể ghi nhớ function không?
+
+### Câu hỏi
+
+Có thể dùng `useMemo()` để memoize một function không?
+
+### Trả lời
+
+Có.
+
+`useMemo()` có thể ghi nhớ function nếu function đó là giá trị được trả về từ callback của `useMemo`.
+
+Ví dụ:
 
 ```tsx
 const handleClick = useMemo(() => {
   return () => {
-    console.log('click');
+    // ...
   };
 }, []);
 ```
 
-Nhưng API phù hợp hơn là:
-
-```tsx
-const handleClick = useCallback(() => {
-  console.log('click');
-}, []);
-```
-
-Có thể hiểu:
-
-```text
-useMemo
-→ memoize result
-
-useCallback
-→ memoize function reference
-```
+Tuy nhiên, `useCallback()` là API chuyên dụng và có cú pháp ngắn gọn hơn cho trường hợp memoize function.
 
 ---
 
-# 10. `useCallback` và Referential Stability
+## 10. `useCallback` — Use Cases
 
-`useCallback()` giữ lại cùng function reference giữa các render nếu dependency không thay đổi.
+### Câu hỏi
 
-Ví dụ:
+Ngoài tối ưu re-render, `useCallback()` còn có tác dụng gì?
 
-```tsx
-const handleClick = useCallback(() => {
-  doSomething(id);
-}, [id]);
-```
+### Trả lời
 
-Điều này đặc biệt hữu ích khi function được truyền vào component được memoize:
+Một vai trò quan trọng là duy trì **referential stability** của function.
+
+Điều này hữu ích khi function được sử dụng làm dependency:
 
 ```tsx
-const Child = memo(({ onClick }) => {
-  ...
-});
+useEffect(() => {
+  // ...
+}, [handleSomething]);
 ```
 
-Tuy nhiên:
+hoặc:
 
-```text
-useCallback ≠ automatically faster
+```tsx
+useMemo(() => {
+  // ...
+}, [handleSomething]);
 ```
 
-Nó cũng có chi phí về dependency tracking và memory.
+Nó cũng hữu ích khi truyền callback xuống component con được bọc bằng:
 
-Do đó không nên bọc mọi function bằng `useCallback()`.
+```tsx
+React.memo()
+```
+
+vì component con có thể dựa vào sự ổn định của reference để tránh render không cần thiết.
 
 ---
 
-# 11. Fiber và Hook Storage
+## 11. Internal Hook Storage
 
-React cần duy trì state của Hook giữa các render.
+### Câu hỏi
 
-Ví dụ:
+React lưu Hook ở đâu? Vì sao không được gọi Hook trong điều kiện?
 
-```tsx
-function Component() {
-  const [count] = useState(0);
-  const [name] = useState('');
+### Trả lời
 
-  return ...
-}
-```
-
-React cần biết:
+Theo bài viết, React lưu các giá trị Hook trong:
 
 ```text
-Hook #1 → count
-Hook #2 → name
+Fiber
+ └── memoizedState
+      └── Linked List
 ```
 
-Đó là lý do thứ tự Hook phải ổn định.
+Mỗi Hook tương ứng với một node trong linked list.
 
-Không được:
+React dựa vào **thứ tự gọi Hook** để xác định state nào thuộc về Hook nào.
+
+Vì vậy code như sau là không hợp lệ:
 
 ```tsx
 if (condition) {
@@ -614,1563 +349,713 @@ if (condition) {
 }
 ```
 
-Nếu thứ tự thay đổi:
-
-```text
-Render 1:
-Hook 1 → count
-Hook 2 → name
-
-Render 2:
-Hook 1 → name
-Hook 2 → ...
-```
-
-React sẽ không thể ánh xạ Hook state đúng cách.
+Nếu điều kiện thay đổi giữa các render, thứ tự Hook thay đổi và React không còn ánh xạ chính xác state với Hook tương ứng.
 
 ---
 
-# 12. `useMemo` và `useEffect`
+## 12. `useMemo` vs `useEffect`
 
-Hai Hook có mục đích khác nhau.
+### Câu hỏi
 
-### `useMemo`
+Tại sao cùng một logic nhưng đặt trong `useMemo()` và `useEffect()` lại cho kết quả khác nhau?
 
-Dùng để memoize computation:
+### Trả lời
 
-```tsx
-const result = useMemo(() => {
-  return expensiveCalculation(data);
-}, [data]);
+`useMemo()` chạy trong quá trình **render** và mang tính đồng bộ.
+
+Nếu đưa side effect hoặc logic impure vào `useMemo`, logic đó có thể ảnh hưởng trực tiếp đến quá trình render.
+
+`useEffect()` chạy sau khi giao diện được paint.
+
+Ví dụ nếu logic thay đổi một global variable:
+
+```text
+useMemo
+→ thay đổi trong render
+
+useEffect
+→ thay đổi sau khi UI đã được paint
 ```
 
-### `useEffect`
-
-Dùng để synchronize component với external systems:
-
-```tsx
-useEffect(() => {
-  connect();
-  
-  return () => {
-    disconnect();
-  };
-}, []);
-```
-
-Không nên dùng `useMemo` để thực hiện side effect.
+Vì vậy hai Hook có thời điểm thực thi khác nhau và không nên được xem là hai API thay thế cho nhau.
 
 ---
 
-# 13. `useEffect` và `useLayoutEffect`
+## 13. `useEffect` vs `useLayoutEffect`
 
-`useEffect` phù hợp cho phần lớn side effects.
+### Câu hỏi
 
-```tsx
-useEffect(() => {
-  document.title = title;
-}, [title]);
-```
+Khi nào sử dụng `useLayoutEffect()`?
 
-`useLayoutEffect` chạy ở thời điểm phù hợp để đọc/điều chỉnh layout trước khi browser paint trong các trường hợp cần đồng bộ layout.
+### Trả lời
 
-Ví dụ:
+`useLayoutEffect()` chạy sau khi DOM đã được cập nhật nhưng trước khi browser paint.
 
-```tsx
-useLayoutEffect(() => {
-  const rect = element.current?.getBoundingClientRect();
+Nó phù hợp với các tình huống cần:
 
-  ...
-}, []);
-```
+* Đo kích thước DOM.
+* Đọc layout.
+* Điều chỉnh UI ngay trước khi paint.
 
-Một use case điển hình:
+Điều này giúp tránh trường hợp người dùng nhìn thấy UI cũ trong thời gian ngắn rồi mới bị thay đổi.
 
-```text
-Render
- ↓
-Layout effect
- ↓
-Paint
- ↓
-Effect
-```
-
-Không nên mặc định thay toàn bộ `useEffect` bằng `useLayoutEffect`.
+`useEffect()` chạy sau paint nên phù hợp với các side effect không yêu cầu đồng bộ layout.
 
 ---
 
-# 14. Function Component Lifecycle
+## 14. Function Component Lifecycle
 
-Một cách mô hình hóa:
+### Câu hỏi
+
+Function Component có những giai đoạn lifecycle nào?
+
+### Trả lời
+
+Có thể chia thành:
 
 ```text
-Render
- ↓
-Commit
- ↓
-Effects
- ↓
+Mount
+  ↓
 Update
- ↓
-Cleanup previous effect
- ↓
-Run new effect
+  ↓
+Unmount
 ```
 
-Ví dụ:
+`useEffect()` chạy sau render.
+
+Cleanup function:
 
 ```tsx
 useEffect(() => {
   const subscription = subscribe();
 
   return () => {
-    subscription.unsubscribe();
+    unsubscribe();
   };
-}, [id]);
+}, []);
 ```
 
-Khi `id` thay đổi:
+được gọi trước khi component unmount hoặc trước khi effect chạy lại ở render tiếp theo.
 
-```text
-cleanup old subscription
-        ↓
-run new effect
-```
-
-Khi component unmount:
-
-```text
-cleanup
-```
-
-được gọi.
+Mục đích là dọn dẹp tài nguyên của effect cũ.
 
 ---
 
-# 15. Rules of Hooks
+## 15. Rules of Hooks
 
-Hook phải được gọi ở top-level.
+### Câu hỏi
 
-Sai:
+Tại sao không được gọi Hook trong loop hoặc condition?
 
-```tsx
-if (loggedIn) {
-  useEffect(...);
-}
-```
+### Trả lời
 
-Đúng:
-
-```tsx
-useEffect(() => {
-  if (loggedIn) {
-    ...
-  }
-}, [loggedIn]);
-```
-
-Lý do chính là React dựa vào thứ tự Hook giữa các lần render để duy trì state/effect tương ứng.
-
----
-
-# 16. `useRef` và React 19
-
-`useRef` thường được dùng cho hai mục đích:
-
-### DOM reference
-
-```tsx
-const inputRef = useRef<HTMLInputElement>(null);
-
-inputRef.current?.focus();
-```
-
-### Mutable value không trigger render
-
-```tsx
-const requestId = useRef(0);
-```
-
-Khi:
-
-```js
-requestId.current++;
-```
-
-component không tự động re-render chỉ vì thay đổi `.current`.
-
-Trong React 19, cách truyền `ref` được đơn giản hóa cho function components, nên nhiều trường hợp không còn cần `forwardRef` theo cách cũ.
-
----
-
-# 17. Context API và Re-render
+React quản lý Hook dựa trên thứ tự gọi Hook trong linked list của Fiber.
 
 Ví dụ:
 
 ```tsx
-<Context.Provider value={{ user, logout }}>
+if (condition) {
+  useState();
+}
+
+useEffect();
 ```
 
-Nếu object value được tạo mới:
+Nếu `condition` thay đổi giữa các render, thứ tự Hook cũng thay đổi.
 
-```tsx
-value={{ user, logout }}
-```
+Khi đó React có thể không xác định đúng state nào thuộc về Hook nào.
 
-thì reference thay đổi khi Provider render.
-
-Có thể giảm thay đổi reference bằng:
-
-```tsx
-const value = useMemo(() => ({
-  user,
-  logout
-}), [user, logout]);
-```
-
-Ngoài ra có thể:
-
-* Tách Context.
-* Giảm phạm vi Provider.
-* Đưa state gần nơi sử dụng.
-* Sử dụng selector-based state management khi phù hợp.
-
-### Điểm Senior
-
-Không nên chỉ hỏi:
-
-> Làm sao để Context không re-render?
-
-Mà nên hỏi:
-
-> State này có thực sự cần nằm trong Context không?
-
-Đó thường là vấn đề kiến trúc quan trọng hơn.
+Vì vậy Hook phải được gọi ở cùng thứ tự giữa các lần render.
 
 ---
 
-# 18. React 19 Hooks và `use()`
+## 16. `useRef` Mechanics — React 19
 
-React 19 đưa vào nhiều API hỗ trợ các mô hình xử lý async/action mới.
+### Câu hỏi
+
+`useRef()` hoạt động thế nào và React 19 thay đổi gì?
+
+### Trả lời
+
+`useRef()` trả về một object ổn định:
+
+```ts
+{
+  current: ...
+}
+```
+
+Object này tồn tại xuyên suốt lifecycle của component.
+
+Thay đổi:
+
+```ts
+ref.current = value;
+```
+
+không tự kích hoạt re-render.
+
+Theo bài viết, React 19 cho phép truyền `ref` như một prop thông thường xuống component con, loại bỏ nhu cầu sử dụng `forwardRef()` trong trường hợp trước đây thường phải dùng API này.
+
+---
+
+## 17. Context API Optimization
+
+### Câu hỏi
+
+Làm thế nào giảm re-render liên quan đến Context?
+
+### Trả lời
+
+Một giải pháp được bài viết đề cập là **Context Splitting**.
+
+Thay vì đưa tất cả state vào một Context lớn, có thể chia thành nhiều Context để cô lập những state thay đổi thường xuyên.
+
+Ngoài ra có thể kết hợp:
+
+```text
+useMemo
++
+React.memo
+```
+
+để giảm việc render những component con không cần thiết trong một số trường hợp.
+
+---
+
+## 18. React 19 Hooks
 
 ### `useActionState`
 
-Hỗ trợ quản lý state liên quan đến action.
+Quản lý state liên quan đến form/action, bao gồm các trạng thái như:
+
+* Pending
+* Data
+* Error
 
 ### `useOptimistic`
 
-Cho phép UI phản ánh trạng thái optimistic trước khi server hoàn thành.
+Cho phép UI hiển thị kết quả optimistic ngay lập tức.
 
-Ví dụ concept:
-
-```text
-User action
-   ↓
-Optimistic UI
-   ↓
-Server request
-   ↓
-Success → giữ state
-Failure → rollback
-```
+Nếu server request thất bại, state optimistic có thể được rollback.
 
 ### `use()`
 
-`use()` có thể đọc resource như Promise hoặc Context trong những nơi React hỗ trợ.
+Có thể unwrap:
 
-Điểm quan trọng:
+* Promise
+* Context
 
-```text
-use()
-```
+trực tiếp trong render.
 
-không phải chỉ là một phiên bản khác của:
-
-```text
-useEffect()
-```
-
-Nó liên quan đến mô hình React xử lý resource và Suspense.
+Theo bài viết, `use()` có điểm đặc biệt là có thể được gọi trong `if/else`, khác với các Rules of Hooks truyền thống.
 
 ---
 
-# 19. React Compiler
+## 19. React Compiler Rules
 
-React Compiler hướng đến việc tự động tối ưu một số component bằng cách phân tích code.
+### Câu hỏi
 
-Mục tiêu có thể giảm nhu cầu memoization thủ công trong những trường hợp compiler có thể chứng minh rằng việc memoization là hữu ích và an toàn.
+React Compiler tối ưu như thế nào?
 
-Tuy nhiên:
+### Trả lời
 
-```text
-React Compiler
-≠
-không cần hiểu rendering nữa
-```
+React Compiler tự động hóa một phần quá trình memoization ở build time.
 
-Developer vẫn cần hiểu:
+Developer vẫn cần đảm bảo code tuân thủ các nguyên tắc như:
 
-* Render.
-* State.
-* Referential equality.
-* Side effects.
-* Effects.
-* Component boundaries.
-* Rules of React.
+* Tính thuần khiết.
+* Idempotency.
+* Immutability của props/state.
+
+Nếu code vi phạm các nguyên tắc mà Compiler cần để đảm bảo tính đúng đắn, bài viết cho biết Compiler có thể bỏ qua việc tối ưu component đó.
 
 ---
 
-# IV. Next.js / Rendering
+# IV. Next.js 16+ & Rendering Strategies
 
-# 20. Hydration
+## 20. Hydration Mechanism
 
-Server có thể trả về HTML:
+### Câu hỏi
+
+Hydration hoạt động như thế nào?
+
+### Trả lời
+
+Server gửi HTML tĩnh cùng dữ liệu khởi tạo.
+
+Bài viết mô tả dữ liệu này được đặt trong:
 
 ```html
-<button>Count: 0</button>
+<script id="__NEXT_DATA__">
 ```
 
-Browser nhận HTML và hiển thị trước.
+Ở browser, React sử dụng dữ liệu để tái tạo Virtual DOM và gắn các event listener vào DOM đã tồn tại.
 
-Sau đó React thực hiện hydration để kết nối React tree với DOM hiện có và thiết lập behavior/event handling.
-
-Mô hình:
-
-```text
-Server Component / Server Render
-            ↓
-          HTML
-            ↓
-         Browser
-            ↓
-       Hydration
-            ↓
-Interactive UI
-```
-
-Hydration mismatch xảy ra khi output server và client không tương thích theo yêu cầu của React.
+Mục tiêu là biến HTML server-rendered thành UI có tính tương tác mà không cần tạo lại toàn bộ DOM từ đầu.
 
 ---
 
-# 21. SSG, SSR, ISR và PPR
+## 21. SSG, SSR, ISR và PPR
 
-## SSG
+### Câu hỏi
 
-Render trước thành static HTML.
+PPR giải quyết vấn đề gì?
 
-```text
-Build
- ↓
-Static HTML
- ↓
-CDN
-```
+### Trả lời
 
-Phù hợp với dữ liệu ít thay đổi.
-
-## SSR
-
-Render ở server khi request đến.
+Bài viết mô tả **Partial Prerendering (PPR)** là sự kết hợp giữa:
 
 ```text
-Request
- ↓
-Server render
- ↓
-HTML
+Static Shell
++
+Dynamic Components
 ```
 
-Phù hợp khi cần dữ liệu động theo request.
+Server có thể gửi static shell sớm, sau đó stream các phần dynamic thông qua Suspense.
 
-## ISR
-
-Kết hợp static generation với cơ chế revalidation.
-
-Mục tiêu là không phải render lại toàn bộ page cho mọi request nhưng vẫn cập nhật được dữ liệu theo chiến lược cache.
-
-## PPR
-
-Partial Prerendering nhằm kết hợp phần có thể prerender với phần dynamic.
-
-Concept:
-
-```text
-Static shell
-    +
-Dynamic content
-```
-
-Mục tiêu là giảm thời gian người dùng phải chờ toàn bộ dynamic content trước khi thấy phần UI có thể hiển thị sớm.
+Theo bài viết, cách này nhằm giảm vấn đề **Network Waterfall** thường gặp trong SSR truyền thống.
 
 ---
 
-# 22. Server Component → Client Component
+## 22. Server Component → Client Component
 
-Có thể truyền dữ liệu từ Server Component xuống Client Component:
+### Câu hỏi
 
-```tsx
-<Profile user={user} />
-```
+Có thể truyền dữ liệu nào qua Server/Client boundary?
 
-Nhưng props đi qua boundary cần đáp ứng yêu cầu serialization mà framework/React hỗ trợ.
+### Trả lời
 
-Không thể tùy ý truyền một function server-side:
+Chỉ dữ liệu có thể **serialize** mới được truyền qua boundary.
 
-```tsx
-<ClientComponent
-  callback={() => {
-    ...
-  }}
-/>
-```
-
-nếu callback đó không thuộc cơ chế được hỗ trợ để vượt qua boundary.
-
-Đây là lý do phải phân biệt:
+Những loại như:
 
 ```text
-Server-only logic
-        ↓
+Function
+Class instance
+DOM node
+```
+
+không thể tùy ý serialize để truyền sang Client Component.
+
+Do đó cần thiết kế rõ ràng ranh giới:
+
+```text
 Server Component
-
-Interactive logic
-        ↓
+       ↓
+Serializable data
+       ↓
 Client Component
 ```
 
 ---
 
-# 23. Next.js Caching
+## 23. Next.js 16 Caching
 
-Các API caching/revalidation của Next.js cần được hiểu theo từng phiên bản Next.js cụ thể.
+### Câu hỏi
 
-Các khái niệm quan trọng:
+`use cache`, `revalidateTag()` và `updateTag()` khác nhau như thế nào?
+
+### Trả lời
+
+Theo bài viết:
+
+### `use cache`
+
+Directive dùng để ghi nhớ/cache kết quả của component hoặc function.
+
+### `revalidateTag()`
+
+Dùng để làm mới cache theo tag theo cơ chế background/stale-while-revalidate.
+
+### `updateTag()`
+
+Được sử dụng trong Server Actions và xóa cache ngay lập tức, phục vụ mô hình **read-your-writes**.
+
+Có thể hình dung:
 
 ```text
-Request
- ↓
-Data cache
- ↓
-Rendered output
- ↓
-Revalidation
- ↓
-Invalidation
+use cache
+   ↓
+Cache result
+
+revalidateTag()
+   ↓
+Revalidate
+
+updateTag()
+   ↓
+Invalidate immediately
 ```
-
-Ví dụ:
-
-```ts
-revalidateTag('products');
-```
-
-có thể được sử dụng để đánh dấu dữ liệu liên quan đến một tag cần được revalidate/invalidate theo cơ chế caching tương ứng.
-
-Điểm quan trọng khi phỏng vấn:
-
-> Không nên học thuộc tên API mà không hiểu cache lifecycle.
-
-Cần xác định:
-
-1. Data được cache ở đâu?
-2. Cache key là gì?
-3. Cache invalidation xảy ra khi nào?
-4. Request nào dùng cached data?
-5. Khi nào server phải lấy data mới?
 
 ---
 
-# V. Tailwind CSS
+# V. Styling, Performance & Situations
 
-# 24. Tailwind CSS v4 và Source Detection
+## 24. Tailwind v4 Oxide Engine
 
-Tailwind CSS v4 thay đổi đáng kể architecture của engine.
+### Câu hỏi
 
-Một điểm quan trọng là Tailwind cần xác định source files để phát hiện utility classes đang được sử dụng.
+Tailwind v4 Source Detection hoạt động thế nào?
 
-Ví dụ:
+### Trả lời
 
-```tsx
-<div className="flex items-center gap-4">
-```
+Bài viết cho biết Tailwind v4 sử dụng engine Oxide viết bằng Rust.
 
-Tailwind cần nhận diện các utility được sử dụng để tạo CSS tương ứng.
+Cơ chế **Source Detection** tự động quét source files để xác định các class thực sự được sử dụng.
 
-Vì vậy không nên hiểu rằng:
+Sau đó chỉ tạo CSS cần thiết thay vì tạo toàn bộ utility CSS.
 
-```text
-Tailwind = generate toàn bộ hàng triệu class
-```
-
-rồi đưa tất cả vào production CSS.
-
-Dynamic class cũng cần được thiết kế cẩn thận:
-
-```tsx
-`bg-${color}-500`
-```
-
-có thể gây khó khăn cho cơ chế detection tùy cách source được phân tích.
+Theo bài viết, cách tiếp cận này giúp tốc độ build nhanh hơn khoảng **35–50%**.
 
 ---
 
-# VI. Browser Rendering / Performance
+## 25. Critical Rendering Path
 
-# 25. Critical Rendering Path
+### Câu hỏi
 
-Với:
+Điều gì xảy ra với:
 
 ```html
 <script src="app.js"></script>
 ```
 
-script thông thường có thể block HTML parsing trong quá trình browser tải và thực thi script.
+khi không có `async` hoặc `defer`?
 
-### `async`
+### Trả lời
 
-```html
-<script async src="app.js"></script>
-```
-
-Download song song với parsing nhưng khi script sẵn sàng thì có thể thực thi ngay.
-
-### `defer`
-
-```html
-<script defer src="app.js"></script>
-```
-
-Download song song nhưng execution được trì hoãn đến sau khi HTML parsing hoàn tất.
-
-Có thể nhớ:
+Browser sẽ dừng HTML parsing để:
 
 ```text
-async
-→ download parallel
-→ execute ASAP
-
-defer
-→ download parallel
-→ execute after parsing
+Download script
+       ↓
+Execute script
+       ↓
+Continue parsing HTML
 ```
 
----
+Điều này có thể ảnh hưởng đến rendering.
 
-# 26. Reflow, Paint và Composite
-
-Rendering pipeline có thể được khái quát:
-
-```text
-Style
- ↓
-Layout
- ↓
-Paint
- ↓
-Composite
-```
-
-Thay đổi thuộc tính ảnh hưởng layout có thể khiến browser phải tính toán layout lại.
-
-Ví dụ:
+Bài viết cũng đề cập:
 
 ```css
-left: 100px;
-```
-
-trong animation có thể gây nhiều công việc layout hơn.
-
-Trong nhiều trường hợp:
-
-```css
-transform: translateX(100px);
-```
-
-có thể được xử lý hiệu quả hơn ở rendering/compositing pipeline.
-
-Tương tự:
-
-```css
+transform
 opacity
 ```
 
-thường có lợi cho animation.
-
-Tuy nhiên không nên nói:
-
-> `transform` luôn chạy trên GPU và luôn nhanh hơn.
-
-Performance thực tế phụ thuộc browser, layer promotion, rendering workload và property cụ thể.
+có lợi cho animation vì có thể được xử lý ở Compositor thread, tránh một số công việc Layout và Paint tốn kém.
 
 ---
 
-# 27. Browser Default Behavior
+## 26. Default Behavior & Passive Listeners
 
-Một event có thể có:
+### Câu hỏi
 
-```text
-Capture
- ↓
-Target
- ↓
-Bubble
- ↓
-Default action
-```
+Ngoài `preventDefault()`, cơ chế nào liên quan đến default behavior và scrolling?
 
-`preventDefault()` dùng để yêu cầu browser không thực hiện default action của event nếu event đó có thể cancel.
+### Trả lời
+
+Bài viết đề cập `passive: true`.
 
 Ví dụ:
 
-```js
-form.addEventListener('submit', event => {
-  event.preventDefault();
-});
+```ts
+element.addEventListener(
+  'touchmove',
+  handler,
+  { passive: true }
+);
 ```
 
-Điều này khác với:
+Việc khai báo passive cho browser biết event handler sẽ không gọi `preventDefault()` để chặn scrolling.
 
-```js
-event.stopPropagation();
-```
-
-`stopPropagation()` liên quan đến propagation.
-
-`preventDefault()` liên quan đến default action.
-
-Đây là hai khái niệm cần phân biệt rõ.
+Điều này cho phép browser xử lý scrolling hiệu quả hơn trong các trường hợp phù hợp.
 
 ---
 
-# VII. Storage / Security
+## 27. Storage Comparison
 
-# 28. LocalStorage, SessionStorage và Cookies
+### Local Storage
 
-| Đặc điểm            | LocalStorage       | SessionStorage      | Cookies                       |
-| ------------------- | ------------------ | ------------------- | ----------------------------- |
-| Persistence         | Có                 | Theo session/tab    | Theo expiration               |
-| JavaScript access   | Có                 | Có                  | Có thể giới hạn bằng HttpOnly |
-| Tự động gửi request | Không              | Không               | Có, theo cookie rules         |
-| Dung lượng          | Lớn hơn cookie     | Lớn hơn cookie      | Nhỏ                           |
-| Server access       | Không tự động      | Không tự động       | Browser gửi theo request      |
-| Use case            | Client persistence | Temporary tab state | HTTP state/auth/session       |
+Theo bài viết:
 
-Không nên lựa chọn storage chỉ dựa trên dung lượng.
+* Khoảng 5–10 MB.
+* Dữ liệu tồn tại lâu dài.
+* Không tự động gửi lên server.
 
-Cần xét:
+### Session Storage
 
-```text
-Security
-Persistence
-Server communication
-XSS
-CSRF
-Architecture
-```
+* Khoảng 5 MB.
+* Gắn với session/tab.
+* Bị xóa khi đóng tab.
+
+### Cookies
+
+* Khoảng 4 KB.
+* Được gửi kèm request theo cookie rules.
+* Có các cơ chế bảo mật như `HttpOnly` và `SameSite`.
 
 ---
 
-# 29. XSS, CSRF và Cookie Security
+## 28. XSS / CSRF Protection
 
-## XSS
+### Câu hỏi
 
-Nếu attacker thực thi được JavaScript trong origin của ứng dụng, token lưu trong:
+LocalStorage và Cookies có những vấn đề bảo mật gì?
 
-```text
-localStorage
-```
+### Trả lời
 
-có thể trở thành mục tiêu bị đọc bởi script độc hại.
+LocalStorage có thể được JavaScript truy cập, vì vậy khi ứng dụng có XSS, token được lưu ở đây có thể trở thành mục tiêu bị đánh cắp.
 
-## HttpOnly
-
-Cookie:
+Cookie có thể sử dụng:
 
 ```http
 HttpOnly
 ```
 
-không cho JavaScript phía client đọc cookie thông qua API cookie thông thường.
-
-## Secure
+để hạn chế JavaScript truy cập cookie.
 
 ```http
 Secure
 ```
 
-yêu cầu cookie được gửi qua secure connection theo quy tắc của cookie.
+để yêu cầu cookie được gửi qua HTTPS.
 
-## SameSite
-
-```http
-SameSite
-```
-
-kiểm soát việc cookie được gửi trong các context cross-site nhất định và có vai trò quan trọng trong giảm CSRF.
-
-### Điểm Senior
-
-Không nên trả lời:
-
-> HttpOnly chống XSS.
-
-Chính xác hơn:
-
-> HttpOnly hạn chế JavaScript phía client đọc cookie, từ đó giảm khả năng một số loại XSS đánh cắp cookie trực tiếp; nó không loại bỏ bản thân lỗ hổng XSS.
-
----
-
-# 30. Refresh Token Rotation và Race Condition
-
-Giả sử:
-
-```text
-Request A → 401
-Request B → 401
-Request C → 401
-```
-
-Nếu cả ba cùng refresh:
-
-```text
-A → refresh
-B → refresh
-C → refresh
-```
-
-có thể gây race condition hoặc token rotation conflict tùy authentication design.
-
-Một pattern phổ biến:
-
-```text
-              401
-               ↓
-        Check refresh state
-          /          \
-      refreshing     no
-         ↓            ↓
-      wait         refresh
-         ↓            ↓
-      retry ←──────────
-```
-
-Có thể quản lý một shared refresh Promise:
-
-```ts
-let refreshPromise: Promise<string> | null = null;
-```
-
-Các request khác chờ cùng Promise thay vì tạo refresh request mới.
-
-Ngoài ra cần cân nhắc:
-
-* Refresh token rotation.
-* Token revocation.
-* Retry limit.
-* Logout khi refresh thất bại.
-* Request cancellation.
-* Cross-tab synchronization.
-
----
-
-# VIII. Architecture
-
-# 31. Centralized Policy Engine
-
-Authentication trả lời:
-
-```text
-Who are you?
-```
-
-Authorization trả lời:
-
-```text
-What are you allowed to do?
-```
-
-Ví dụ:
-
-```ts
-can(user, 'invoice.read')
-can(user, 'invoice.update')
-can(user, 'invoice.delete')
-```
-
-Có thể xây policy layer:
-
-```text
-UI
- ↓
-Permission API
- ↓
-Policy Engine
- ↓
-Authorization Rules
-```
-
-Nhưng cần nhớ:
-
-```text
-UI hiding ≠ Security
-```
-
-Ví dụ:
-
-```tsx
-{canDelete && <DeleteButton />}
-```
-
-chỉ kiểm soát UI.
-
-API/server vẫn phải kiểm tra authorization:
-
-```text
-Client
-  ↓
-API
-  ↓
-Authorization
-  ↓
-Database
-```
-
----
-
-# IX. Advanced Problem Solving
-
-# 32. Form 10.000 Fields không dùng Client Storage
-
-Đây là bài toán architecture chứ không chỉ là React optimization.
-
-Một hướng có thể thiết kế:
-
-```text
-Anonymous Session
-      ↓
-Session ID
-      ↓
-Server-side Draft
-      ↓
-Autosave
-      ↓
-Resume
-```
-
-Ví dụ:
-
-```text
-Browser
-   ↓
-Temporary Session ID
-   ↓
-API
-   ↓
-Server-side storage
-```
-
-Client không cần lưu toàn bộ form trong LocalStorage.
-
-Có thể autosave theo:
-
-```text
-debounce
-+
-dirty fields
-+
-patch API
-```
-
-thay vì gửi toàn bộ 10.000 fields mỗi lần.
-
-Ví dụ:
+Và:
 
 ```http
-PATCH /draft
+SameSite=Strict
+SameSite=Lax
 ```
 
-body:
-
-```json
-{
-  "field_120": "abc",
-  "field_782": true
-}
-```
-
-Cần thiết kế thêm:
-
-* Session expiration.
-* Draft ownership.
-* Rate limiting.
-* Cleanup.
-* Conflict handling.
-* Privacy.
-* Encryption khi cần.
-* CSRF/authentication strategy phù hợp.
+để giảm nguy cơ CSRF theo chính sách gửi cookie cross-site.
 
 ---
 
-# 33. React App với hàng nghìn Components
+## 29. Refresh Token Rotation — Next.js 16 Proxy
 
-Nếu chuyển tab mất 1–2 giây, không nên ngay lập tức thêm:
+### Câu hỏi
 
-```tsx
-useMemo()
-useCallback()
-memo()
-```
+Xử lý Access Token hết hạn như thế nào?
 
-Trước tiên cần profiling.
+### Trả lời
 
-Quy trình:
+Bài viết sử dụng:
 
 ```text
-Measure
- ↓
-Identify bottleneck
- ↓
-Optimize
- ↓
-Measure again
+proxy.ts
 ```
 
-Các khả năng:
+thay cho middleware truyền thống trong cách tiếp cận được mô tả.
 
-### 1. Render quá nhiều component
-
-Sử dụng virtualization nếu danh sách thực sự lớn.
-
-### 2. State đặt quá cao
-
-Ví dụ:
-
-```text
-App
- ↓
-Huge state
- ↓
-Thousands components
-```
-
-mỗi state update có thể tạo phạm vi update lớn.
-
-Đưa state gần component sử dụng có thể giảm phạm vi ảnh hưởng.
-
-### 3. Context quá lớn
-
-Một Context chứa quá nhiều state có thể khiến nhiều consumer bị ảnh hưởng khi value thay đổi.
-
-### 4. Heavy computation
-
-Đưa computation nặng ra khỏi render hoặc tối ưu bằng memoization khi profiling chứng minh cần thiết.
-
-### 5. Code splitting
-
-```tsx
-const HeavyPanel = lazy(() => import('./HeavyPanel'));
-```
-
-Không cần tải tất cả code ngay từ đầu nếu feature chưa được sử dụng.
-
----
-
-# 34. Race Condition khi chuyển trang liên tục
-
-Giả sử:
-
-```text
-Request 1 → Page A
-Request 2 → Page B
-Request 3 → Page C
-```
-
-nhưng response:
-
-```text
-Response 3
-Response 1
-Response 2
-```
-
-Nếu mọi response đều update state:
-
-```text
-Page C
- ↓
-Page A
- ↓
-Page B
-```
-
-UI cuối cùng có thể không phản ánh request hiện tại.
-
-## Giải pháp 1: AbortController
-
-```ts
-const controller = new AbortController();
-
-fetch(url, {
-  signal: controller.signal
-});
-
-return () => {
-  controller.abort();
-};
-```
-
-Khi request cũ không còn cần thiết thì cancel.
-
-## Giải pháp 2: Request ID
-
-```ts
-const requestId = ++latestRequestId;
-```
-
-Khi response trả về:
-
-```ts
-if (requestId !== latestRequestId) {
-  return;
-}
-```
-
-Chỉ response của request hiện tại mới được apply.
-
-## Giải pháp 3: Query Library
-
-Các thư viện quản lý server state có thể cung cấp:
-
-* Query key.
-* Cache.
-* Deduplication.
-* Cancellation.
-* Stale state.
-* Refetch.
-
-### Điểm Senior
-
-Không chỉ biết `AbortController`.
-
-Cần phân biệt:
-
-```text
-Cancel request
-≠
-Prevent stale response
-```
-
-Trong một số tình huống, dù request không thể cancel hoàn toàn, application vẫn phải đảm bảo stale response không ghi đè state mới.
-
----
-
-# X. Các câu hỏi mở rộng nên luyện thêm
-
-## 35. React Reconciliation là gì?
-
-React so sánh React tree giữa các lần render để xác định những phần UI cần được cập nhật.
-
-`key` giúp React nhận diện identity của các phần tử trong list.
-
-Không nên dùng:
-
-```tsx
-key={index}
-```
-
-một cách máy móc khi list có khả năng reorder/insert/delete.
-
----
-
-# 36. Vì sao Context có thể gây re-render?
-
-Khi Provider value thay đổi identity:
-
-```tsx
-value={{ user }}
-```
-
-các consumer liên quan có thể bị ảnh hưởng.
-
-Có thể cải thiện bằng:
-
-```tsx
-const value = useMemo(() => ({
-  user
-}), [user]);
-```
-
-nhưng tốt hơn nữa là kiểm tra xem Context có đang chứa quá nhiều state hay không.
-
----
-
-# 37. Controlled và Uncontrolled Component
-
-### Controlled
-
-```tsx
-<input
-  value={value}
-  onChange={e => setValue(e.target.value)}
-/>
-```
-
-React state là source of truth.
-
-### Uncontrolled
-
-```tsx
-<input ref={inputRef} />
-```
-
-DOM giữ value.
-
-Controlled phù hợp khi:
-
-* Validation realtime.
-* Conditional UI.
-* State cần đồng bộ với React.
-
-Uncontrolled có thể phù hợp với:
-
-* Form lớn.
-* Tương tác đơn giản.
-* Trường hợp muốn giảm state update trong mỗi keystroke.
-
----
-
-# 38. SSR có làm website nhanh hơn không?
-
-Không thể trả lời đơn giản là:
-
-```text
-SSR = faster
-```
-
-SSR có thể cải thiện thời gian browser nhận được HTML hữu ích trong một số kiến trúc.
-
-Nhưng server rendering cũng có chi phí:
+Khi Access Token hết hạn:
 
 ```text
 Request
- ↓
-Server compute
- ↓
-HTML generation
- ↓
-Network
- ↓
-Browser
+   ↓
+Proxy
+   ↓
+Access Token expired
+   ↓
+Refresh Token API
+   ↓
+New HttpOnly cookies
+   ↓
+Continue request
 ```
 
-Performance thực tế phụ thuộc:
-
-* Server latency.
-* Data fetching.
-* Caching.
-* HTML size.
-* JavaScript bundle.
-* Hydration.
-* CDN.
-* Rendering strategy.
+Proxy thực hiện việc refresh và cập nhật cookie trước khi request tiếp tục.
 
 ---
 
-# 39. `useMemo` có luôn cải thiện performance không?
+## 30. Centralized Policy Engine — RBAC
 
-Không.
+### Câu hỏi
 
-`useMemo` cũng có overhead:
+Làm thế nào xây dựng hệ thống phân quyền tập trung?
 
-```text
-Dependency tracking
-+
-Stored value
-+
-Comparison
-```
+### Trả lời
 
-Nếu computation rất nhẹ:
+Bài viết đề xuất một **Policy Engine tập trung**, ví dụ Oso.
 
-```tsx
-const result = useMemo(() => a + b, [a, b]);
-```
+Các rule authorization được định nghĩa ở một nơi riêng biệt thay vì rải rác trong UI.
 
-memoization có thể không mang lại lợi ích đáng kể.
-
-Nguyên tắc tốt hơn:
+Logic này được áp dụng ở:
 
 ```text
-Profile
- ↓
-Find expensive computation
- ↓
-Determine recomputation cost
- ↓
-Memoize if justified
+Server Components
+        +
+Server Actions
 ```
 
----
+Server Components dùng policy để xác định UI cần render.
 
-# 40. `React.memo` có ngăn component render không?
+Server Actions dùng policy để bảo vệ việc thực thi.
 
-Không nên mô tả đơn giản rằng:
-
-> `React.memo` ngăn component render.
-
-Nó cho phép React bỏ qua render trong một số trường hợp khi props được xem là không thay đổi theo cơ chế comparison của memoized component.
-
-Ví dụ:
-
-```tsx
-const User = memo(({ name }) => {
-  return <div>{name}</div>;
-});
-```
-
-Nếu parent render nhưng `name` không thay đổi, React có thể bỏ qua việc render lại component này.
-
-Nhưng:
-
-```tsx
-const value = { name: 'Hiểu' };
-```
-
-mỗi render tạo object mới.
-
-Do đó:
+Điểm quan trọng là không dựa vào client UI để bảo vệ quyền:
 
 ```text
-same value
+Hide button
 ≠
-same reference
+Authorization
 ```
 
-là vấn đề cần hiểu khi dùng `React.memo`.
+User vẫn có thể cố gọi API/action trực tiếp, nên server phải kiểm tra quyền.
 
 ---
 
-# 41. `key` trong React có tác dụng gì?
+## 31. Form 10.000 Input
 
-`key` giúp React xác định identity của element trong collection.
+### Câu hỏi
+
+Làm sao cho phép người dùng nhập form 10.000 field mà không cần đăng nhập hoặc dùng LocalStorage?
+
+### Trả lời
+
+Giải pháp được bài viết đề xuất là **field-level saving**.
+
+Thay vì chờ toàn bộ form hoàn thành, mỗi field có thể được lưu lên server khi người dùng:
+
+```text
+onBlur
+```
+
+Dữ liệu draft được lưu trên server, với Redis được sử dụng làm nơi lưu draft.
+
+Identity của draft có thể dựa trên:
+
+```text
+Browser Fingerprint
+hoặc
+Session Cookie
+```
+
+Nhờ đó user có thể quay lại và tiếp tục form mà không cần:
+
+* Login.
+* LocalStorage.
+* Client-side database.
+
+---
+
+## 32. React 19 — 3 Tab bị Lag
+
+### Câu hỏi
+
+Một ứng dụng có nhiều component và chuyển tab mất khoảng 1–2 giây. Giải pháp theo bài viết là gì?
+
+### Trả lời
+
+Bài viết đề xuất sử dụng:
+
+```tsx
+useTransition()
+```
+
+để đánh dấu việc chuyển tab là một update có mức ưu tiên thấp hơn.
+
+Nhờ đó UI có thể tiếp tục phản hồi trong khi React xử lý transition.
+
+Bài viết cũng đề cập:
+
+```tsx
+<Activity />
+```
+
+của React 19.2 để ẩn tab cũ mà vẫn giữ state/DOM, giúp khi quay lại tab có thể hiển thị nhanh hơn.
+
+---
+
+## 33. Pagination Race Condition
+
+### Câu hỏi
+
+Làm sao xử lý khi user chuyển pagination liên tục và request cũ trả về sau request mới?
+
+### Trả lời
+
+Bài viết đề xuất sử dụng:
+
+```ts
+AbortController
+```
 
 Ví dụ:
 
-```tsx
-users.map(user => (
-  <User
-    key={user.id}
-    user={user}
-  />
-))
+```ts
+let controller: AbortController | null = null;
+
+async function loadPage(page: number) {
+  controller?.abort();
+
+  controller = new AbortController();
+
+  const response = await fetch(
+    `/api/items?page=${page}`,
+    {
+      signal: controller.signal,
+    }
+  );
+
+  return response.json();
+}
 ```
 
-Nếu list:
+Khi user chuyển sang page mới:
 
 ```text
-A
-B
-C
+Page 1 request
+      ↓
+User chọn Page 2
+      ↓
+abort Page 1
+      ↓
+Page 2 request
 ```
 
-thành:
-
-```text
-C
-A
-B
-```
-
-stable key giúp React nhận biết:
-
-```text
-C → vẫn là C
-A → vẫn là A
-B → vẫn là B
-```
-
-Nếu dùng index:
-
-```tsx
-key={index}
-```
-
-khi reorder, identity có thể bị gắn với vị trí thay vì item.
+Theo bài viết, mục tiêu là hủy request cũ để dữ liệu cuối cùng hiển thị tương ứng với page mới nhất.
 
 ---
 
-# 42. `useEffect` có phải lifecycle replacement không?
-
-Có thể dùng `useEffect` để mô hình hóa một số lifecycle behavior, nhưng hiểu `useEffect` chỉ như:
-
-```text
-componentDidMount
-componentDidUpdate
-componentWillUnmount
-```
-
-là chưa đầy đủ.
-
-Mental model tốt hơn:
-
-> `useEffect` dùng để synchronize React component với external system.
-
-Ví dụ external system:
-
-* WebSocket.
-* DOM API.
-* Browser API.
-* Subscription.
-* Timer.
-* External library.
-
----
-
-# 43. Debounce và Throttle khác nhau thế nào?
-
-## Debounce
-
-Chờ đến khi event ngừng xảy ra.
-
-```text
-keypress
-keypress
-keypress
-    ↓
-wait
-    ↓
-request
-```
-
-Phù hợp:
-
-* Search.
-* Validation.
-* Autosave.
-
-## Throttle
-
-Giới hạn tần suất execution.
-
-```text
-event event event event
- ↓
-execute
- ↓
-wait
- ↓
-execute
-```
-
-Phù hợp:
-
-* Scroll.
-* Resize.
-* Mousemove.
-
----
-
-# 44. Code Splitting là gì?
-
-Thay vì:
-
-```text
-main.js = 5MB
-```
-
-có thể chia:
-
-```text
-main.js
-dashboard.js
-map.js
-editor.js
-admin.js
-```
-
-Sau đó chỉ tải chunk cần thiết.
-
-Trong React:
-
-```tsx
-const Map = lazy(() => import('./Map'));
-```
-
-Lợi ích:
-
-```text
-Initial JS ↓
-Initial parse ↓
-Initial execution ↓
-```
-
-Nhưng quá nhiều chunk cũng có thể tạo overhead network/request và complexity, nên cần cân bằng.
-
----
-
-# 45. Web Worker giải quyết vấn đề gì?
-
-JavaScript chạy trên main thread có thể ảnh hưởng UI nếu computation quá nặng.
-
-Ví dụ:
-
-```text
-Main Thread
- ├── Rendering
- ├── User interaction
- └── JS
-```
-
-Có thể đưa CPU-intensive work sang:
-
-```text
-Web Worker
-```
-
-Mô hình:
-
-```text
-Main Thread
-     ↓ postMessage
-Worker
-     ↓ computation
-Main Thread
-     ↓ result
-UI
-```
-
-Phù hợp với:
-
-* Large data processing.
-* Parsing.
-* Computation nặng.
-* Một số thuật toán.
-
-Không phù hợp với mọi workload vì Worker cũng có communication/serialization overhead.
-
----
-
-# 46. Core Web Vitals cần biết gì?
-
-Ba metric quan trọng:
-
-```text
-LCP
-INP
-CLS
-```
-
-### LCP
-
-Đo tốc độ hiển thị nội dung lớn nhất thuộc vùng viewport theo định nghĩa của metric.
-
-### INP
-
-Đánh giá responsiveness của trang đối với tương tác người dùng.
-
-### CLS
-
-Đo mức độ layout thay đổi ngoài ý muốn.
-
-Senior Frontend nên biết cách liên hệ metric với nguyên nhân:
-
-```text
-LCP
-→ server latency
-→ resource loading
-→ image
-→ render blocking
-
-INP
-→ long JavaScript tasks
-→ excessive rendering
-→ event handlers
-
-CLS
-→ image dimensions
-→ dynamic content
-→ font/layout shifts
-```
-
----
-
-# 47. Khi nào nên dùng Virtualization?
-
-Nếu có:
-
-```text
-10,000 rows
-```
-
-không nhất thiết phải render cả 10.000 DOM nodes.
-
-Virtualization chỉ render phần đang cần hiển thị:
-
-```text
-10,000 items
-       ↓
-Viewport
-       ↓
-~20–100 DOM items
-```
-
-Các thư viện phổ biến thường cung cấp windowing/virtualization.
-
-Cần cân nhắc:
-
-* Variable row height.
-* Accessibility.
-* Keyboard navigation.
-* Search.
-* Scroll restoration.
-* Measurement cost.
-
----
-
-# 48. Tổng kết kiến thức cần nắm
-
-Đối với Frontend Senior, không nên chỉ học thuộc syntax.
-
-Cần hiểu các tầng:
-
-```text
-JavaScript
-    ↓
-Runtime / Event Loop
-    ↓
-Browser
-    ↓
-Rendering Pipeline
-    ↓
-React
-    ↓
-React Fiber / Scheduler
-    ↓
-Next.js / Server Rendering
-    ↓
-Network / Cache
-    ↓
-Security
-    ↓
-Architecture
-    ↓
-Performance
-```
-
-Khi gặp câu hỏi phỏng vấn, nên trả lời theo cấu trúc:
-
-```text
-1. Định nghĩa
-2. Cơ chế hoạt động
-3. Ví dụ
-4. Trade-off
-5. Khi nào sử dụng
-6. Khi nào không nên sử dụng
-7. Performance / Security implications
-```
-
-Đây là cách trả lời có chiều sâu hơn so với việc chỉ đưa ra một định nghĩa ngắn.
+# Tổng kết
+
+|  # | Chủ đề                           |
+| -: | -------------------------------- |
+|  1 | Event Loop & Task Prioritization |
+|  2 | Memory Management                |
+|  3 | Object Copying                   |
+|  4 | Reference Logic                  |
+|  5 | Promise.all                      |
+|  6 | Switch vs If-Else                |
+|  7 | String Literal Union vs Enum     |
+|  8 | `infer` & `satisfies`            |
+|  9 | `useMemo`                        |
+| 10 | `useCallback`                    |
+| 11 | React Fiber & Hook Storage       |
+| 12 | `useMemo` vs `useEffect`         |
+| 13 | `useEffect` vs `useLayoutEffect` |
+| 14 | Function Component Lifecycle     |
+| 15 | Rules of Hooks                   |
+| 16 | `useRef` & React 19              |
+| 17 | Context Optimization             |
+| 18 | React 19 Hooks                   |
+| 19 | React Compiler                   |
+| 20 | Hydration                        |
+| 21 | SSG / SSR / ISR / PPR            |
+| 22 | Server → Client Serialization    |
+| 23 | Next.js Caching                  |
+| 24 | Tailwind v4                      |
+| 25 | Critical Rendering Path          |
+| 26 | Passive Listeners                |
+| 27 | Browser Storage                  |
+| 28 | XSS / CSRF                       |
+| 29 | Refresh Token Rotation           |
+| 30 | Centralized Policy Engine        |
+| 31 | 10.000 Input Form                |
+| 32 | React 19 Tab Performance         |
+| 33 | Pagination Race Condition        |
+
+**Nguồn:** Tấn Phát Digital, *Những Câu Hỏi Phỏng Vấn Frontend 2026 Và Đáp Án Chi Tiết*, đăng ngày 11/02/2026.
 
 
 </details>
