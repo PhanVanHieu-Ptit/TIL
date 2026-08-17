@@ -3,6 +3,610 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-08-17 —  17 Câu hỏi phỏng vấn React </strong></summary>
+  
+  # 17 Câu hỏi phỏng vấn React
+
+> Tổng hợp và diễn giải lại từ bài viết **“17 Câu Hỏi Phỏng Vấn React Bắt Buộc Phải Biết Cho Developer Năm 2025”** của Evotek Careers, đăng ngày 15/05/2025.
+> Nguồn: [Evotek Careers – 17 Câu Hỏi Phỏng Vấn React](https://tuyendung.evotek.vn/17-cau-hoi-phong-van-react-bat-buoc-phai-biet-cho-developer-nam-2025/?utm_source=chatgpt.com)
+
+## 1. Virtual DOM là gì? Khác Real DOM và Shadow DOM như thế nào?
+
+### Câu hỏi
+
+Virtual DOM của React là gì? Nó khác Real DOM và Shadow DOM như thế nào?
+
+### Trả lời
+
+Virtual DOM là một biểu diễn trong bộ nhớ của UI mà React sử dụng trong quá trình reconciliation. Khi state hoặc props thay đổi, React tạo ra biểu diễn UI mới, so sánh với trạng thái trước đó và xác định các thay đổi cần commit vào DOM thật.
+
+Có thể phân biệt:
+
+* **Real DOM**: cây DOM thực tế do trình duyệt quản lý.
+* **Virtual DOM**: biểu diễn UI trong bộ nhớ được React sử dụng để thực hiện reconciliation.
+* **Shadow DOM**: cơ chế native của trình duyệt nhằm tạo một DOM tree được đóng gói, thường dùng trong Web Components.
+
+Điểm quan trọng khi trả lời phỏng vấn là không nên đồng nhất Virtual DOM với một bản sao hoàn chỉnh của DOM thật. Nó là một phần trong cơ chế rendering/reconciliation của React.
+
+---
+
+## 2. Có những loại Component nào trong React?
+
+### Câu hỏi
+
+Có những loại Component nào trong React? Khi nào sử dụng loại nào?
+
+### Trả lời
+
+Hai dạng component phổ biến trong lịch sử React là:
+
+* **Class Component**
+* **Function Component**
+
+Trước React Hooks, Class Component thường được sử dụng khi component cần state hoặc lifecycle methods. Từ React 16.8, Function Component có thể sử dụng Hooks như `useState` và `useEffect`.
+
+Trong code React hiện đại, Function Component thường là lựa chọn chính.
+
+Class Component vẫn có thể xuất hiện trong một số trường hợp đặc biệt, chẳng hạn như triển khai Error Boundary theo API truyền thống.
+
+---
+
+## 3. Tại sao React cần `key`?
+
+### Câu hỏi
+
+Tại sao cần `key` trong React? Có thể sử dụng `key` ngoài List không?
+
+### Trả lời
+
+`key` giúp React nhận diện ổn định từng phần tử trong một collection khi reconciliation.
+
+Ví dụ:
+
+```tsx
+{todos.map((todo) => (
+  <TodoItem
+    key={todo.id}
+    todo={todo}
+  />
+))}
+```
+
+`key` nên:
+
+* ổn định giữa các lần render;
+* duy nhất trong phạm vi collection;
+* đại diện cho identity của item.
+
+Không nên sử dụng `index` làm `key` khi thứ tự hoặc nội dung của list có thể thay đổi.
+
+`key` cũng có thể được sử dụng để thay đổi identity của một component và từ đó khiến component được mount lại, nhưng đây không phải mục đích chính của `key`.
+
+---
+
+## 4. Controlled Input và Uncontrolled Input
+
+### Câu hỏi
+
+Phân biệt Controlled Input và Uncontrolled Input trong React.
+
+### Trả lời
+
+**Controlled Input** có giá trị được React state kiểm soát:
+
+```tsx
+const [value, setValue] = useState('');
+
+<input
+  value={value}
+  onChange={(event) => setValue(event.target.value)}
+/>
+```
+
+Trong khi đó, **Uncontrolled Input** để DOM quản lý giá trị và có thể truy cập giá trị thông qua `ref`:
+
+```tsx
+const inputRef = useRef<HTMLInputElement>(null);
+
+<input ref={inputRef} />
+```
+
+Controlled Input phù hợp khi cần validation, formatting hoặc logic UI phụ thuộc trực tiếp vào giá trị input.
+
+Uncontrolled Input có thể phù hợp với các trường hợp đơn giản hoặc khi cần tương tác trực tiếp với DOM.
+
+---
+
+## 5. Tại sao cần Transpile JSX?
+
+### Câu hỏi
+
+Tại sao mã JSX cần được transpile?
+
+### Trả lời
+
+JSX không phải cú pháp JavaScript mà browser xử lý trực tiếp.
+
+Build tool sẽ chuyển JSX thành JavaScript mà runtime có thể thực thi.
+
+Ví dụ:
+
+```tsx
+const element = <h1>Hello</h1>;
+```
+
+được chuyển thành cơ chế tạo React element tương ứng.
+
+Các công cụ như Babel hoặc compiler/build pipeline của framework có thể đảm nhiệm bước chuyển đổi này.
+
+---
+
+## 6. JSX bảo vệ ứng dụng khỏi Injection/XSS như thế nào?
+
+### Câu hỏi
+
+JSX ngăn chặn các cuộc tấn công Injection Attack như thế nào?
+
+### Trả lời
+
+Khi dữ liệu được render thông qua JSX:
+
+```tsx
+<div>{userInput}</div>
+```
+
+React mặc định xử lý giá trị như dữ liệu thay vì coi nó là HTML executable.
+
+Đây là một cơ chế quan trọng giúp giảm nguy cơ XSS khi render dữ liệu không tin cậy.
+
+Cần đặc biệt chú ý với:
+
+```tsx
+<div
+  dangerouslySetInnerHTML={{
+    __html: html,
+  }}
+/>
+```
+
+Khi sử dụng HTML raw, ứng dụng cần có chiến lược sanitize phù hợp với nguồn dữ liệu.
+
+---
+
+## 7. Các cách Styling React Component
+
+### Câu hỏi
+
+Làm thế nào để thêm Styling vào React Components?
+
+### Trả lời
+
+Một số cách phổ biến:
+
+1. CSS thông thường
+2. Inline styles
+3. CSS Modules
+4. CSS-in-JS
+5. Các utility framework như Tailwind CSS
+
+Ví dụ CSS Module:
+
+```tsx
+import styles from './Button.module.css';
+
+function Button() {
+  return (
+    <button className={styles.button}>
+      Submit
+    </button>
+  );
+}
+```
+
+Việc lựa chọn phương pháp phụ thuộc vào kiến trúc, quy mô và yêu cầu của project.
+
+---
+
+## 8. Synthetic Events là gì?
+
+### Câu hỏi
+
+Synthetic Events trong React là gì?
+
+### Trả lời
+
+Synthetic Event là abstraction của React đối với browser events.
+
+Ví dụ:
+
+```tsx
+function Button() {
+  const handleClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    event.preventDefault();
+  };
+
+  return (
+    <button onClick={handleClick}>
+      Click
+    </button>
+  );
+}
+```
+
+Developer có thể sử dụng các API quen thuộc như:
+
+* `target`
+* `preventDefault()`
+* `stopPropagation()`
+
+Cần lưu ý rằng event system của React đã thay đổi qua các phiên bản React, vì vậy không nên trả lời rằng mọi phiên bản React đều triển khai event delegation giống hệt nhau.
+
+---
+
+## 9. Strict Mode là gì?
+
+### Câu hỏi
+
+Strict Mode trong React là gì?
+
+### Trả lời
+
+`<StrictMode>` là công cụ hỗ trợ phát hiện các vấn đề tiềm ẩn trong quá trình development.
+
+Ví dụ:
+
+```tsx
+<React.StrictMode>
+  <App />
+</React.StrictMode>
+```
+
+Trong development, React có thể thực hiện thêm một số lần render hoặc effect execution để giúp phát hiện code không thuần khiết và các vấn đề cleanup.
+
+Điểm quan trọng:
+
+* Strict Mode chủ yếu phục vụ development.
+* Nó không phải một UI component.
+* Một số hành vi development đặc biệt có thể khiến developer thấy component/effect chạy nhiều lần hơn mong đợi.
+
+---
+
+## 10. Xử lý lỗi trong React
+
+### Câu hỏi
+
+Làm thế nào để Gracefully Handle Errors trong React?
+
+### Trả lời
+
+React cung cấp khái niệm **Error Boundary** để xử lý một số lỗi xảy ra trong component tree.
+
+Error Boundary có thể:
+
+* bắt lỗi trong quá trình rendering của component con;
+* ghi log lỗi;
+* hiển thị fallback UI.
+
+Hai lifecycle API truyền thống là:
+
+```tsx
+static getDerivedStateFromError()
+```
+
+và:
+
+```tsx
+componentDidCatch()
+```
+
+Error Boundary không thay thế cho việc xử lý lỗi trong event handler hoặc các Promise/asynchronous operation.
+
+---
+
+## 11. Các Rules of Hooks
+
+### Câu hỏi
+
+Các quy tắc của React Hooks là gì?
+
+### Trả lời
+
+Hai nguyên tắc quan trọng:
+
+### Rule 1 — Chỉ gọi Hooks ở top level
+
+Không gọi Hook bên trong:
+
+* `if`;
+* `for`;
+* `while`;
+* nested function;
+* callback có điều kiện.
+
+Không nên:
+
+```tsx
+if (enabled) {
+  useEffect(() => {
+    // ...
+  }, []);
+}
+```
+
+### Rule 2 — Chỉ gọi Hooks từ React Function
+
+Hook nên được gọi từ:
+
+* Function Component;
+* Custom Hook.
+
+Ví dụ:
+
+```tsx
+function useUser() {
+  return useContext(UserContext);
+}
+```
+
+ESLint plugin cho React Hooks có thể hỗ trợ phát hiện nhiều lỗi liên quan đến Rules of Hooks.
+
+---
+
+## 12. Lifecycle trong Function Components
+
+### Câu hỏi
+
+Làm thế nào xử lý các Lifecycle Methods phổ biến trong Functional Components?
+
+### Trả lời
+
+Function Components không sử dụng trực tiếp các lifecycle method của Class Component.
+
+Thay vào đó, Hooks như `useEffect` được sử dụng để xử lý side effects.
+
+Ví dụ:
+
+```tsx
+useEffect(() => {
+  const subscription = subscribe();
+
+  return () => {
+    subscription.unsubscribe();
+  };
+}, []);
+```
+
+Có thể hiểu theo hướng:
+
+* setup effect;
+* cleanup effect;
+* chạy lại effect khi dependencies thay đổi.
+
+Không nên xem `useEffect` đơn giản là bản thay thế 1-1 cho toàn bộ lifecycle API của Class Component.
+
+---
+
+## 13. Refs trong React
+
+### Câu hỏi
+
+Refs trong React là gì?
+
+### Trả lời
+
+Refs cho phép component giữ một giá trị có thể tồn tại qua nhiều lần render mà việc thay đổi giá trị đó không trực tiếp gây ra re-render.
+
+Ví dụ truy cập DOM:
+
+```tsx
+const inputRef = useRef<HTMLInputElement>(null);
+
+function focusInput() {
+  inputRef.current?.focus();
+}
+```
+
+Refs thường được dùng cho:
+
+* DOM manipulation;
+* focus;
+* measurement;
+* lưu mutable value;
+* lưu timer ID hoặc giá trị cần tồn tại giữa các render.
+
+Nếu dữ liệu cần làm thay đổi UI, state thường phù hợp hơn ref.
+
+---
+
+## 14. Prop Drilling
+
+### Câu hỏi
+
+Prop Drilling là gì? Làm thế nào để tránh nó?
+
+### Trả lời
+
+Prop Drilling xảy ra khi một giá trị phải được truyền qua nhiều component trung gian chỉ để đến component thực sự cần giá trị đó.
+
+Ví dụ:
+
+```text
+App
+ └── Layout
+      └── Sidebar
+           └── UserMenu
+                └── Avatar
+```
+
+Nếu `Avatar` cần user nhưng phải truyền `user` qua toàn bộ component trung gian, code có thể trở nên khó bảo trì.
+
+Một số giải pháp:
+
+* React Context;
+* state management;
+* component composition;
+* custom hooks kết hợp Context.
+
+Không phải mọi việc truyền props đều là Prop Drilling xấu. Với component tree nhỏ, truyền props trực tiếp thường vẫn là giải pháp đơn giản nhất.
+
+---
+
+## 15. Tối ưu hiệu suất React
+
+### Câu hỏi
+
+Một số kỹ thuật tối ưu hiệu suất trong React là gì?
+
+### Trả lời
+
+Một số kỹ thuật phổ biến:
+
+### `React.memo`
+
+Tránh render lại component khi props không thay đổi theo cơ chế so sánh của React.
+
+```tsx
+const UserItem = React.memo(function UserItem({
+  user,
+}: Props) {
+  return <div>{user.name}</div>;
+});
+```
+
+### `useMemo`
+
+Cache kết quả của một computation khi dependencies không thay đổi.
+
+```tsx
+const result = useMemo(
+  () => expensiveCalculation(data),
+  [data],
+);
+```
+
+### `useCallback`
+
+Giữ ổn định function reference giữa các render khi phù hợp.
+
+### Code Splitting / Lazy Loading
+
+```tsx
+const Dashboard = lazy(
+  () => import('./Dashboard'),
+);
+```
+
+Kết hợp với `Suspense` để tải code khi cần.
+
+### Debounce / Throttle
+
+Hữu ích với các event có tần suất cao như:
+
+* search;
+* resize;
+* scroll.
+
+### Virtualization
+
+Với list rất lớn, chỉ render phần item cần thiết trong viewport thay vì render toàn bộ danh sách.
+
+Điểm quan trọng trong phỏng vấn: không nên sử dụng `memo`, `useMemo`, `useCallback` một cách máy móc. Cần xác định bottleneck trước khi tối ưu.
+
+---
+
+## 16. React Portal
+
+### Câu hỏi
+
+Portals trong React là gì?
+
+### Trả lời
+
+Portal cho phép render một React element vào một DOM node khác với vị trí DOM thông thường của component.
+
+Ví dụ:
+
+```tsx
+createPortal(
+  <Modal />,
+  document.getElementById('modal-root')!,
+);
+```
+
+Một use case phổ biến là Modal:
+
+```text
+React tree
+    │
+    └── Page
+         └── Modal
+              │
+              └── Portal
+                   ↓
+               body / modal-root
+```
+
+Mặc dù DOM node được render ở vị trí khác, Portal vẫn thuộc React tree ban đầu. Vì vậy Context và event propagation của React vẫn có thể hoạt động theo React tree.
+
+---
+
+## 17. React Fiber là gì?
+
+### Câu hỏi
+
+React Fiber là gì?
+
+### Trả lời
+
+Fiber là kiến trúc reconciliation của React được giới thiệu từ React 16.
+
+Thay vì xử lý toàn bộ reconciliation như một công việc không thể chia nhỏ, Fiber biểu diễn công việc thành các đơn vị có thể được React scheduler quản lý.
+
+Kiến trúc này là nền tảng cho khả năng:
+
+* chia nhỏ công việc;
+* ưu tiên công việc;
+* tạm dừng và tiếp tục một số công việc rendering;
+* hỗ trợ các khả năng rendering hiện đại của React.
+
+Fiber chủ yếu là implementation detail của React, developer không cần trực tiếp thao tác với Fiber trong code application thông thường.
+
+---
+
+# Tóm tắt 17 chủ đề
+
+| #  | Chủ đề                    | Từ khóa cần nhớ                           |
+| -- | ------------------------- | ----------------------------------------- |
+| 1  | Virtual DOM               | Reconciliation, DOM, Shadow DOM           |
+| 2  | Components                | Function, Class, Hooks                    |
+| 3  | `key`                     | Identity, reconciliation, list            |
+| 4  | Controlled / Uncontrolled | State, DOM, `ref`                         |
+| 5  | JSX Transpile             | JSX, Babel, JavaScript                    |
+| 6  | JSX & XSS                 | Escape, `dangerouslySetInnerHTML`         |
+| 7  | Styling                   | CSS, CSS Modules, CSS-in-JS               |
+| 8  | Synthetic Events          | Event system, propagation                 |
+| 9  | Strict Mode               | Development checks                        |
+| 10 | Error Boundary            | `componentDidCatch`, fallback             |
+| 11 | Rules of Hooks            | Top level, Function Component             |
+| 12 | Lifecycle                 | `useEffect`, cleanup                      |
+| 13 | Refs                      | DOM, mutable value                        |
+| 14 | Prop Drilling             | Context, composition                      |
+| 15 | Performance               | Memoization, lazy loading, virtualization |
+| 16 | Portal                    | `createPortal`, DOM tree                  |
+| 17 | Fiber                     | Reconciliation, scheduling                |
+
+## Nguồn
+
+* Evotek Careers — *17 Câu Hỏi Phỏng Vấn React Bắt Buộc Phải Biết Cho Developer Năm 2025*:
+  https://tuyendung.evotek.vn/17-cau-hoi-phong-van-react-bat-buoc-phai-biet-cho-developer-nam-2025/
+
+> Nội dung phần trả lời trong tài liệu này là **bản diễn giải/tổng hợp**, không phải bản sao nguyên văn bài viết.
+
+</details>
+
+<details>
   <summary><strong>📅 2026-08-16 — Frontend Interview 2026 — 33 câu hỏi và đáp án </strong></summary>
   
  # Frontend Interview 2026 — 33 câu hỏi và đáp án
