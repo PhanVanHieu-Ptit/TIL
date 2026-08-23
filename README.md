@@ -3,6 +3,596 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2026-08-23 —  17 Câu hỏi phỏng vấn React </strong></summary>
+  
+  # 17 Câu hỏi phỏng vấn React
+
+> Nguồn tham khảo: Evotek Careers – [17 Câu Hỏi Phỏng Vấn React Bắt Buộc Phải Biết Cho Developer Năm 2025](https://tuyendung.evotek.vn/17-cau-hoi-phong-van-react-bat-buoc-phai-biet-cho-developer-nam-2025/)
+
+---
+
+## 1. Virtual DOM của React là gì? Khác Real DOM và Shadow DOM như thế nào?
+
+### Trả lời
+
+**Virtual DOM** là một representation trong bộ nhớ của cấu trúc UI. Khi state hoặc props thay đổi, React tạo representation mới, thực hiện reconciliation để xác định thay đổi cần thiết rồi cập nhật DOM thật.
+
+* **Real DOM:** Cấu trúc DOM thực tế được browser sử dụng.
+* **Virtual DOM:** Representation do React quản lý nhằm hỗ trợ quá trình reconciliation.
+* **Shadow DOM:** Cơ chế native của browser dùng để encapsulate DOM/CSS trong Web Components.
+
+Điểm quan trọng: Virtual DOM và Shadow DOM là hai khái niệm hoàn toàn khác nhau.
+
+---
+
+## 2. Có những loại Component nào trong React? Khi nào sử dụng?
+
+### Trả lời
+
+Có hai loại component truyền thống:
+
+1. **Class Component**
+2. **Function Component**
+
+Từ React 16.8, Hooks cho phép Function Component sử dụng state và nhiều khả năng trước đây gắn với lifecycle của Class Component.
+
+Trong codebase React hiện đại, Function Component thường là lựa chọn chính.
+
+Class Component vẫn có thể xuất hiện trong một số trường hợp legacy hoặc Error Boundary.
+
+---
+
+## 3. Tại sao React cần `key`?
+
+### Trả lời
+
+`key` giúp React xác định identity của từng phần tử trong một collection.
+
+Ví dụ:
+
+```tsx
+todos.map((todo) => (
+  <li key={todo.id}>{todo.text}</li>
+))
+```
+
+React sử dụng `key` để xác định item nào:
+
+* được thêm;
+* bị xóa;
+* thay đổi;
+* được giữ lại.
+
+`key` nên ổn định và đại diện cho identity của item.
+
+Không nên dùng `key` như một cách tùy tiện để ép component re-render.
+
+---
+
+## 4. Controlled Input và Uncontrolled Input khác nhau thế nào?
+
+### Trả lời
+
+### Controlled
+
+Giá trị input được React state quản lý:
+
+```tsx
+const [value, setValue] = useState('');
+
+<input
+  value={value}
+  onChange={(e) => setValue(e.target.value)}
+/>
+```
+
+React trở thành source of truth.
+
+Ưu điểm:
+
+* dễ validation;
+* dễ format dữ liệu;
+* dễ điều khiển UI;
+* state luôn phản ánh input.
+
+### Uncontrolled
+
+DOM giữ giá trị của input và React truy cập thông qua `ref`:
+
+```tsx
+const inputRef = useRef<HTMLInputElement>(null);
+
+<input ref={inputRef} />
+```
+
+Có thể phù hợp với một số form đơn giản hoặc trường hợp cần tương tác trực tiếp với DOM.
+
+---
+
+## 5. Tại sao cần transpile JSX?
+
+### Trả lời
+
+Browser không thực thi JSX syntax trực tiếp.
+
+Ví dụ:
+
+```tsx
+const element = <h1>Hello</h1>;
+```
+
+JSX cần được compiler/transpiler chuyển thành JavaScript mà runtime có thể thực thi.
+
+Trong hệ sinh thái React, Babel là một công cụ phổ biến cho quá trình này.
+
+Về bản chất, JSX được chuyển thành các lời gọi tạo React element.
+
+---
+
+## 6. JSX giúp hạn chế Injection Attack/XSS như thế nào?
+
+### Trả lời
+
+Khi render dữ liệu thông qua JSX:
+
+```tsx
+<div>{userInput}</div>
+```
+
+React mặc định xử lý giá trị như text thay vì coi nó là HTML executable.
+
+Do đó, dữ liệu người dùng chứa markup không được diễn giải trực tiếp thành HTML trong trường hợp render text thông thường.
+
+Cần đặc biệt cẩn thận với:
+
+```tsx
+dangerouslySetInnerHTML
+```
+
+Nếu nội dung HTML đến từ nguồn không đáng tin cậy, cần có bước sanitization phù hợp trước khi đưa vào DOM.
+
+---
+
+## 7. Làm thế nào để thêm Styling vào React Component?
+
+### Trả lời
+
+Có nhiều phương pháp:
+
+### CSS thông thường
+
+```tsx
+import './Button.css';
+
+<button className="button">
+  Click
+</button>
+```
+
+### Inline Style
+
+```tsx
+<button
+  style={{
+    padding: '8px 16px',
+    borderRadius: '4px',
+  }}
+>
+  Click
+</button>
+```
+
+### CSS-in-JS
+
+Có thể sử dụng các thư viện như Styled Components hoặc Emotion.
+
+### CSS Modules
+
+```tsx
+import styles from './Button.module.css';
+
+<button className={styles.button}>
+  Click
+</button>
+```
+
+Lựa chọn phụ thuộc vào architecture, quy mô project và yêu cầu styling.
+
+---
+
+## 8. Synthetic Events trong React là gì?
+
+### Trả lời
+
+Synthetic Event là abstraction của React đối với browser events.
+
+Ví dụ:
+
+```tsx
+<button onClick={handleClick}>
+  Click
+</button>
+```
+
+Object nhận được trong handler cung cấp API quen thuộc như:
+
+```tsx
+event.preventDefault();
+event.stopPropagation();
+```
+
+Mục đích của hệ thống event là cung cấp behavior nhất quán và tích hợp event handling vào React.
+
+---
+
+## 9. Strict Mode trong React là gì?
+
+### Trả lời
+
+`StrictMode` là development tool giúp phát hiện các vấn đề tiềm ẩn trong React application.
+
+Ví dụ:
+
+```tsx
+<React.StrictMode>
+  <App />
+</React.StrictMode>
+```
+
+Trong development, React có thể cố ý thực hiện thêm một số lifecycle/effect behavior để phát hiện:
+
+* side effect không đúng;
+* thiếu cleanup;
+* API deprecated;
+* một số vấn đề liên quan đến lifecycle.
+
+Các behavior kiểm tra này phục vụ development và không phải là behavior production tương ứng.
+
+---
+
+## 10. Xử lý lỗi trong React như thế nào?
+
+### Trả lời
+
+React cung cấp **Error Boundary** để cô lập lỗi ở một phần component tree và hiển thị fallback UI.
+
+Error Boundary có thể:
+
+* bắt một số lỗi trong quá trình rendering;
+* log lỗi;
+* hiển thị fallback UI.
+
+Hai lifecycle method quan trọng:
+
+```tsx
+static getDerivedStateFromError()
+```
+
+và:
+
+```tsx
+componentDidCatch()
+```
+
+Một điểm quan trọng khi phỏng vấn: Error Boundary không phải cơ chế bắt mọi loại lỗi, chẳng hạn event handler hoặc một số lỗi asynchronous cần được xử lý riêng.
+
+---
+
+## 11. Các Rules of Hooks là gì?
+
+### Trả lời
+
+Có hai nguyên tắc cốt lõi.
+
+### Rule 1: Chỉ gọi Hooks ở top level
+
+Không gọi Hooks bên trong:
+
+```tsx
+if (...) {
+  useEffect(...)
+}
+```
+
+hoặc:
+
+```tsx
+for (...) {
+  useState(...)
+}
+```
+
+Hooks cần được gọi theo cùng một thứ tự giữa các lần render.
+
+### Rule 2: Chỉ gọi Hooks từ React functions
+
+Hooks được gọi từ:
+
+* Function Components;
+* Custom Hooks.
+
+Ví dụ Custom Hook:
+
+```tsx
+function useUser() {
+  // hooks
+}
+```
+
+Tên Custom Hook theo convention bắt đầu bằng `use`.
+
+---
+
+## 12. Lifecycle Methods trong Function Component được xử lý thế nào?
+
+### Trả lời
+
+Function Component sử dụng `useEffect` để thực hiện nhiều loại side effect.
+
+Ví dụ:
+
+### Mount
+
+```tsx
+useEffect(() => {
+  // effect
+}, []);
+```
+
+### Khi dependency thay đổi
+
+```tsx
+useEffect(() => {
+  // effect
+}, [count]);
+```
+
+### Cleanup
+
+```tsx
+useEffect(() => {
+  const subscription = subscribe();
+
+  return () => {
+    subscription.unsubscribe();
+  };
+}, []);
+```
+
+Tuy nhiên, cần hiểu rằng `useEffect` không đơn giản là bản sao 1-1 của lifecycle methods. Nó được thiết kế để đồng bộ component với external systems.
+
+---
+
+## 13. Refs trong React là gì?
+
+### Trả lời
+
+`ref` cho phép giữ một mutable value hoặc tham chiếu đến một DOM node mà không cần trigger re-render khi giá trị thay đổi.
+
+Ví dụ:
+
+```tsx
+const inputRef = useRef<HTMLInputElement>(null);
+
+<input ref={inputRef} />
+```
+
+Có thể sử dụng ref để:
+
+* focus input;
+* truy cập DOM;
+* lưu interval/timeout ID;
+* lưu mutable value giữa các render.
+
+Ví dụ:
+
+```tsx
+inputRef.current?.focus();
+```
+
+Không nên dùng refs thay cho React state khi giá trị đó cần được phản ánh lên UI.
+
+---
+
+## 14. Prop Drilling là gì? Làm thế nào để tránh?
+
+### Trả lời
+
+**Prop Drilling** xảy ra khi data phải truyền qua nhiều component trung gian chỉ để đến component thực sự sử dụng data.
+
+Ví dụ:
+
+```text
+App
+ └── Parent
+      └── Child
+           └── GrandChild
+```
+
+Nếu `GrandChild` cần data từ `App`, data có thể phải đi qua `Parent` và `Child`.
+
+Các giải pháp phổ biến:
+
+### Context API
+
+Phù hợp với những dữ liệu được chia sẻ ở nhiều nơi:
+
+* theme;
+* locale;
+* user information;
+* configuration.
+
+### State Management
+
+Với application phức tạp, có thể sử dụng các state management solution như:
+
+* Redux;
+* Zustand;
+* Jotai;
+* MobX.
+
+Không nên mặc định đưa mọi state vào global store; phạm vi state nên phù hợp với nhu cầu sử dụng.
+
+---
+
+## 15. Các kỹ thuật tối ưu performance trong React?
+
+### Trả lời
+
+Một số kỹ thuật quan trọng:
+
+### Memoization
+
+```tsx
+useMemo()
+useCallback()
+React.memo()
+```
+
+Có thể giúp tránh computation hoặc render không cần thiết trong những trường hợp phù hợp.
+
+Không nên sử dụng memoization một cách máy móc; cần dựa trên profiling và render behavior thực tế.
+
+### Lazy Loading / Code Splitting
+
+```tsx
+const HeavyComponent = lazy(
+  () => import('./HeavyComponent')
+);
+```
+
+Kết hợp với:
+
+```tsx
+<Suspense fallback={...}>
+  <HeavyComponent />
+</Suspense>
+```
+
+Giúp giảm JavaScript cần tải ban đầu.
+
+### Debouncing
+
+Phù hợp với các thao tác như search:
+
+```text
+User typing
+    ↓
+wait
+    ↓
+API request
+```
+
+### Throttling
+
+Phù hợp với event xảy ra liên tục như scroll hoặc resize.
+
+### Virtualization
+
+Với list rất lớn, chỉ render phần item đang cần hiển thị thay vì render toàn bộ danh sách.
+
+---
+
+## 16. Portals trong React là gì?
+
+### Trả lời
+
+Portal cho phép render React element vào một DOM node nằm ngoài DOM hierarchy thông thường của component.
+
+Ví dụ:
+
+```tsx
+createPortal(
+  <Modal />,
+  document.getElementById('modal-root')!
+)
+```
+
+Các use case phổ biến:
+
+* Modal;
+* Dialog;
+* Tooltip;
+* Popover;
+* overlay.
+
+Một điểm quan trọng: Portal thay đổi vị trí DOM nhưng component vẫn thuộc React tree ban đầu.
+
+Vì vậy các cơ chế như Context và React event propagation vẫn có thể hoạt động theo React tree.
+
+---
+
+## 17. React Fiber là gì?
+
+### Trả lời
+
+**Fiber** là kiến trúc reconciliation của React được giới thiệu từ React 16.
+
+Fiber chia quá trình xử lý thành các đơn vị công việc nhỏ hơn.
+
+Điều này cho phép React tổ chức rendering theo hướng có thể:
+
+* ưu tiên công việc;
+* chia nhỏ work;
+* tạm dừng;
+* tiếp tục;
+* bỏ qua hoặc thay đổi thứ tự xử lý work khi cần.
+
+Fiber là implementation detail của React, không phải API mà developer thường thao tác trực tiếp.
+
+### Reconciliation
+
+Khi state hoặc props thay đổi, React cần xác định UI mới khác UI cũ ở đâu.
+
+Quá trình đó gồm việc:
+
+```text
+State / Props change
+        ↓
+New React tree
+        ↓
+Reconciliation
+        ↓
+Determine changes
+        ↓
+Commit updates
+        ↓
+DOM update
+```
+
+Fiber là nền tảng kiến trúc giúp React thực hiện quá trình này theo cách linh hoạt hơn.
+
+---
+
+# Tóm tắt 17 chủ đề
+
+| #  | Chủ đề                                |
+| -- | ------------------------------------- |
+| 1  | Virtual DOM vs Real DOM vs Shadow DOM |
+| 2  | Class Component vs Function Component |
+| 3  | `key` và component identity           |
+| 4  | Controlled vs Uncontrolled Input      |
+| 5  | JSX Transpilation                     |
+| 6  | JSX và XSS                            |
+| 7  | Styling trong React                   |
+| 8  | Synthetic Events                      |
+| 9  | Strict Mode                           |
+| 10 | Error Boundary                        |
+| 11 | Rules of Hooks                        |
+| 12 | Lifecycle và `useEffect`              |
+| 13 | Refs                                  |
+| 14 | Prop Drilling                         |
+| 15 | React Performance Optimization        |
+| 16 | Portals                               |
+| 17 | React Fiber                           |
+
+## Nguồn
+
+* Evotek Careers: [17 Câu Hỏi Phỏng Vấn React Bắt Buộc Phải Biết Cho Developer Năm 2025](https://tuyendung.evotek.vn/17-cau-hoi-phong-van-react-bat-buoc-phai-biet-cho-developer-nam-2025/)
+
+</details>
+
+<details>
   <summary><strong>📅 2026-08-17 —  17 Câu hỏi phỏng vấn React </strong></summary>
   
   # 17 Câu hỏi phỏng vấn React
