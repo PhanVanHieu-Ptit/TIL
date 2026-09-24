@@ -3,6 +3,86 @@ Today I Learned
 
 # 📚 Frontend Learning Journal
 <details>
+  <summary><strong>📅 2027-09-24 —  Frontend Daily </strong></summary>
+
+> A curated list of resources for learning and keeping up with Frontend development every day.
+
+## Learning Resources
+
+### Web Fundamentals
+
+* [MDN Web Docs](https://developer.mozilla.org/) — HTML, CSS, JavaScript, Web APIs
+* [web.dev](https://web.dev/) — Web performance, accessibility, PWA, Core Web Vitals
+* [CSS-Tricks](https://css-tricks.com/) — CSS, layouts, animations, SVG
+
+### JavaScript & TypeScript
+
+* [JavaScript Weekly](https://javascriptweekly.com/) — Weekly JavaScript news and resources
+* [TypeScript Weekly](https://typescript-weekly.com/) — TypeScript news, articles and tools
+* [You Don't Know JS](https://github.com/getify/You-Dont-Know-JS) — Deep dive into JavaScript fundamentals
+
+### React & Modern Frontend
+
+* [React Status](https://react.statuscode.com/) — React ecosystem news and resources
+* [Frontend Masters Blog](https://frontendmasters.com/blog/) — Advanced Frontend articles and tutorials
+* [TkDodo's Blog](https://tkdodo.eu/blog) — React Query and modern React patterns
+* [Overreacted](https://overreacted.io/) — React and JavaScript insights
+* [Josh Comeau](https://www.joshwcomeau.com/) — CSS, React, UI and frontend engineering
+
+### Community & Discovery
+
+* [DEV Community](https://dev.to/) — Community articles and discussions
+* [GitHub Trending](https://github.com/trending) — Discover trending projects and libraries
+* [Smashing Magazine](https://www.smashingmagazine.com/) — Frontend, UX, accessibility and web development
+
+### System Design & Engineering
+
+* [ByteByteGo](https://blog.bytebytego.com/) — System design and software engineering concepts
+
+---
+
+## Daily Learning Routine
+
+A simple **30–45 minute** routine:
+
+| Time   | Activity                                      |
+| ------ | --------------------------------------------- |
+| 10 min | Read JavaScript Weekly / React Status         |
+| 15 min | Study one topic from MDN / web.dev            |
+| 15 min | Read one deep-dive article                    |
+| 5 min  | Write notes or apply the concept to a project |
+
+## Recommended Order
+
+For a React + TypeScript Frontend Developer:
+
+1. **MDN** — Strengthen Web fundamentals
+2. **Frontend Masters Blog** — Advanced Frontend
+3. **React Status** — React ecosystem
+4. **TkDodo** — Server state & React Query
+5. **Josh Comeau** — CSS & UI engineering
+6. **web.dev** — Performance & accessibility
+7. **CSS-Tricks** — CSS techniques
+8. **JavaScript Weekly** — JavaScript ecosystem
+9. **TypeScript Weekly** — TypeScript ecosystem
+10. **GitHub Trending** — Discover new technologies
+
+## Daily Checklist
+
+* [ ] Read one Frontend article
+* [ ] Learn one new concept
+* [ ] Take short notes
+* [ ] Apply one concept to a project
+* [ ] Review yesterday's notes
+
+## Goal
+
+> Learn every day. Build continuously. Understand the fundamentals. Stay curious.
+
+  
+</details>
+
+<details>
   <summary><strong>📅 2026-08-23 —  17 Câu hỏi phỏng vấn React </strong></summary>
   
   # 17 Câu hỏi phỏng vấn React
